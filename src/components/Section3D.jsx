@@ -1,5 +1,4 @@
-//src/components/section3D.jsx
-
+// src/components/Section3D.jsx
 import React from 'react';
 import { Html } from '@react-three/drei';
 
@@ -16,11 +15,19 @@ export default function Section3D({
 
     return (
         <group position={position}>
-            {/* Only HTML overlay for crisp text */}
             <Html center className={`section-card ${className}`} transform occlude>
                 <div className={`card ${isActive ? 'active' : ''}`}>
-                    <h2 className="title">{title}</h2>
-                    <p className="subtitle">{subtitle}</p>
+                    <div className="card-head">
+                        <div className="card-icon" aria-hidden>
+                            {/* tiny animated spark */}
+                            <svg viewBox="0 0 24 24"><path d="M12 2l1.5 4L18 8l-4 2-1.5 4L9 10 5 8l4.5-2L12 2z" /></svg>
+                        </div>
+                        <div className="card-head-text">
+                            <h2 className="title">{title}</h2>
+                            <p className="subtitle">{subtitle}</p>
+                        </div>
+                    </div>
+
                     <p className="body">{body}</p>
                 </div>
             </Html>

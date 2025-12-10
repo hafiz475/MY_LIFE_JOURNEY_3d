@@ -1,162 +1,251 @@
 //src/styles/main.scss
 
-@use './variables' as *;
-@use './sections/hero';
-@use './sections/factory';
-@use './sections/pivot';
-@use './sections/nippon';
-@use './sections/bizmagnets';
+/* ----------------------------------------------------------
+   MAIN SCSS — using _variables.scss
+----------------------------------------------------------- */
+
+@import "variables";
+
+/* -----------------------------------
+   1) BASE RESET
+----------------------------------- */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 html,
-body,
-#root {
+body {
+    width: 100%;
     height: 100%;
-    background: $bg;
-    color: $text;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;
-    margin: 0;
-}
-
-/* Glassmorphism card */
-.section-card .card {
-    width: 420px;
-    max-width: 70vw;
-    backdrop-filter: blur(12px);
-    background: rgba(20, 24, 32, 0.45);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: $shadow;
-    padding: 16px 20px;
-    border-radius: $radius;
-    transition: transform 280ms cubic-bezier(.2, .9, .2, 1), box-shadow 280ms;
-    transform-origin: center;
-}
-
-.section-card .card.active {
-    transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 30px 60px rgba(2, 6, 12, 0.6);
-}
-
-.section-card .title {
-    font-size: 20px;
-    letter-spacing: 0.3px;
-    margin: 0 0 6px;
-    position: relative;
     overflow: hidden;
+    /* IMPORTANT FIX: Allows R3F full screen */
+    background: $bg-dark;
+    font-family: $font-base;
+    color: $white;
 }
 
-.section-card .subtitle {
-    font-size: 13px;
-    color: $muted;
-    margin: 0 0 10px;
+/* Ensure React root fills screen */
+#root,
+.app,
+.canvas-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
 }
 
-.section-card .body {
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-/* Accent underline reveal */
-.section-card .title::after {
-    content: '';
+/* R3F canvas must fill the whole viewport */
+canvas {
+    width: 100% !important;
+    height: 100% !important;
     display: block;
-    height: 2px;
-    width: 0%;
-    background: linear-gradient(90deg, $electric, $digital);
-    transition: width 520ms ease;
 }
 
-.section-card .card.active .title::after {
-    width: 64px;
-}
+/* -----------------------------------
+   2) HUD (top-right)
+----------------------------------- */
 
-/* Ambient tint per section */
-body[data-section='hero'] {
-    background: #0b0e14;
-}
-
-body[data-section='factory'] {
-    background: #11141b;
-}
-
-body[data-section='pivot'] {
-    background: #121825;
-}
-
-body[data-section='nippon'] {
-    background: #141a2a;
-}
-
-body[data-section='bizmagnets'] {
-    background: #161c2f;
-}
-
-/* HUD styles — vertical timeline on right */
 .hud {
     position: fixed;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
+    top: $space-lg;
+    right: $space-lg;
+
+    width: $hud-width;
+    padding: 12px 16px;
+
     display: flex;
-    flex-direction: column;
-    gap: 14px;
     align-items: center;
-    z-index: 40;
-    pointer-events: auto;
-    color: $text;
+    justify-content: space-between;
+
+    background: linear-gradient(160deg, $hud-bg-1, $hud-bg-2);
+    backdrop-filter: blur(14px) saturate(150%);
+    border-radius: $radius-lg;
+    box-shadow: $neon-shadow;
+
+    z-index: 50;
+}
+
+.hud-left {
+    flex: 1 1 auto;
 }
 
 .hud-title {
-    font-weight: 600;
-    font-size: 14px;
-    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
 }
 
 .hud-subtitle {
-    font-size: 12px;
-    color: $muted;
-    margin-top: 2px;
-    text-align: center;
+    margin-top: 4px;
+    font-size: 11px;
+    color: $text-muted;
 }
 
-.dots {
+/* -----------------------------------
+   3) HUD ICONS
+----------------------------------- */
+
+.icon-list {
     display: flex;
-    flex-direction: column;
     gap: 10px;
-    margin-top: 12px;
+    list-style: none;
 }
 
-.dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.12);
+.icon-btn {
     border: none;
+    background: transparent;
+    padding: 6px;
     cursor: pointer;
-    transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+    border-radius: $radius-md;
+
+    display: grid;
+    place-items: center;
 }
 
-.dot:hover {
-    transform: scale(1.2);
+.icon-wrap {
+    width: 44px;
+    height: 44px;
+    position: relative;
+    display: grid;
+    place-items: center;
 }
 
-.dot.active {
-    background: $accent;
-    box-shadow: 0 0 10px rgba(122, 162, 247, 0.4);
+.icon-svg {
+    width: 22px;
+    height: 22px;
+    color: $accent-1;
+    transition: transform .32s $curve-smooth, filter .25s ease;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.35));
 }
 
-/* theme tokens */
-$rust: #b86a3a;
-$warm: #f5a97f;
-$electric: #8aadf4;
-$digital: #91d7e3;
+.icon-ring {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(160deg, rgba($accent-2, 0.08), rgba($accent-1, 0.08));
+    opacity: 0;
+    transform: scale(.8);
+    transition: opacity .35s ease, transform .45s $curve-smooth;
+}
 
-/* …rest of your styles… */
+/* Active Icon State */
+.icon-item.active .icon-wrap {
+    animation: floaty 3s ease-in-out infinite;
+}
 
-.section-card .title::after {
-    content: '';
-    display: block;
-    height: 2px;
-    width: 0%;
-    background: linear-gradient(90deg, $electric, $digital);
-    transition: width 520ms ease;
+.icon-item.active .icon-ring {
+    opacity: 1;
+    transform: scale(1.1);
+    animation: ringPulse 1.8s ease infinite;
+}
+
+.icon-item.active .icon-svg {
+    transform: rotate(-8deg) scale(1.08);
+    filter: drop-shadow(0 10px 22px rgba($accent-2, 0.15));
+}
+
+/* Hover */
+.icon-btn:hover .icon-svg {
+    transform: translateY(-4px) rotate(-4deg) scale(1.05);
+}
+
+/* -----------------------------------
+   4) KEYFRAMES
+----------------------------------- */
+
+@keyframes floaty {
+    0% {
+        transform: translateY(0) rotate(-1deg);
+    }
+
+    50% {
+        transform: translateY(-6px) rotate(3deg);
+    }
+
+    100% {
+        transform: translateY(0) rotate(-1deg);
+    }
+}
+
+@keyframes ringPulse {
+    0% {
+        transform: scale(.9);
+        opacity: .8;
+    }
+
+    60% {
+        transform: scale(1.25);
+        opacity: .2;
+    }
+
+    100% {
+        transform: scale(.9);
+        opacity: 0;
+    }
+}
+
+/* -----------------------------------
+   5) SECTION CARD (3D HTML content)
+----------------------------------- */
+
+.section-card .card {
+    width: 320px;
+    padding: 18px;
+    border-radius: $radius-lg;
+
+    background: linear-gradient(180deg, $glass-1, $glass-2);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.65);
+
+    transition: all .35s $curve-smooth;
+    transform-origin: center;
+}
+
+.card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: $radius-md;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.card-icon svg {
+    width: 20px;
+    height: 20px;
+    fill: $accent-2;
+}
+
+/* Active card highlight */
+.section-card .card.active {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 24px 44px rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba($accent-2, 0.15);
+}
+
+.section-card .card.active .card-icon {
+    background: linear-gradient(120deg, rgba($accent-2, 0.15), rgba($accent-1, 0.12));
+}
+
+/* -----------------------------------
+   6) RESPONSIVE FIXES
+----------------------------------- */
+
+@media (max-width: $mobile) {
+    .hud {
+        width: auto;
+        left: $space-md;
+        right: $space-md;
+    }
+
+    .section-card .card {
+        width: 280px;
+    }
 }

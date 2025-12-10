@@ -1,13 +1,46 @@
 //src/_variables.scss
+/* ===============================================
+   GLOBAL VARIABLES — clean modular organization
+================================================ */
 
-$bg: #0b0e14;
-$text: #e6edf3;
-$muted: #9aa7b4;
-$accent: #7aa2f7;
-$radius: 12px;
-$shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+/* Colors */
+$bg-dark: #05070c;
+$white: #ffffff;
 
-$rust: #b86a3a;
-$warm: #f5a97f;
-$electric: #8aadf4;
-$digital: #91d7e3;
+$accent-1: #ff6b6b;
+$accent-2: #6be7ff;
+
+/* Glass backgrounds */
+$glass-1: rgba(255, 255, 255, 0.06);
+$glass-2: rgba(255, 255, 255, 0.02);
+
+$hud-bg-1: rgba(10, 12, 18, 0.55);
+$hud-bg-2: rgba(10, 12, 18, 0.32);
+
+/* Text colors */
+$text-muted: rgba(255, 255, 255, 0.75);
+$text-soft: rgba(255, 255, 255, 0.55);
+
+/* Shadows */
+$neon-shadow: 0 8px 22px rgba(107, 231, 255, 0.08),
+    0 3px 10px rgba(255, 107, 107, 0.06);
+
+/* Sizing */
+$hud-width: 330px;
+$radius-lg: 14px;
+$radius-md: 10px;
+$radius-sm: 6px;
+
+/* Animation curves */
+$curve-smooth: cubic-bezier(0.2, 0.9, 0.2, 1);
+
+/* Typography */
+$font-base: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+
+/* Global spacing */
+$space-sm: 10px;
+$space-md: 16px;
+$space-lg: 24px;
+
+/* Breakpoints */
+$mobile: 900px;
