@@ -1,0 +1,101 @@
+/* src/components/LifeStory3D/LifeStory3D.scss */
+
+.life-3d-root {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(180deg, #04060a 0%, #061018 60%);
+}
+
+/* top-left caption */
+.life-3d-caption {
+    position: absolute;
+    top: 18px;
+    left: 20px;
+    z-index: 20;
+    color: #ffffff;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+
+    h2 {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    p {
+        font-size: 12px;
+        opacity: 0.72;
+        margin-top: 4px;
+    }
+}
+
+/* bottom UI */
+.life-3d-ui {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 6px 12px;
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+/* dots */
+.dots {
+    display: flex;
+    gap: 6px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.dot.on {
+    background: linear-gradient(90deg, #6be7ff, #ff6b6b);
+    box-shadow: 0 4px 14px rgba(107, 231, 255, 0.6);
+}
+
+/* Lottie wrapper */
+.life-lottie-wrapper {
+    pointer-events: none;
+}
+
+.life-lottie {
+    width: 44px;
+    height: 44px;
+}
+
+/* responsive */
+@media (max-width: 900px) {
+    .life-3d-caption {
+        left: 12px;
+        top: 12px;
+    }
+
+    .life-3d-ui {
+        bottom: 12px;
+        gap: 10px;
+    }
+
+    .life-lottie {
+        width: 36px;
+        height: 36px;
+    }
+}
