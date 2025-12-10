@@ -1,0 +1,91 @@
+@import "../../styles/variables";
+
+/* Bento HUD v2 — minimal, compact, Apple-like */
+.bento-hud {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: rgba(18, 20, 28, 0.6);
+    backdrop-filter: blur(14px) saturate(140%);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    box-shadow: 0 8px 22px rgba(2, 6, 12, 0.6);
+    z-index: 200;
+}
+
+.bento-left {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.bento-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: $white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bento-sub {
+    margin-top: 4px;
+    font-size: 11px;
+    color: $text-muted;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* list */
+.bento-list {
+    display: flex;
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.bento-item {
+    display: flex;
+}
+
+.bento-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    transition: background .18s ease, transform .18s ease;
+}
+
+.bento-btn:hover {
+    background: rgba(255, 255, 255, 0.04);
+    transform: translateY(-3px);
+}
+
+.bento-icon {
+    width: 18px;
+    height: 18px;
+    fill: rgba(107, 231, 255, 0.9);
+    opacity: 0.9;
+    transition: transform .18s $curve-smooth, fill .18s;
+}
+
+/* active */
+.bento-item.active .bento-btn {
+    background: linear-gradient(90deg, rgba($accent-2, 0.12), rgba($accent-1, 0.12));
+    transform: translateY(-2px);
+}
+
+.bento-item.active .bento-icon {
+    fill: $accent-1;
+    transform: scale(1.06);
+}
