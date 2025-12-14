@@ -1,14 +1,15 @@
-/* StoryPoint styles (Apple Spatial Clean) */
+/* StoryPoint styles (Apple Spatial Clean polished) */
 .story-body {
-    width: 310px;
+    width: 260px;
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto;
     font-size: 12px;
-    color: rgba(15, 23, 42, 0.8);
-    background: rgba(255, 255, 255, 0.94);
+    color: rgba(15, 23, 42, 0.86);
+    background: rgba(255, 255, 255, 0.86);
     padding: 8px 12px;
-    border-radius: 10px;
-    box-shadow: 0 6px 20px rgba(12, 16, 24, 0.06);
-    border: 1px solid rgba(15, 23, 42, 0.03);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(12, 16, 24, 0.06);
+    border: 1px solid rgba(15, 23, 42, 0.04);
+    backdrop-filter: blur(6px);
 }
 
 .crest-placeholder {
@@ -22,7 +23,7 @@
 .crest-inner {
     width: 56px;
     height: 56px;
-    border-radius: 10px;
+    border-radius: 12px;
     background: linear-gradient(180deg, #ffffff, #f8fafc);
     border: 1px solid rgba(15, 23, 42, 0.04);
     display: flex;
@@ -30,5 +31,5 @@
     justify-content: center;
     font-size: 12px;
     color: #0f172a;
-    box-shadow: 0 6px 18px rgba(12, 16, 24, 0.04);
+    box-shadow: 0 10px 30px rgba(12, 16, 24, 0.06);
 }

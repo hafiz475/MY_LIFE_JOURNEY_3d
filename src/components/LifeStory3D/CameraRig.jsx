@@ -4,13 +4,15 @@ import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
 /**
- * Simple camera rig that lerps to target position and rotates to lookAt.
+ * CameraRig: smooth, slightly slower camera that eases toward cameraTarget
  * cameraTarget, cameraLookAt are arrays [x,y,z]
+ * Adjust lerpSpeed to make camera slower/faster (smaller = slower)
  */
 export default function CameraRig({ cameraTarget = [0, 1.4, 6.5], cameraLookAt = [0, 1, 0] }) {
     const { camera } = useThree();
     const targetRef = useRef(new THREE.Vector3(...cameraTarget));
     const lookAtRef = useRef(new THREE.Vector3(...cameraLookAt));
+    const currentLookAt = useRef(new THREE.Vector3(...cameraLookAt));
 
     useEffect(() => {
         targetRef.current.set(...cameraTarget);
@@ -21,14 +23,16 @@ export default function CameraRig({ cameraTarget = [0, 1.4, 6.5], cameraLookAt =
     }, [cameraLookAt]);
 
     useFrame((_, delta) => {
-        // lerp camera position
-        camera.position.lerp(targetRef.current, 1 - Math.pow(0.001, delta));
-        // smooth lookAt
-        const cur = new THREE.Vector3();
-        camera.getWorldDirection(cur);
-        const desired = lookAtRef.current.clone().sub(camera.position).normalize();
-        const slerp = cur.lerp(desired, 1 - Math.pow(0.001, delta));
-        camera.lookAt(camera.position.clone().add(slerp));
+        // tweak this value to taste: smaller -> slower
+        const lerpSpeed = 3.6;
+
+        // smooth position lerp using exponential smoothing
+        const alpha = 1 - Math.exp(-lerpSpeed * delta);
+        camera.position.lerp(targetRef.current, alpha);
+
+        // smooth lookAt: lerp the point we want to look at, then camera.lookAt it
+        currentLookAt.current.lerp(lookAtRef.current, alpha * 1.1);
+        camera.lookAt(currentLookAt.current);
     });
 
     return null;
