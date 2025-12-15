@@ -1,43 +1,34 @@
 import { useGLTF } from '@react-three/drei';
-import { useRef } from 'react';
-import * as THREE from 'three';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { useThree } from '@react-three/fiber';
-import { moveCamera } from './CameraRig';
 
-export default function Football() {
+export default function Football({ visible }) {
     const { scene } = useGLTF('/assets/models/football.glb');
     const ref = useRef();
-    const { camera } = useThree();
 
-    scene.traverse((c) => {
-        if (c.isMesh) c.castShadow = true;
-    });
+    useEffect(() => {
+        if (visible && ref.current) {
+            gsap.fromTo(
+                ref.current.position,
+                { z: -5 },
+                { z: 0, duration: 1.2, ease: 'power2.out' }
+            );
 
-    const handleClick = () => {
-        // roll forward
-        gsap.to(ref.current.position, {
-            z: 0,
-            duration: 1.5,
-            ease: 'power2.out'
-        });
-
-        gsap.to(ref.current.rotation, {
-            x: "+=6",
-            duration: 1.5,
-            ease: 'power2.out'
-        });
-
-        moveCamera(camera, [0, 2, 6], [0, 1, 0]);
-    };
+            gsap.fromTo(
+                ref.current.rotation,
+                { x: 0 },
+                { x: Math.PI * 2, duration: 1.2, ease: 'power2.out' }
+            );
+        }
+    }, [visible]);
 
     return (
         <primitive
             ref={ref}
             object={scene}
+            visible={visible}
             scale={0.6}
-            position={[0, 0.5, -5]}
-            onClick={handleClick}
+            position={[0, 0.5, 0]}
         />
     );
 }
