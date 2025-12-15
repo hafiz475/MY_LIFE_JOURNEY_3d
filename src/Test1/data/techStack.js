@@ -1,16 +1,16 @@
 // src/data/techStack.js
-import javascript from "../assets/lotties/javascript.json";
-import typescript from "../assets/lotties/typescript.json";
-import reactLottie from "../assets/lotties/react.json";
+import javascript from "../../assets/lotties/javascript.json";
+import typescript from "../../assets/lotties/typescript.json";
+import reactLottie from "../../assets/lotties/react.json";
 
-import node from "../assets/lotties/node.json";
-import express from "../assets/lotties/express.json";
-import mongodb from "../assets/lotties/mongodb.json";
-import firebase from "../assets/lotties/firebase.json";
+import node from "../../assets/lotties/node.json";
+import express from "../../assets/lotties/express.json";
+import mongodb from "../../assets/lotties/mongodb.json";
+import firebase from "../../assets/lotties/firebase.json";
 
-import aws from "../assets/lotties/aws.json";
-import cloudflare from "../assets/lotties/cloudflare.json";
-import digitalocean from "../assets/lotties/digitalocean.json";
+import aws from "../../assets/lotties/aws.json";
+import cloudflare from "../../assets/lotties/cloudflare.json";
+import digitalocean from "../../assets/lotties/digitalocean.json";
 
 export const techStack = [
     { id: "javascript", name: "JavaScript", icon: "/assets/logos/javascript.svg", lottie: javascript, color: "#f7df1e", orbit: { radius: 1.8, speed: 1.2, height: 0.3 } },
