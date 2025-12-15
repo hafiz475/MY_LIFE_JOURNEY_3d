@@ -1,24 +1,35 @@
-// // src/App.jsx
-// import React from "react";
-// import LifeStory3D from "./components/LifeStory3D";
-// import "./styles/main.scss"; // your global styles (optional)
-// export default function App() {
-//   return (
-//     <div className="app">
-//       <LifeStory3D />
-//     </div>
-//   );
-// }
-
-import { Suspense } from 'react';
-import './styles/main.scss';  // Import your SCSS
-import Scene from './components/Scene';
+import { useEffect, useState, Suspense } from 'react';
+import './styles/main.scss';
+import MainScene from './components/MainScene';
 
 function App() {
+  const [section, setSection] = useState(0);
+  const maxSection = 2; // 0=Plane, 1=Football, 2=Bike (later)
+
+  useEffect(() => {
+    let locked = false;
+
+    const onWheel = (e) => {
+      if (locked) return;
+
+      if (e.deltaY > 0) {
+        setSection((s) => Math.min(s + 1, maxSection));
+      } else {
+        setSection((s) => Math.max(s - 1, 0));
+      }
+
+      locked = true;
+      setTimeout(() => (locked = false), 1200); // debounce
+    };
+
+    window.addEventListener('wheel', onWheel, { passive: true });
+    return () => window.removeEventListener('wheel', onWheel);
+  }, []);
+
   return (
     <div className="app-container">
-      <Suspense fallback={<div>Loading 3D scene...</div>}>
-        <Scene />
+      <Suspense fallback={null}>
+        <MainScene section={section} />
       </Suspense>
     </div>
   );
