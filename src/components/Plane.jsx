@@ -6,7 +6,7 @@ import * as THREE from 'three';
 
 export default function Plane() {
   const group = useRef();
-  const { scene, animations } = useGLTF('/assets/models/basic_plane.glb');
+  const { scene, animations } = useGLTF('/assets/models/gottfried_freiherr_von_banfields_seaplane.glb');
   const { actions, names } = useAnimations(animations, group);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function Plane() {
     scene.position.sub(center);
 
     // 🔹 Make plane smaller (adjust this value only)
-    scene.scale.set(0.25, 0.25, 0.25);
+    scene.scale.set(1, 1, 1);
 
     // Keep your preferred rotation
     scene.rotation.set(0, Math.PI / 2, 0);
