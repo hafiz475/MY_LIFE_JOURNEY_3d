@@ -1,29 +1,41 @@
+// src/components/MainScene.jsx
 import { Canvas } from '@react-three/fiber';
 import { Suspense } from 'react';
+import { Sky, OrbitControls } from '@react-three/drei';
+
 import Plane from './Plane';
-import Floor from './Floor';
+import Clouds from './Clouds';
 
 export default function MainScene() {
-    return (
-        <Canvas
-            shadows
-            camera={{ position: [0, 2, 8], fov: 45 }}
-        >
-            <color attach="background" args={['#eaf1ff']} />
+  return (
+    <Canvas camera={{ position: [0, 1.5, 6], fov: 45 }}>
+      {/* nice sky gradient */}
+      <Sky
+        distance={450000}
+        sunPosition={[1, 1, 0]}
+        inclination={0.49}   // sun height
+        azimuth={0.25}
+        turbidity={6}
+        rayleigh={2}
+      />
 
-            {/* Realistic lighting */}
-            <ambientLight intensity={0.8} />
-            <directionalLight
-                position={[5, 10, 5]}
-                intensity={1.5}
-                castShadow
-                shadow-mapSize={[2048, 2048]}
-            />
+      {/* subtle fog for depth (optional) */}
+      <fog attach="fog" args={['#eaf1ff', 6, 20]} />
 
-            <Suspense fallback={null}>
-                <Floor />
-                <Plane visible={true} />
-            </Suspense>
-        </Canvas>
-    );
+      {/* Soft lights */}
+      <ambientLight intensity={0.8} />
+      <directionalLight position={[5, 10, 5]} intensity={1.2} castShadow />
+
+      <Suspense fallback={null}>
+        {/* Clouds placed behind plane (z negative) */}
+        <Clouds count={14} zStart={-8} zSpacing={3.5} />
+
+        {/* Centered, small plane */}
+        <Plane />
+
+      </Suspense>
+
+      <OrbitControls enablePan={false} enableZoom={false} />
+    </Canvas>
+  );
 }
