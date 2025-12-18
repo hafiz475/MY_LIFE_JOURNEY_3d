@@ -1,5 +1,6 @@
 //src/components/Plane.jsx
 
+import { useFrame } from '@react-three/fiber';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
@@ -7,6 +8,7 @@ import gsap from 'gsap';
 
 export default function Plane() {
   const group = useRef();
+  const idleRef = useRef();
   const { scene, animations } = useGLTF('/assets/models/gottfried_freiherr_von_banfields_seaplane.glb');
   const { actions, names } = useAnimations(animations, group);
 
@@ -39,6 +41,20 @@ export default function Plane() {
     }
   }, [scene]);
 
+  // Idle Animation (Floating/Flying feel)
+  useFrame((state) => {
+    if (idleRef.current) {
+      const t = state.clock.getElapsedTime();
+
+      // "Wing flapping" (Roll - Rotation X)
+      // 4s loop -> freq ~ 1.5
+      idleRef.current.rotation.x = Math.sin(t * 1.5) * 0.05; // +/- ~3 deg
+
+      // "1 degree left and right" (Yaw - Rotation Y)
+      idleRef.current.rotation.y = Math.cos(t * 1) * 0.02; // +/- ~1 deg
+    }
+  });
+
   const handlePlaneClick = (e) => {
     e.stopPropagation(); // Prevent clicking through to other things
 
@@ -49,7 +65,7 @@ export default function Plane() {
     // 360 Degree Barrel Roll (Rotation around X axis since plane flies along X)
     gsap.to(group.current.rotation, {
       x: group.current.rotation.x + Math.PI * 2,
-      duration: 3,
+      duration: 2, // Faster (2 seconds)
       ease: "power1.inOut",
       onComplete: () => {
         isSpinning.current = false;
@@ -67,7 +83,10 @@ export default function Plane() {
       onPointerOver={() => document.body.style.cursor = 'pointer'}
       onPointerOut={() => document.body.style.cursor = 'auto'}
     >
-      <primitive object={scene} />
+      {/* Inner group for Idle Animation Only */}
+      <group ref={idleRef}>
+        <primitive object={scene} />
+      </group>
     </group>
   );
 }
