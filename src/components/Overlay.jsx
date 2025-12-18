@@ -4,17 +4,17 @@ const Overlay = ({ section }) => {
     const [showName, setShowName] = useState(false);
 
     useEffect(() => {
-        // Show name after 8 seconds (during the 10-second intro)
+        // Show name after 3 seconds (intro starts, name joins the movement)
         const timer = setTimeout(() => {
             setShowName(true);
-        }, 8000);
+        }, 3000);
         return () => clearTimeout(timer);
     }, []);
 
     return (
         <div className="overlay">
             <div className={`name-container ${showName ? 'visible' : ''}`}>
-                <h1 className="name-text">J Md Hafizur Rahaman</h1>
+                <h1 className="name-text">J Md Hafizur Rahman</h1>
             </div>
 
             {/* section indicator logic can go here later */}
