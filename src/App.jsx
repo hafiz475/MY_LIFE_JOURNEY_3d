@@ -29,10 +29,10 @@ function App() {
 
   return (
     <div className="app-container">
-      <Overlay section={section} />
       <Suspense fallback={null}>
         <MainScene section={section} />
       </Suspense>
+      <Overlay section={section} />
     </div>
   );
 }
