@@ -1,18 +1,36 @@
-// src/components/MainScene.jsx
 import { Canvas, useThree } from '@react-three/fiber';
-import { Suspense, useEffect, useRef } from 'react';
-import { Sky } from '@react-three/drei';
+import { Suspense, useEffect, useRef, useState } from 'react';
+import { Sky, CameraShake } from '@react-three/drei';
 import gsap from 'gsap';
 
 import Plane from './Plane';
-// import Clouds from './Clouds';
-// import CloudGLB from './CloudGLB';
 import CloudStream from './CloudStream';
 import HudText from './HudText';
+import WeatherSystem from './WeatherSystem';
 
 function SceneContent({ section }) {
   const { camera, size } = useThree();
   const isMobile = size.width < 768;
+
+  // Thunder Refs
+  const lightRef = useRef();
+  const [shakeIntensity, setShakeIntensity] = useState(0);
+  const [isRaining, setIsRaining] = useState(false);
+
+  // Start rain after 12 seconds automatically, stop after 15s duration
+  useEffect(() => {
+    const startTimer = setTimeout(() => {
+      setIsRaining(true);
+
+      // Stop rain after 15 seconds
+      const stopTimer = setTimeout(() => {
+        setIsRaining(false);
+      }, 15000);
+
+      return () => clearTimeout(stopTimer);
+    }, 12000);
+    return () => clearTimeout(startTimer);
+  }, []);
 
   useEffect(() => {
     // Initial Camera Intro Animation (3 seconds)
@@ -48,6 +66,27 @@ function SceneContent({ section }) {
     camera.updateProjectionMatrix();
   }, [isMobile, camera]);
 
+  const triggerThunder = () => {
+    // 1. Flash Light (3 seconds of chaos)
+    if (lightRef.current) {
+      // Flash brightness up then down repeatedly for ~2s
+      gsap.killTweensOf(lightRef.current);
+      gsap.to(lightRef.current, {
+        intensity: 8,
+        duration: 0.1,
+        yoyo: true,
+        repeat: 14, // ~1.5s
+        onComplete: () => {
+          lightRef.current.intensity = 1.2; // Reset
+        }
+      });
+    }
+
+    // 2. Camera Shake (1.5 seconds)
+    setShakeIntensity(3); // Higher shake
+    setTimeout(() => setShakeIntensity(0), 1500); // Stop after 1.5s
+  };
+
   return (
     <>
       {/* nice sky gradient */}
@@ -64,16 +103,31 @@ function SceneContent({ section }) {
       <fog attach="fog" args={['#eaf1ff', 6, 20]} />
 
       {/* Soft lights */}
-      <ambientLight intensity={0.8} />
-      <directionalLight position={[5, 10, 5]} intensity={1.2} castShadow />
+      <ambientLight intensity={0.5} />
+      <directionalLight ref={lightRef} position={[5, 10, 5]} intensity={1.2} castShadow />
 
       <Suspense fallback={null}>
         {/* Clouds placed behind plane (z negative) */}
-        <CloudStream maxClouds={24} />
+        <CloudStream maxClouds={24} onCloudClick={triggerThunder} />
+
+        {/* Weather: Rain */}
+        <WeatherSystem active={isRaining} />
+
         {/* Centered, small plane */}
         <Plane />
         <HudText />
       </Suspense>
+
+      {/* Camera Shake (controlled by intensity) */}
+      <CameraShake
+        maxYaw={0.1}
+        maxPitch={0.1}
+        maxRoll={0.1}
+        yawFrequency={10}
+        pitchFrequency={10}
+        rollFrequency={10}
+        intensity={shakeIntensity}
+      />
     </>
   );
 }

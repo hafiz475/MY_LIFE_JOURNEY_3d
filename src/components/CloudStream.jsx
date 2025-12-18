@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 import * as THREE from 'three';
 
-export default function CloudStream({ maxClouds = 20 }) {
+export default function CloudStream({ maxClouds = 20, onCloudClick }) {
   const { scene } = useGLTF('/assets/models/cloud.glb');
   const group = useRef();
   const clouds = useRef([]);
@@ -83,7 +83,18 @@ export default function CloudStream({ maxClouds = 20 }) {
     });
   });
 
-  return <group ref={group} />;
+  return (
+    <group
+      ref={group}
+      onClick={(e) => {
+        // Thunder Trigger
+        e.stopPropagation();
+        if (onCloudClick) onCloudClick();
+      }}
+      onPointerOver={() => document.body.style.cursor = 'pointer'}
+      onPointerOut={() => document.body.style.cursor = 'auto'}
+    />
+  );
 }
 
 useGLTF.preload('/assets/models/cloud.glb');
