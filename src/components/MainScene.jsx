@@ -1,4 +1,4 @@
-import { Canvas, useThree } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { Sky, CameraShake } from '@react-three/drei';
 import gsap from 'gsap';
@@ -7,8 +7,9 @@ import Plane from './Plane';
 import CloudStream from './CloudStream';
 import HudText from './HudText';
 import WeatherSystem from './WeatherSystem';
+import * as THREE from 'three';
 
-function SceneContent({ section }) {
+function SceneContent({ section, onRainStart }) {
   const { camera, size } = useThree();
   const isMobile = size.width < 768;
 
@@ -17,25 +18,101 @@ function SceneContent({ section }) {
   const [shakeIntensity, setShakeIntensity] = useState(0);
   const [isRaining, setIsRaining] = useState(false);
 
+  // Plane Ref for animation
+  const planeRef = useRef();
+
+  // Camera Target for smooth LookAt
+  const camTarget = useRef(new THREE.Vector3(0, 0, 0));
+
+  // Sky State (Scene 0 defaults)
+  const [skyState, setSkyState] = useState({
+    turbidity: 6,
+    rayleigh: 2,
+    mieCoefficient: 0.005,
+    mieDirectionalG: 0.8,
+    sunPosition: [1, 1, 0], // High sun
+  });
+
+  // After 3 seconds, move plane back 20% (when name appears)
+  useEffect(() => {
+    const moveBackTimer = setTimeout(() => {
+      if (planeRef.current) {
+        gsap.to(planeRef.current.position, {
+          z: -1.5, // Move back ~20% (negative Z = further from camera)
+          duration: 2,
+          ease: "power2.inOut"
+        });
+      }
+    }, 3000);
+    return () => clearTimeout(moveBackTimer);
+  }, []);
+
   // Start rain after 12 seconds automatically, stop after 15s duration
   useEffect(() => {
     const startTimer = setTimeout(() => {
       setIsRaining(true);
+      // Notify App that rain has started - scroll can now be enabled
+      if (onRainStart) onRainStart();
 
-      // Stop rain after 15 seconds
       const stopTimer = setTimeout(() => {
         setIsRaining(false);
       }, 15000);
-
       return () => clearTimeout(stopTimer);
     }, 12000);
     return () => clearTimeout(startTimer);
-  }, []);
+  }, [onRainStart]);
 
+  // Handle Section Changes (Camera & Lighting) - ONLY for section > 0
   useEffect(() => {
-    // Initial Camera Intro Animation (3 seconds)
-    // Setup initial position (e.g., lower and centered)
+    // Skip if section 0 - we want the intro animation to handle that
+    if (section === 0) return;
+
+    const tl = gsap.timeline();
+
+    if (section === 1) {
+      // --- SCENE 2: Sunset / Under Wing ---
+
+      // Animate Sun Position to horizon
+      const sunPosObj = { x: skyState.sunPosition[0], y: skyState.sunPosition[1], z: skyState.sunPosition[2] };
+      gsap.to(sunPosObj, {
+        x: 100,
+        y: 0, // Horizon
+        z: -20,
+        duration: 3,
+        onUpdate: () => setSkyState(prev => ({
+          ...prev,
+          sunPosition: [sunPosObj.x, sunPosObj.y, sunPosObj.z],
+          turbidity: 10,
+          rayleigh: 4
+        }))
+      });
+
+      // Camera: Under the wing, facing horizon
+      tl.to(camera.position, {
+        x: -2,
+        y: -1.5,
+        z: 3,
+        duration: 3,
+        ease: "power2.inOut"
+      });
+
+      // Look At: Forward Horizon (+X)
+      tl.to(camTarget.current, {
+        x: 100,
+        y: 0,
+        z: 0,
+        duration: 3,
+        ease: "power2.inOut"
+      }, "<");
+    }
+
+  }, [section]);
+
+  // ORIGINAL Intro Animation (Scene 0) - runs once on mount
+  useEffect(() => {
+    // Initial Camera position (lower and centered)
     camera.position.set(0, -2, 8);
+    camTarget.current.set(0, 0, 0);
 
     const tl = gsap.timeline();
 
@@ -54,88 +131,78 @@ function SceneContent({ section }) {
       ease: "power1.inOut"
     });
 
-  }, [camera]);
+  }, []); // Only run once on mount
 
-  // Responsive adjustments for the plane or camera based on aspect ratio
+  // Update Camera LookAt every frame
+  useFrame(() => {
+    camera.lookAt(camTarget.current);
+  });
+
+  // Responsive adjustments
   useEffect(() => {
-    if (isMobile) {
-      camera.fov = 60;
-    } else {
-      camera.fov = 45;
-    }
+    camera.fov = isMobile ? 60 : 45;
     camera.updateProjectionMatrix();
   }, [isMobile, camera]);
 
   const triggerThunder = () => {
-    // 1. Flash Light (3 seconds of chaos)
     if (lightRef.current) {
-      // Flash brightness up then down repeatedly for ~2s
       gsap.killTweensOf(lightRef.current);
       gsap.to(lightRef.current, {
         intensity: 8,
         duration: 0.1,
         yoyo: true,
-        repeat: 14, // ~1.5s
-        onComplete: () => {
-          lightRef.current.intensity = 1.2; // Reset
-        }
+        repeat: 14,
+        onComplete: () => { lightRef.current.intensity = 1.2; }
       });
     }
-
-    // 2. Camera Shake (1.5 seconds)
-    setShakeIntensity(3); // Higher shake
-    setTimeout(() => setShakeIntensity(0), 1500); // Stop after 1.5s
+    setShakeIntensity(3);
+    setTimeout(() => setShakeIntensity(0), 1500);
   };
 
   return (
     <>
-      {/* nice sky gradient */}
       <Sky
         distance={450000}
-        sunPosition={[1, 1, 0]}
-        inclination={0.49}   // sun height
+        sunPosition={skyState.sunPosition}
+        turbidity={skyState.turbidity}
+        rayleigh={skyState.rayleigh}
+        mieCoefficient={0.005}
+        mieDirectionalG={0.8}
+        inclination={0.49} // We control sun via sunPosition
         azimuth={0.25}
-        turbidity={6}
-        rayleigh={2}
       />
 
-      {/* subtle fog for depth (optional) */}
       <fog attach="fog" args={['#eaf1ff', 6, 20]} />
 
-      {/* Soft lights */}
       <ambientLight intensity={0.5} />
       <directionalLight ref={lightRef} position={[5, 10, 5]} intensity={1.2} castShadow />
 
       <Suspense fallback={null}>
-        {/* Clouds placed behind plane (z negative) */}
         <CloudStream maxClouds={24} onCloudClick={triggerThunder} />
-
-        {/* Weather: Rain */}
         <WeatherSystem active={isRaining} />
-
-        {/* Centered, small plane */}
-        <Plane />
-        <HudText />
+        <group ref={planeRef}>
+          <Plane />
+        </group>
+        {section === 0 && <HudText />}
       </Suspense>
 
-      {/* Camera Shake (controlled by intensity) */}
       <CameraShake
-        maxYaw={0.1}
-        maxPitch={0.1}
-        maxRoll={0.1}
-        yawFrequency={10}
-        pitchFrequency={10}
-        rollFrequency={10}
-        intensity={shakeIntensity}
+        maxYaw={0.05}     // Reduced shake for smoother flight feel
+        maxPitch={0.05}
+        maxRoll={0.05}
+        yawFrequency={5}
+        pitchFrequency={5}
+        rollFrequency={5}
+        intensity={shakeIntensity > 0 ? shakeIntensity : 0.2} // Always slight subtle shake
       />
     </>
   );
 }
 
-export default function MainScene({ section }) {
+export default function MainScene({ section, onRainStart }) {
   return (
     <Canvas camera={{ position: [0, 1.5, 6], fov: 45 }}>
-      <SceneContent section={section} />
+      <SceneContent section={section} onRainStart={onRainStart} />
     </Canvas>
   );
 }
