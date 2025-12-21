@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber';
 import { useRef } from 'react';
 import * as THREE from 'three';
 
-export default function CloudStream({ maxClouds = 20, onCloudClick }) {
+export default function CloudStream({ maxClouds = 20, onCloudClick, section = 0 }) {
   const { scene } = useGLTF('/assets/models/cloud.glb');
   const group = useRef();
   const clouds = useRef([]);
@@ -47,10 +47,20 @@ export default function CloudStream({ maxClouds = 20, onCloudClick }) {
       y = 1.3 + Math.random() * 1.6;
     }
 
+    // Scene 0: clouds only on left side (negative Z)
+    // Scene 1+: clouds on both sides
+    let zSide;
+    if (section === 0) {
+      zSide = -1; // Only left side
+    } else {
+      zSide = Math.random() > 0.5 ? 1 : -1; // Both sides
+    }
+    const zOffset = 1 + Math.random() * 8;
+
     clone.position.set(
       SPAWN_X,
       y,
-      -1 - Math.random() * 8
+      zSide * zOffset
     );
 
     clone.scale.set(scale, scale, scale);

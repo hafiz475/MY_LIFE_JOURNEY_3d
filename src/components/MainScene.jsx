@@ -181,7 +181,7 @@ function SceneContent({ section, onRainStart }) {
       <directionalLight ref={lightRef} position={[5, 10, 5]} intensity={1.2} castShadow />
 
       <Suspense fallback={null}>
-        <CloudStream maxClouds={24} onCloudClick={triggerThunder} />
+        <CloudStream maxClouds={24} onCloudClick={triggerThunder} section={section} />
         <WeatherSystem active={isRaining} />
         <group ref={planeRef}>
           <Plane />
