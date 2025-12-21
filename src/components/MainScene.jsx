@@ -9,7 +9,7 @@ import HudText from './HudText';
 import WeatherSystem from './WeatherSystem';
 import * as THREE from 'three';
 
-function SceneContent({ section, onRainStart }) {
+function SceneContent({ section, onRainStart, isLanding }) {
   const { camera, size } = useThree();
   const isMobile = size.width < 768;
 
@@ -38,7 +38,7 @@ function SceneContent({ section, onRainStart }) {
     const moveBackTimer = setTimeout(() => {
       if (planeRef.current) {
         gsap.to(planeRef.current.position, {
-          z: -1.5, // Move back ~20% (negative Z = further from camera)
+          z: -1.5,
           duration: 2,
           ease: "power2.inOut"
         });
@@ -46,6 +46,30 @@ function SceneContent({ section, onRainStart }) {
     }, 3000);
     return () => clearTimeout(moveBackTimer);
   }, []);
+
+  // Landing animation: plane descends when isLanding is true
+  useEffect(() => {
+    if (isLanding && planeRef.current) {
+      // Plane descends
+      gsap.to(planeRef.current.position, {
+        y: -8,
+        duration: 3,
+        ease: "power2.in"
+      });
+      // Camera follows down
+      gsap.to(camera.position, {
+        y: -5,
+        duration: 3,
+        ease: "power2.in"
+      });
+      // Look down towards ground
+      gsap.to(camTarget.current, {
+        y: -10,
+        duration: 3,
+        ease: "power2.in"
+      });
+    }
+  }, [isLanding, camera]);
 
   // Start rain after 12 seconds automatically, stop after 15s duration
   useEffect(() => {
@@ -202,10 +226,10 @@ function SceneContent({ section, onRainStart }) {
   );
 }
 
-export default function MainScene({ section, onRainStart }) {
+export default function MainScene({ section, onRainStart, isLanding }) {
   return (
     <Canvas camera={{ position: [0, 1.5, 6], fov: 45 }}>
-      <SceneContent section={section} onRainStart={onRainStart} />
+      <SceneContent section={section} onRainStart={onRainStart} isLanding={isLanding} />
     </Canvas>
   );
 }
