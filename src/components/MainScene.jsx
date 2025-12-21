@@ -87,19 +87,22 @@ function SceneContent({ section, onRainStart }) {
         }))
       });
 
-      // Camera: Under the wing, facing horizon
+      // Camera: Behind and under the wing, front of plane visible
+      // x: negative = behind plane (plane faces +X)
+      // y: negative = below
+      // z: positive = to the side (under left wing)
       tl.to(camera.position, {
-        x: -2,
-        y: -1.5,
-        z: 3,
+        x: -4,    // Further behind the plane
+        y: -0.8,  // Below wing level
+        z: 2.5,   // Under left wing
         duration: 3,
         ease: "power2.inOut"
       });
 
-      // Look At: Forward Horizon (+X)
+      // Look At: Forward Horizon (+X) - plane front visible in frame
       tl.to(camTarget.current, {
         x: 100,
-        y: 0,
+        y: 0.5,   // Slightly up to keep horizon in view
         z: 0,
         duration: 3,
         ease: "power2.inOut"
