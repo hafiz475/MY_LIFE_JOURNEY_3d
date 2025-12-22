@@ -37,7 +37,7 @@ export default function StoryText3D() {
 
         // Position: Center of screen
         let targetX = 0;
-        let targetY = -0.8;
+        let targetY = -0.3; // Previously -0.8. Moved UP but kept slightly below center (0).
         let targetZ = -4;
 
         // Mobile adjustments
@@ -85,6 +85,9 @@ export default function StoryText3D() {
 
     return (
         <group ref={groupRef}>
+            {/* Light to illuminate the text */}
+            <pointLight position={[0, 1, 2]} intensity={2} distance={5} decay={2} color="#ffffff" />
+
             {/* Main Title - Same style as name */}
             <Text
                 {...titleProps}
