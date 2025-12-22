@@ -35,7 +35,7 @@ function Bird({ position, speed, factor, phase, scale, scene, animations }) {
             group.current.position.x = 35;
             // Randomize Y and Z slightly when reseting
             group.current.position.y = -2 + Math.random() * 2; // Lower altitude
-            group.current.position.z = -4 - Math.random() * 6;
+            group.current.position.z = -12 + Math.random() * 24; // Range from -12 to +12 (Left and Right)
         }
     });
 
