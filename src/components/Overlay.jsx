@@ -26,36 +26,13 @@ const Overlay = ({ section, onLand }) => {
         };
     }, [section]);
 
-    // Scene 2: Sunset Story - Centered with Name Font Style
+    // Scene 2: Sunset Story - Only Land Button (text is now 3D in canvas)
     if (section === 1) {
         return (
-            <>
-                {/* Land Button - Always visible immediately */}
-                <button className="land-button" onClick={onLand}>
-                    <span className="land-icon">🛬</span>
-                    <span>Land</span>
-                </button>
-
-                {/* Story Content - Delayed by 3 seconds */}
-                <div className={`story-centered ${contentVisible ? 'visible' : ''}`}>
-                    <h1 className="story-main-title">From Torque to TypeScript</h1>
-
-                    <div className="story-content">
-                        <p>
-                            Started as a <span className="highlight">Mechanical Engineer</span> at Royal Enfield,
-                            supervising 2,000 motorcycles daily. When Industry 4.0 arrived, I pivoted to code.
-                        </p>
-                        <p>
-                            With zero background, I learned <span className="highlight">React JS</span>,
-                            built CarzMoto's billing system solo, and now at <span className="highlight">Bizmagnets</span>,
-                            I build WhatsApp CRM tools.
-                        </p>
-                        <p>
-                            From tightening bolts at 72 Nm to debugging at 3 AM with Red Bull and sarcasm.
-                        </p>
-                    </div>
-                </div>
-            </>
+            <button className="land-button" onClick={onLand}>
+                <span className="land-icon">🛬</span>
+                <span>Land</span>
+            </button>
         );
     }
 

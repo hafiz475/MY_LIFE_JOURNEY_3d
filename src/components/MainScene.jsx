@@ -6,6 +6,7 @@ import gsap from 'gsap';
 import Plane from './Plane';
 import CloudStream from './CloudStream';
 import HudText from './HudText';
+import StoryText3D from './StoryText3D';
 import WeatherSystem from './WeatherSystem';
 import * as THREE from 'three';
 
@@ -211,6 +212,7 @@ function SceneContent({ section, onRainStart, isLanding }) {
           <Plane />
         </group>
         {section === 0 && <HudText />}
+        {section === 1 && <StoryText3D />}
       </Suspense>
 
       <CameraShake
