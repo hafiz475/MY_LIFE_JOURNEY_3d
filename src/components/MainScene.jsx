@@ -90,14 +90,17 @@ function SceneContent({ section, onRainStart, isLanding }) {
     return () => clearTimeout(startTimer);
   }, [onRainStart]);
 
-  // Handle Section Changes (Camera & Lighting) - ONLY for section > 0
+  // Track if we have left the intro (to avoid running reverse anim on mount)
+  const hasLeftIntro = useRef(false);
+
+  // Handle Section Changes (Camera & Lighting)
   useEffect(() => {
-    // Skip if section 0 - we want the intro animation to handle that
-    if (section === 0) return;
 
     const tl = gsap.timeline();
 
     if (section === 1) {
+      hasLeftIntro.current = true; // Mark that we've left intro
+
       // --- SCENE 2: Sunset / Under Wing ---
 
       // Animate Sun Position to horizon
@@ -143,10 +146,55 @@ function SceneContent({ section, onRainStart, isLanding }) {
       }, 9500);
 
       return () => clearTimeout(transitionTimer);
-    } else {
-      // Reset transition for other sections
-      setShowClouds(true);
-      setShowBirds(false);
+      return () => clearTimeout(transitionTimer);
+    } else if (section === 0) {
+      // --- BACK TO SCENE 1 ---
+      // Reverse animation: Go back to the flight position
+
+      const targetX = isMobile ? 0 : 2;
+
+      // Kill previous animations to prevent conflicts
+      gsap.killTweensOf(camera.position);
+      gsap.killTweensOf(camTarget.current);
+
+      // Reset Sun Position using proxy object (arrays can't be animated directly)
+      const sunProxy = { x: skyState.sunPosition[0], y: skyState.sunPosition[1], z: skyState.sunPosition[2] };
+      gsap.to(sunProxy, {
+        x: 1, y: 1, z: 0, // High sun position
+        duration: 3,
+        onUpdate: () => setSkyState(prev => ({
+          ...prev,
+          sunPosition: [sunProxy.x, sunProxy.y, sunProxy.z],
+          turbidity: 6,
+          rayleigh: 2
+        }))
+      });
+
+      // Move Camera back to "Intro End" position
+      tl.to(camera.position, {
+        x: targetX,
+        y: 1.5,
+        z: 6,
+        duration: 3, // Matched to forward transition speed
+        ease: "power2.inOut"
+      });
+
+      // Reset LookAt to center forward
+      tl.to(camTarget.current, {
+        x: 0,
+        y: 0,
+        z: 0,
+        duration: 3,
+        ease: "power2.inOut"
+      }, "<");
+
+      // Delay cloud appearance to let sunset stay visible during move
+      const reverseTimer = setTimeout(() => {
+        setShowClouds(true);
+        setShowBirds(false);
+      }, 3000);
+
+      return () => clearTimeout(reverseTimer);
     }
 
   }, [section]);

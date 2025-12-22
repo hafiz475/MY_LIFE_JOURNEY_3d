@@ -96,7 +96,7 @@ export default function StoryText3D() {
             >
                 From Torque to TypeScript
                 <meshStandardMaterial
-                    color="#bdc3c7"
+                    color="#ffffff"
                     roughness={0.5}
                     metalness={0.2}
                 />
@@ -110,7 +110,7 @@ export default function StoryText3D() {
                 Started as a Mechanical Engineer at Royal Enfield,
                 {"\n"}supervising 2,000 motorcycles daily. When Industry 4.0 arrived, I pivoted to code.
                 <meshStandardMaterial
-                    color={textColor}
+                    color="#ffffff"
                     roughness={0.6}
                     metalness={0.1}
                 />
@@ -125,7 +125,7 @@ export default function StoryText3D() {
                 {"\n"}built CarzMoto's billing system solo, and now at Bizmagnets,
                 {"\n"}I build WhatsApp CRM tools.
                 <meshStandardMaterial
-                    color={textColor}
+                    color="#ffffff"
                     roughness={0.6}
                     metalness={0.1}
                 />
@@ -138,7 +138,7 @@ export default function StoryText3D() {
             >
                 From tightening bolts at 72 Nm to debugging at 3 AM with Red Bull and sarcasm.
                 <meshStandardMaterial
-                    color={textColor}
+                    color="#ffffff"
                     roughness={0.6}
                     metalness={0.1}
                 />

@@ -6,6 +6,7 @@ import Overlay from './components/Overlay';
 function App() {
   const [section, setSection] = useState(0);
   const [canScroll, setCanScroll] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const [isLanding, setIsLanding] = useState(false); // Landing animation in progress
   const [isDark, setIsDark] = useState(false); // Dark transition screen
   const maxSection = 1; // Only 0 and 1 via scroll, 2 via Land button
@@ -43,8 +44,12 @@ function App() {
       if (isLanding) return; // Block scroll during landing
 
       if (e.deltaY > 0) {
-        // Can only scroll to section 1, not 2
-        setSection((s) => Math.min(s + 1, maxSection));
+        // Can only scroll to section 1, not 2.
+        // If already at section 1, do NOT increment. User must click "Land".
+        setSection((s) => {
+          if (s < 1) setHasScrolled(true); // User moved past start
+          return s >= 1 ? 1 : Math.min(s + 1, maxSection);
+        });
       } else {
         setSection((s) => Math.max(s - 1, 0));
       }
@@ -68,8 +73,8 @@ function App() {
       </Suspense>
       <Overlay section={section} onLand={handleLand} />
 
-      {/* Scroll Prompt - section 0 only */}
-      {canScroll && section === 0 && (
+      {/* Scroll Prompt - section 0 only, and only if never scrolled before */}
+      {canScroll && section === 0 && !hasScrolled && (
         <div className="scroll-prompt">
           <span>Scroll to continue</span>
           <div className="scroll-arrow">↓</div>
