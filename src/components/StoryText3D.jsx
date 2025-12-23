@@ -28,6 +28,7 @@ export default function StoryText3D({ isStoryDone }) {
 
     // Material Refs
     const storyMat1 = useRef();
+    const storyMat1_Prefix = useRef(); // For "I'm"
     const storyMat2 = useRef();
     const storyMat3 = useRef();
     const hiMat = useRef();
@@ -52,6 +53,7 @@ export default function StoryText3D({ isStoryDone }) {
 
         // Apply to Materials
         if (storyMat1.current) storyMat1.current.opacity = storyOpacity.current;
+        if (storyMat1_Prefix.current) storyMat1_Prefix.current.opacity = storyOpacity.current;
         if (storyMat2.current) storyMat2.current.opacity = hiOpacity.current;
         if (storyMat3.current) storyMat3.current.opacity = hiOpacity.current;
         if (hiMat.current) hiMat.current.opacity = hiOpacity.current;
@@ -101,8 +103,28 @@ export default function StoryText3D({ isStoryDone }) {
             <pointLight position={[0, 1, 2]} intensity={2} distance={5} decay={2} color="#ffffff" />
 
             {/* --- PHASE 1: NAME (Initially Visible) --- */}
+            {/* --- PHASE 1: NAME (Initially Visible) --- */}
             <group position={[0, 0, 0]}>
-                <Text font={CAVEAT_URL} fontSize={0.3} position={[0, 0, 0]} anchorX="center" anchorY="middle">
+                {/* "I'm" - Smaller, lighter, aligned left above name */}
+                <Text
+                    font={CAVEAT_URL}
+                    fontSize={0.18}
+                    position={[-1.7, 0.25, 0]}
+                    anchorX="left"
+                    anchorY="middle"
+                >
+                    I'm
+                    <meshStandardMaterial ref={storyMat1_Prefix} transparent color="#bdc3c7" roughness={0.5} metalness={0.2} />
+                </Text>
+
+                {/* Name - Larger, aligned left below "I'm" */}
+                <Text
+                    font={CAVEAT_URL}
+                    fontSize={0.3}
+                    position={[-1.7, 0, 0]}
+                    anchorX="left"
+                    anchorY="middle"
+                >
                     J Md Hafizur Rahman
                     <meshStandardMaterial ref={storyMat1} transparent color="#ffffff" roughness={0.5} metalness={0.2} />
                 </Text>
