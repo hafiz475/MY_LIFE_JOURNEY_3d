@@ -67,10 +67,12 @@ export default function StoryText3D({ isStoryDone }) {
         let targetY = -0.6;
         let targetZ = -3;
 
-        // Mobile adjustments
-        if (size.width < 768) {
+        const isNarrow = size.width < 1100;
+
+        // Narrow screen adjustments (Tablet & Mobile)
+        if (isNarrow) {
             targetX = 0;   // Centered
-            targetY = -1.0; // Moved up to center in orange region
+            targetY = size.width < 768 ? -1.0 : -1.2; // Higher on phone, middle on tablet
             targetZ = -5;
         }
 
@@ -87,11 +89,11 @@ export default function StoryText3D({ isStoryDone }) {
         groupRef.current.translateZ(targetZ);
     });
 
-    const isMobileUI = size.width < 768;
+    const isNarrowUI = size.width < 1100;
 
     const textProps = {
         font: CAVEAT_URL,
-        fontSize: 0.15,
+        fontSize: isNarrowUI ? 0.13 : 0.15, // Slightly smaller for tablets/mobile
         lineHeight: 1.2,
         letterSpacing: 0.02,
         anchorX: "center",
@@ -109,9 +111,9 @@ export default function StoryText3D({ isStoryDone }) {
                 {/* "I'm" - Smaller, lighter, aligned left above name */}
                 <Text
                     font={CAVEAT_URL}
-                    fontSize={0.18}
-                    position={[isMobileUI ? 0 : -1.7, 0.25, 0]}
-                    anchorX={isMobileUI ? "center" : "left"}
+                    fontSize={isNarrowUI ? 0.16 : 0.18}
+                    position={[isNarrowUI ? 0 : -1.7, 0.25, 0]}
+                    anchorX={isNarrowUI ? "center" : "left"}
                     anchorY="middle"
                 >
                     I'm
@@ -121,9 +123,9 @@ export default function StoryText3D({ isStoryDone }) {
                 {/* Name - Larger, aligned left below "I'm" */}
                 <Text
                     font={CAVEAT_URL}
-                    fontSize={0.3}
-                    position={[isMobileUI ? 0 : -1.7, 0, 0]}
-                    anchorX={isMobileUI ? "center" : "left"}
+                    fontSize={isNarrowUI ? 0.25 : 0.3}
+                    position={[isNarrowUI ? 0 : -1.7, 0, 0]}
+                    anchorX={isNarrowUI ? "center" : "left"}
                     anchorY="middle"
                 >
                     J Md Hafizur Rahman

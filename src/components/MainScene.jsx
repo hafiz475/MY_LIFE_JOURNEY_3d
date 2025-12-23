@@ -15,6 +15,7 @@ import * as THREE from 'three';
 function SceneContent({ section, onRainStart, isLanding, isStoryDone, hasStarted }) {
   const { camera, size } = useThree();
   const isMobile = size.width < 768;
+  const isTablet = size.width < 1100;
 
   // Thunder Refs
   const lightRef = useRef();
@@ -188,9 +189,9 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone, hasStarted
       // y: negative = below
       // z: positive = to the side (under left wing)
       tl.to(camera.position, {
-        x: isMobile ? -3.5 : -4,
-        y: isMobile ? -0.5 : -0.8,
-        z: isMobile ? 1.2 : 2.5,
+        x: isMobile ? -3.5 : (isTablet ? -3.8 : -4),
+        y: isMobile ? -0.5 : (isTablet ? -0.6 : -0.8),
+        z: isMobile ? 1.2 : (isTablet ? 1.8 : 2.5),
         duration: 3,
         ease: "power2.inOut"
       });

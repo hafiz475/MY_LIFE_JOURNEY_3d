@@ -43,11 +43,19 @@ export default function HudText() {
         let targetY = -0.6;
         let targetZ = -3;
 
+        const isMobile = size.width < 768;
+        const isTablet = size.width < 1100;
+
         // Mobile Adjustments: Center and Below Plane
-        if (size.width < 768) {
+        if (isMobile) {
             targetX = 0;   // Perfectly centered
             targetY = -1.8; // Lower down (below plane)
             targetZ = -5;  // Push back slightly
+        } else if (isTablet) {
+            // Tablet Adjustments: Keep on right but safer distance from edge
+            targetX = 0.7;
+            targetY = -0.8;
+            targetZ = -4;
         }
 
         // Start (Hidden) Offset: Lower down
