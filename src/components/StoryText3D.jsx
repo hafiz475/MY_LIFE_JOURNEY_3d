@@ -52,8 +52,8 @@ export default function StoryText3D({ isStoryDone }) {
 
         // Apply to Materials
         if (storyMat1.current) storyMat1.current.opacity = storyOpacity.current;
-        if (storyMat2.current) storyMat2.current.opacity = storyOpacity.current;
-        if (storyMat3.current) storyMat3.current.opacity = storyOpacity.current;
+        if (storyMat2.current) storyMat2.current.opacity = hiOpacity.current;
+        if (storyMat3.current) storyMat3.current.opacity = hiOpacity.current;
         if (hiMat.current) hiMat.current.opacity = hiOpacity.current;
 
         // Lock to camera for HUD-like behavior
@@ -100,27 +100,27 @@ export default function StoryText3D({ isStoryDone }) {
             {/* Light to illuminate the text */}
             <pointLight position={[0, 1, 2]} intensity={2} distance={5} decay={2} color="#ffffff" />
 
-            {/* --- PHASE 1: STORY --- */}
+            {/* --- PHASE 1: NAME (Initially Visible) --- */}
             <group position={[0, 0, 0]}>
-                <Text {...textProps} fontSize={0.22} position={[0, 0.4, 0]}>
-                    From Torque to TypeScript
+                <Text font={CAVEAT_URL} fontSize={0.3} position={[0, 0, 0]} anchorX="center" anchorY="middle">
+                    J Md Hafizur Rahman
                     <meshStandardMaterial ref={storyMat1} transparent color="#ffffff" roughness={0.5} metalness={0.2} />
-                </Text>
-                <Text {...textProps} position={[0, 0.1, 0]}>
-                    Started as a Mechanical Engineer at Royal Enfield
-                    <meshStandardMaterial ref={storyMat2} transparent color="#ffffff" roughness={0.6} metalness={0.1} />
-                </Text>
-                <Text {...textProps} position={[0, -0.1, 0]}>
-                    Now crafting WhatsApp CRM tools at Bizmagnets
-                    <meshStandardMaterial ref={storyMat3} transparent color="#ffffff" roughness={0.6} metalness={0.1} />
                 </Text>
             </group>
 
-            {/* --- PHASE 2: HI --- */}
+            {/* --- PHASE 2: BIO (Visible after 6s) --- */}
             <group position={[0, 0, 0]}>
-                <Text font={CAVEAT_URL} fontSize={0.5} position={[0, 0, 0]} anchorX="center" anchorY="middle">
-                    Hi!
+                <Text {...textProps} fontSize={0.22} position={[0, 0.4, 0]}>
+                    From Torque to TypeScript
                     <meshStandardMaterial ref={hiMat} transparent opacity={0} color="#ffffff" roughness={0.5} metalness={0.2} />
+                </Text>
+                <Text {...textProps} position={[0, 0.1, 0]}>
+                    Started as a Mechanical Engineer at Royal Enfield
+                    <meshStandardMaterial ref={storyMat2} transparent opacity={0} color="#ffffff" roughness={0.6} metalness={0.1} />
+                </Text>
+                <Text {...textProps} position={[0, -0.1, 0]}>
+                    Now crafting WhatsApp CRM tools at Bizmagnets
+                    <meshStandardMaterial ref={storyMat3} transparent opacity={0} color="#ffffff" roughness={0.6} metalness={0.1} />
                 </Text>
             </group>
         </group>

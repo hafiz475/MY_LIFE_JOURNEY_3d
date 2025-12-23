@@ -79,52 +79,13 @@ export default function HudText() {
 
     return (
         <group ref={groupRef}>
-            {/* I'm */}
+            {/* Hi! */}
             <Text
                 {...textProps}
-                position={[-1.4, 0.35, 0]}
+                fontSize={0.5}
+                position={[-0.5, 0.1, 0]}
             >
-                I'm
-                <meshStandardMaterial
-                    color="#ecf0f1"
-                    roughness={0.6}
-                    metalness={0.1}
-                />
-            </Text>
-
-            {/* J Md (Cloud White) */}
-            <Text
-                {...textProps}
-                position={[-1.4, 0.1, 0]}
-            >
-                J Md
-                <meshStandardMaterial
-                    color="#ecf0f1"
-                    roughness={0.6}
-                    metalness={0.1}
-                />
-            </Text>
-
-            {/* Hafizur (Darker Grey/Blue Cloud) */}
-            <Text
-                {...textProps}
-                fontSize={0.3} // Slightly bigger
-                position={[-0.8, 0.08, 0]}
-            >
-                Hafizur
-                <meshStandardMaterial
-                    color="#bdc3c7" // Grey Cloud
-                    roughness={0.5}
-                    metalness={0.2}
-                />
-            </Text>
-
-            {/* Rahman (Cloud White) */}
-            <Text
-                {...textProps}
-                position={[0.2, 0, 0]}
-            >
-                Rahman
+                Hi!
                 <meshStandardMaterial
                     color="#ecf0f1"
                     roughness={0.6}

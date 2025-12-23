@@ -73,8 +73,8 @@ function App() {
   useEffect(() => {
     if (section === 1) {
       setIsStoryDone(false);
-      // 3.5s (enter delay) + 8s (read time) = 11.5s
-      const timer = setTimeout(() => setIsStoryDone(true), 11500);
+      // 3.5s (enter delay) + 6s (read time) = 9.5s
+      const timer = setTimeout(() => setIsStoryDone(true), 9500);
       return () => clearTimeout(timer);
     } else {
       setIsStoryDone(false);
