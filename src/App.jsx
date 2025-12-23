@@ -2,8 +2,10 @@ import { useEffect, useState, Suspense } from 'react';
 import './styles/main.scss';
 import MainScene from './components/MainScene';
 import Overlay from './components/Overlay';
+import ExperienceStart from './components/ExperienceStart';
 
 function App() {
+  const [hasStarted, setHasStarted] = useState(false);
   const [section, setSection] = useState(0);
   const [canScroll, setCanScroll] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -36,6 +38,8 @@ function App() {
   };
 
   useEffect(() => {
+    if (!hasStarted) return; // Disable scroll until started
+
     let locked = false;
 
     const onWheel = (e) => {
@@ -61,7 +65,7 @@ function App() {
 
     window.addEventListener('wheel', onWheel, { passive: true });
     return () => window.removeEventListener('wheel', onWheel);
-  }, [canScroll, isLanding, hasScrolled]); // Locked dependency removed to avoid stale closures
+  }, [hasStarted, canScroll, isLanding, hasScrolled]); // Locked dependency removed to avoid stale closures
 
   // Story Timing for Scene 2
   const [isStoryDone, setIsStoryDone] = useState(false);
@@ -78,26 +82,32 @@ function App() {
 
   return (
     <div className="app-container">
-      <Suspense fallback={null}>
-        <MainScene
-          section={section}
-          onRainStart={handleRainStart}
-          isLanding={isLanding}
-          isStoryDone={isStoryDone}
-        />
-      </Suspense>
-      <Overlay section={section} onLand={handleLand} isStoryDone={isStoryDone} />
+      {!hasStarted ? (
+        <ExperienceStart onStart={() => setHasStarted(true)} />
+      ) : (
+        <>
+          <Suspense fallback={null}>
+            <MainScene
+              section={section}
+              onRainStart={handleRainStart}
+              isLanding={isLanding}
+              isStoryDone={isStoryDone}
+            />
+          </Suspense>
+          <Overlay section={section} onLand={handleLand} isStoryDone={isStoryDone} />
 
-      {/* Scroll Prompt - section 0 only, and only if never scrolled before */}
-      {canScroll && section === 0 && !hasScrolled && (
-        <div className="scroll-prompt">
-          <span>Scroll to continue</span>
-          <div className="scroll-arrow">↓</div>
-        </div>
+          {/* Scroll Prompt - section 0 only, and only if never scrolled before */}
+          {canScroll && section === 0 && !hasScrolled && (
+            <div className="scroll-prompt">
+              <span>Scroll to continue</span>
+              <div className="scroll-arrow">↓</div>
+            </div>
+          )}
+
+          {/* Dark Transition Overlay */}
+          <div className={`dark-overlay ${isDark ? 'active' : ''}`} />
+        </>
       )}
-
-      {/* Dark Transition Overlay */}
-      <div className={`dark-overlay ${isDark ? 'active' : ''}`} />
     </div>
   );
 }
