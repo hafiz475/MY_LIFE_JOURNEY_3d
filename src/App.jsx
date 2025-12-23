@@ -6,6 +6,7 @@ import ExperienceStart from './components/ExperienceStart';
 
 function App() {
   const [hasStarted, setHasStarted] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
   const [section, setSection] = useState(0);
   const [canScroll, setCanScroll] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -88,11 +89,15 @@ function App() {
           onRainStart={handleRainStart}
           isLanding={isLanding}
           isStoryDone={isStoryDone}
+          hasStarted={hasStarted}
         />
       </Suspense>
 
-      {!hasStarted && (
-        <ExperienceStart onStart={() => setHasStarted(true)} />
+      {showIntro && (
+        <ExperienceStart
+          onStart={() => setHasStarted(true)}
+          onExitComplete={() => setShowIntro(false)}
+        />
       )}
 
       {hasStarted && (

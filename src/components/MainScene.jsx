@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Suspense, useEffect, useRef, useState } from 'react';
-import { Sky, CameraShake } from '@react-three/drei';
+import { Sky } from '@react-three/drei';
 import gsap from 'gsap';
 
 import Plane from './Plane';
@@ -12,13 +12,12 @@ import WeatherSystem from './WeatherSystem';
 import SoundManager from './SoundManager';
 import * as THREE from 'three';
 
-function SceneContent({ section, onRainStart, isLanding, isStoryDone }) {
+function SceneContent({ section, onRainStart, isLanding, isStoryDone, hasStarted }) {
   const { camera, size } = useThree();
   const isMobile = size.width < 768;
 
   // Thunder Refs
   const lightRef = useRef();
-  const [shakeIntensity, setShakeIntensity] = useState(0);
   const [isRaining, setIsRaining] = useState(false);
   const [showClouds, setShowClouds] = useState(true);
   const [showBirds, setShowBirds] = useState(false);
@@ -40,6 +39,7 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone }) {
 
   // After 3 seconds, move plane back 20% (when name appears)
   useEffect(() => {
+    if (!hasStarted) return;
     const moveBackTimer = setTimeout(() => {
       if (planeRef.current) {
         gsap.to(planeRef.current.position, {
@@ -48,9 +48,9 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone }) {
           ease: "power2.inOut"
         });
       }
-    }, 3000);
+    }, 100);
     return () => clearTimeout(moveBackTimer);
-  }, []);
+  }, [hasStarted]);
 
   // Landing animation: plane descends when isLanding is true
   useEffect(() => {
@@ -78,7 +78,7 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone }) {
 
   // Thunder Loop (Section 0 only)
   useEffect(() => {
-    if (section !== 0) return;
+    if (section !== 0 || !hasStarted) return;
 
     let intervalId;
     // First thunder at 3s
@@ -86,17 +86,17 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone }) {
       triggerThunder();
       // Then repeats every 6s (3+6=9, 9+6=15...)
       intervalId = setInterval(triggerThunder, 6000);
-    }, 3000);
+    }, 500);
 
     return () => {
       clearTimeout(firstTimer);
       clearInterval(intervalId);
     };
-  }, [section]);
+  }, [section, hasStarted]);
 
   // Rain Logic - Only automatic in Section 0
   useEffect(() => {
-    if (section !== 0) {
+    if (section !== 0 || !hasStarted) {
       setIsRaining(false);
       return;
     }
@@ -114,12 +114,12 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone }) {
     }, 12000);
 
     return () => clearTimeout(startTimer);
-  }, [section, onRainStart]);
+  }, [section, onRainStart, hasStarted]);
 
   // Plane Rotation Loop (Sections 0 & 1)
   useEffect(() => {
     // Enable for both Scene 0 (Intro) and Scene 1 (Sunset)
-    if (section > 1) return;
+    if (section > 1 || !hasStarted) return;
 
     const performRotation = () => {
       if (!planeRef.current) return;
@@ -153,7 +153,7 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone }) {
         });
       }
     };
-  }, [section]);
+  }, [section, hasStarted]);
 
   // Track if we have left the intro (to avoid running reverse anim on mount)
   const hasLeftIntro = useRef(false);
@@ -211,7 +211,6 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone }) {
       }, 9500);
 
       return () => clearTimeout(transitionTimer);
-      return () => clearTimeout(transitionTimer);
     } else if (section === 0) {
       // --- BACK TO SCENE 1 ---
       // Reverse animation: Go back to the flight position
@@ -266,6 +265,7 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone }) {
 
   // ORIGINAL Intro Animation (Scene 0) - runs once on mount
   useEffect(() => {
+    if (!hasStarted) return;
     // Initial Camera position (lower and centered)
     camera.position.set(0, -2, 8);
     camTarget.current.set(0, 0, 0);
@@ -287,7 +287,7 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone }) {
       ease: "power1.inOut"
     });
 
-  }, []); // Only run once on mount
+  }, [hasStarted]); // Run when hasStarted becomes true
 
   // Update Camera LookAt every frame
   useFrame(() => {
@@ -316,19 +316,10 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone }) {
         onComplete: () => { lightRef.current.intensity = 1.2; }
       });
     }
-    setShakeIntensity(3);
-    setTimeout(() => setShakeIntensity(0), 1500);
   };
 
   return (
     <>
-      <SoundManager
-        ref={soundRef}
-        isRaining={isRaining}
-        showBirds={showBirds}
-        section={section}
-      />
-
       <Sky
         distance={450000}
         sunPosition={skyState.sunPosition}
@@ -345,34 +336,34 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone }) {
       <ambientLight intensity={0.5} />
       <directionalLight ref={lightRef} position={[5, 10, 5]} intensity={1.2} castShadow />
 
-      <Suspense fallback={null}>
-        <CloudStream active={showClouds} maxClouds={24} onCloudClick={triggerThunder} section={section} />
-        {showBirds && <Birds />}
-        <WeatherSystem active={isRaining} />
-        <group ref={planeRef}>
-          <Plane />
-        </group>
-        {section === 0 && <HudText />}
-        {section === 1 && <StoryText3D isStoryDone={isStoryDone} />}
-      </Suspense>
-
-      <CameraShake
-        maxYaw={0.05}     // Reduced shake for smoother flight feel
-        maxPitch={0.05}
-        maxRoll={0.05}
-        yawFrequency={5}
-        pitchFrequency={5}
-        rollFrequency={5}
-        intensity={shakeIntensity > 0 ? shakeIntensity : 0.2} // Always slight subtle shake
-      />
+      {hasStarted && (
+        <>
+          <SoundManager
+            ref={soundRef}
+            isRaining={isRaining}
+            showBirds={showBirds}
+            section={section}
+          />
+          <Suspense fallback={null}>
+            <CloudStream active={showClouds} maxClouds={24} onCloudClick={triggerThunder} section={section} />
+            {showBirds && <Birds />}
+            <WeatherSystem active={isRaining} />
+            <group ref={planeRef}>
+              <Plane />
+            </group>
+            {section === 0 && <HudText />}
+            {section === 1 && <StoryText3D isStoryDone={isStoryDone} />}
+          </Suspense>
+        </>
+      )}
     </>
   );
 }
 
-export default function MainScene({ section, onRainStart, isLanding, isStoryDone }) {
+export default function MainScene({ section, onRainStart, isLanding, isStoryDone, hasStarted }) {
   return (
     <Canvas camera={{ position: [0, 1.5, 6], fov: 45 }}>
-      <SceneContent section={section} onRainStart={onRainStart} isLanding={isLanding} isStoryDone={isStoryDone} />
+      <SceneContent section={section} onRainStart={onRainStart} isLanding={isLanding} isStoryDone={isStoryDone} hasStarted={hasStarted} />
     </Canvas>
   );
 }

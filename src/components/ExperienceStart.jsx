@@ -2,24 +2,25 @@ import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import './ExperienceStart.scss';
 
-export default function ExperienceStart({ onStart }) {
+export default function ExperienceStart({ onStart, onExitComplete }) {
     const tagline = "BORN TO BUILD. FORGED IN CODE.";
     const [isExiting, setIsExiting] = useState(false);
     const containerRef = useRef();
 
     // Generate grid for particles
-    const rows = 12;
-    const cols = 20;
+    const rows = 6;
+    const cols = 10;
     const totalParticles = rows * cols;
     const particles = Array.from({ length: totalParticles });
 
     const handleEnter = () => {
         setIsExiting(true);
+        onStart(); // Start scene immediately
 
         // Final Exit Animation
         const tl = gsap.timeline({
             onComplete: () => {
-                onStart(); // Proceed to next scene
+                onExitComplete(); // Unmount component after animation
             }
         });
 
