@@ -70,7 +70,7 @@ export default function StoryText3D({ isStoryDone }) {
         // Mobile adjustments
         if (size.width < 768) {
             targetX = 0;   // Centered
-            targetY = -2.2; // Further below
+            targetY = -1.0; // Moved up to center in orange region
             targetZ = -5;
         }
 
