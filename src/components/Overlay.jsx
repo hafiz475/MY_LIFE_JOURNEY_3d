@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import StarJourney from './StarJourney';
 
 const Overlay = ({ section, onLand, onBack, isStoryDone }) => {
     const [visible, setVisible] = useState(false);
@@ -50,67 +51,9 @@ const Overlay = ({ section, onLand, onBack, isStoryDone }) => {
         ) : null;
     }
 
-    // Scene 3: Space Galaxy - Skills Showcase
+    // Scene 3: Star Journey - Immersive Life Story Experience
     if (section === 2) {
-        return (
-            <>
-                {/* Back Button */}
-                <button className="back-button" onClick={onBack}>
-                    <span className="back-icon">🚀</span>
-                    <span>Back to Sky</span>
-                </button>
-
-                <div className={`space-skills-overlay ${visible ? 'visible' : ''}`}>
-                    <div className="space-skills-scroll">
-                        <h1 className="space-title">✦ Skills & Achievements ✦</h1>
-
-                        <div className="constellation-grid">
-                            <div className="skill-constellation software">
-                                <div className="constellation-icon">💻</div>
-                                <h3>Software</h3>
-                                <div className="skill-stars">
-                                    <span>React JS</span>
-                                    <span>Node.js</span>
-                                    <span>MongoDB</span>
-                                    <span>Firebase</span>
-                                    <span>AWS S3</span>
-                                </div>
-                            </div>
-
-                            <div className="skill-constellation projects">
-                                <div className="constellation-icon">🚀</div>
-                                <h3>Projects</h3>
-                                <div className="skill-stars">
-                                    <span>CarzMoto Billing</span>
-                                    <span>Bizmagnets CRM</span>
-                                    <span>WhatsApp Automation</span>
-                                    <span>Nippon Paint</span>
-                                </div>
-                            </div>
-
-                            <div className="skill-constellation mechanical">
-                                <div className="constellation-icon">⚙️</div>
-                                <h3>Mechanical</h3>
-                                <div className="skill-stars">
-                                    <span>Kaizen & Lean</span>
-                                    <span>Production KPIs</span>
-                                    <span>Vehicle Assembly</span>
-                                </div>
-                            </div>
-
-                            <div className="skill-constellation football">
-                                <div className="constellation-icon">⚽</div>
-                                <h3>Football</h3>
-                                <div className="skill-stars">
-                                    <span>District-Level Player</span>
-                                    <span>Team Coordination</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </>
-        );
+        return <StarJourney onBack={onBack} />;
     }
 
     // Scene 1: Name handled by HudText
@@ -118,3 +61,4 @@ const Overlay = ({ section, onLand, onBack, isStoryDone }) => {
 };
 
 export default Overlay;
+

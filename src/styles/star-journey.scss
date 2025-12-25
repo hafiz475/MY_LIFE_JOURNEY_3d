@@ -1,0 +1,580 @@
+// ================================================
+// STAR JOURNEY - Immersive Space Navigation
+// ================================================
+
+.star-journey-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(180deg,
+            #030108 0%,
+            #0a0520 30%,
+            #050218 70%,
+            #020108 100%);
+}
+
+// ================================================
+// Progress Indicator - Right Side
+// ================================================
+.journey-progress {
+    position: fixed;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    pointer-events: none;
+
+    .progress-track {
+        width: 3px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+        overflow: hidden;
+
+        .progress-fill {
+            width: 100%;
+            background: linear-gradient(180deg, #61DAFB, #FF79C6, #50FA7B);
+            border-radius: 2px;
+            transition: height 0.1s ease-out;
+        }
+    }
+
+    .progress-dots {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+        padding: 0.5rem 0;
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+
+            &.active {
+                background: var(--dot-color);
+                box-shadow: 0 0 15px var(--dot-color);
+                transform: scale(1.3);
+            }
+
+            &.passed {
+                background: var(--dot-color);
+                opacity: 0.5;
+            }
+        }
+    }
+}
+
+// ================================================
+// Star Field - Parallax Layers with Ambient Rotation
+// ================================================
+.star-field {
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    pointer-events: none;
+    z-index: 1;
+    animation: ambientRotate 120s linear infinite;
+
+    &.warping {
+        .star-layer.near .star {
+            transition: height 0.1s ease;
+        }
+    }
+}
+
+@keyframes ambientRotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.star-layer {
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    height: 50%;
+    transition: transform 0.05s linear;
+
+    .star {
+        position: absolute;
+        background: #fff;
+        border-radius: 50%;
+        animation: starTwinkle 3s ease-in-out infinite alternate;
+
+        &.streaking {
+            border-radius: 50% 50% 0 0;
+            background: linear-gradient(180deg,
+                    rgba(255, 255, 255, 1) 0%,
+                    rgba(255, 255, 255, 0.5) 50%,
+                    transparent 100%);
+        }
+    }
+
+    &.far {
+        animation: layerDrift 80s ease-in-out infinite alternate;
+
+        .star {
+            animation-duration: 5s;
+        }
+    }
+
+    &.mid {
+        animation: layerDrift 60s ease-in-out infinite alternate-reverse;
+
+        .star {
+            animation-duration: 3.5s;
+        }
+    }
+
+    &.near {
+        animation: layerDrift 40s ease-in-out infinite alternate;
+
+        .star {
+            animation-duration: 2s;
+        }
+    }
+}
+
+@keyframes layerDrift {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(20px, 10px);
+    }
+
+    100% {
+        transform: translate(-10px, 20px);
+    }
+}
+
+@keyframes starTwinkle {
+    0% {
+        opacity: var(--star-opacity, 0.5);
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: calc(var(--star-opacity, 0.5) * 1.5);
+        transform: scale(1.2);
+    }
+
+    100% {
+        opacity: var(--star-opacity, 0.5);
+        transform: scale(1);
+    }
+}
+
+// ================================================
+// Center Hub Layout Container
+// ================================================
+.journey-scroll-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 10;
+    scroll-behavior: smooth;
+
+    // Custom scrollbar
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.journey-content {
+    min-height: 800vh;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+// Fixed center title that stays visible
+.journey-center-title {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    text-align: center;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+
+    h1 {
+        font-family: 'Inter', sans-serif;
+        font-size: 3rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        background: linear-gradient(135deg, #61DAFB, #FF79C6, #50FA7B);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+        text-shadow: none;
+    }
+
+    p {
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.5);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+    }
+
+    &.faded {
+        opacity: 0.15;
+    }
+}
+
+// ================================================
+// Intro & Outro Spacers
+// ================================================
+.journey-spacer {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &.intro {
+        .journey-title {
+            text-align: center;
+            animation: fadeInUp 1.5s ease-out;
+
+            h1 {
+                font-family: 'Inter', sans-serif;
+                font-size: 3.5rem;
+                font-weight: 800;
+                letter-spacing: 0.05em;
+                background: linear-gradient(135deg, #61DAFB, #FF79C6, #50FA7B);
+                -webkit-background-clip: text;
+                background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 1rem;
+                text-shadow: none;
+            }
+
+            p {
+                font-family: 'Inter', sans-serif;
+                font-size: 1.2rem;
+                color: rgba(255, 255, 255, 0.6);
+                letter-spacing: 0.1em;
+            }
+
+            .scroll-indicator {
+                margin-top: 3rem;
+                animation: bounceDown 2s ease-in-out infinite;
+
+                span {
+                    font-size: 2rem;
+                    color: rgba(255, 255, 255, 0.5);
+                }
+            }
+        }
+    }
+
+    &.outro {
+        .journey-end {
+            text-align: center;
+
+            h2 {
+                font-family: 'Inter', sans-serif;
+                font-size: 2rem;
+                font-weight: 700;
+                color: rgba(255, 255, 255, 0.9);
+                margin-bottom: 1rem;
+            }
+
+            p {
+                font-family: 'Inter', sans-serif;
+                font-size: 1.2rem;
+                color: rgba(255, 255, 255, 0.5);
+            }
+        }
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounceDown {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(15px);
+    }
+}
+
+// ================================================
+// Journey Sections - Multi-directional Floating Panels
+// ================================================
+.journey-section {
+    width: 85%;
+    max-width: 550px;
+    min-height: auto;
+    margin: 15vh 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.4s ease-out, opacity 0.4s ease-out;
+    will-change: transform, opacity;
+
+    // Alternate left and right positioning
+    &:nth-child(odd) {
+        align-self: flex-start;
+        margin-left: 5%;
+    }
+
+    &:nth-child(even) {
+        align-self: flex-end;
+        margin-right: 5%;
+    }
+
+    .section-glow {
+        position: absolute;
+        inset: -30px;
+        background: radial-gradient(ellipse at center,
+                var(--section-color, rgba(97, 218, 251, 0.15)) 0%,
+                transparent 70%);
+        opacity: 0.4;
+        filter: blur(40px);
+        z-index: -1;
+        transition: opacity 0.5s ease;
+    }
+
+    &.active .section-glow {
+        opacity: 0.7;
+    }
+
+    .section-content {
+        width: 100%;
+        background: rgba(10, 15, 35, 0.6);
+        backdrop-filter: blur(25px);
+        border-radius: 24px;
+        padding: 3rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+
+        // Top accent line
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    var(--section-color, #61DAFB),
+                    transparent);
+            opacity: 0.8;
+        }
+    }
+
+    .section-number {
+        position: absolute;
+        top: -2rem;
+        left: 2rem;
+        font-family: 'Inter', sans-serif;
+        font-size: 5rem;
+        font-weight: 900;
+        color: rgba(255, 255, 255, 0.03);
+        letter-spacing: -0.05em;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .section-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: inline-block;
+        animation: iconPulse 3s ease-in-out infinite;
+    }
+
+    .section-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--section-color, #fff);
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.02em;
+    }
+
+    .section-subtitle {
+        font-family: 'Inter', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 1.5rem;
+        font-style: italic;
+    }
+
+    .section-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.8;
+    }
+}
+
+@keyframes iconPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+// ================================================
+// Responsive Design
+// ================================================
+@media (max-width: 900px) {
+    .journey-progress {
+        right: 1rem;
+
+        .progress-track {
+            height: 150px;
+        }
+
+        .progress-dots {
+            gap: 0.8rem;
+
+            .progress-dot {
+                width: 8px;
+                height: 8px;
+            }
+        }
+    }
+
+    .journey-spacer.intro .journey-title {
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        p {
+            font-size: 1rem;
+        }
+    }
+
+    .journey-section {
+        width: 95%;
+
+        .section-content {
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+        }
+
+        .section-subtitle {
+            font-size: 1rem;
+        }
+
+        .section-text {
+            font-size: 0.95rem;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .journey-progress {
+        right: 0.5rem;
+
+        .progress-track {
+            width: 2px;
+            height: 120px;
+        }
+
+        .progress-dots {
+            gap: 0.6rem;
+
+            .progress-dot {
+                width: 6px;
+                height: 6px;
+            }
+        }
+    }
+
+    .journey-spacer.intro .journey-title h1 {
+        font-size: 2rem;
+    }
+
+    .journey-section {
+        min-height: 50vh;
+        margin: 8vh 0;
+
+        .section-content {
+            padding: 1.5rem;
+            border-radius: 18px;
+        }
+
+        .section-icon {
+            font-size: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+        }
+
+        .section-subtitle {
+            font-size: 0.9rem;
+        }
+
+        .section-text {
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .section-number {
+            font-size: 3.5rem;
+            top: -1.5rem;
+        }
+    }
+}
