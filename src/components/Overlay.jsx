@@ -50,16 +50,17 @@ const Overlay = ({ section, onLand, isStoryDone }) => {
         ) : null;
     }
 
-    // Scene 3: Skills - Centered, Same Name Font Style
+    // Scene 3: Space Galaxy - Skills Showcase
     if (section === 2) {
         return (
-            <div className={`skills-overlay-centered ${visible ? 'visible' : ''}`}>
-                <h1 className="skills-main-title">Skills & Achievements</h1>
+            <div className={`space-skills-overlay ${visible ? 'visible' : ''}`}>
+                <h1 className="space-title">✦ Skills & Achievements ✦</h1>
 
-                <div className="skills-categories">
-                    <div className="skill-category">
-                        <h3 className="category-title software">💻 Software</h3>
-                        <div className="category-items">
+                <div className="constellation-grid">
+                    <div className="skill-constellation software">
+                        <div className="constellation-icon">💻</div>
+                        <h3>Software</h3>
+                        <div className="skill-stars">
                             <span>React JS</span>
                             <span>Node.js</span>
                             <span>MongoDB</span>
@@ -68,9 +69,10 @@ const Overlay = ({ section, onLand, isStoryDone }) => {
                         </div>
                     </div>
 
-                    <div className="skill-category">
-                        <h3 className="category-title projects">🚀 Projects</h3>
-                        <div className="category-items">
+                    <div className="skill-constellation projects">
+                        <div className="constellation-icon">🚀</div>
+                        <h3>Projects</h3>
+                        <div className="skill-stars">
                             <span>CarzMoto Billing</span>
                             <span>Bizmagnets CRM</span>
                             <span>WhatsApp Automation</span>
@@ -78,18 +80,20 @@ const Overlay = ({ section, onLand, isStoryDone }) => {
                         </div>
                     </div>
 
-                    <div className="skill-category">
-                        <h3 className="category-title mechanical">⚙️ Mechanical</h3>
-                        <div className="category-items">
+                    <div className="skill-constellation mechanical">
+                        <div className="constellation-icon">⚙️</div>
+                        <h3>Mechanical</h3>
+                        <div className="skill-stars">
                             <span>Kaizen & Lean</span>
                             <span>Production KPIs</span>
                             <span>Vehicle Assembly</span>
                         </div>
                     </div>
 
-                    <div className="skill-category">
-                        <h3 className="category-title football">⚽ Football</h3>
-                        <div className="category-items">
+                    <div className="skill-constellation football">
+                        <div className="constellation-icon">⚽</div>
+                        <h3>Football</h3>
+                        <div className="skill-stars">
                             <span>District-Level Player</span>
                             <span>Team Coordination</span>
                         </div>

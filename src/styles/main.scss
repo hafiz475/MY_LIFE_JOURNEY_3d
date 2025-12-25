@@ -498,8 +498,8 @@ canvas {
     cursor: pointer;
     pointer-events: auto;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 25px rgba(178, 34, 34, 0.4), 
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 25px rgba(178, 34, 34, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
     .land-icon {
         font-size: 1.2rem;
@@ -509,7 +509,7 @@ canvas {
         transform: translateY(-2px);
         background: linear-gradient(135deg, rgba(139, 69, 19, 0.85), rgba(178, 34, 34, 0.95));
         box-shadow: 0 6px 35px rgba(178, 34, 34, 0.6),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
         border-color: rgba(255, 255, 255, 0.35);
     }
 
@@ -660,6 +660,291 @@ canvas {
 
             span {
                 font-size: 0.75rem;
+            }
+        }
+    }
+}
+
+// ========================================
+// SPACE GALAXY SKILLS SCENE
+// ========================================
+.space-skills-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5%;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.5s ease-out;
+
+    &.visible {
+        opacity: 1;
+    }
+
+    // Main Title - Celestial Style
+    .space-title {
+        font-family: 'Inter', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 3rem;
+        text-align: center;
+        color: #fff;
+        text-shadow:
+            0 0 10px rgba(130, 180, 255, 0.8),
+            0 0 30px rgba(130, 180, 255, 0.5),
+            0 0 60px rgba(130, 180, 255, 0.3);
+        animation: titlePulse 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes titlePulse {
+        from {
+            text-shadow:
+                0 0 10px rgba(130, 180, 255, 0.8),
+                0 0 30px rgba(130, 180, 255, 0.5),
+                0 0 60px rgba(130, 180, 255, 0.3);
+        }
+
+        to {
+            text-shadow:
+                0 0 15px rgba(180, 130, 255, 0.9),
+                0 0 40px rgba(180, 130, 255, 0.6),
+                0 0 80px rgba(180, 130, 255, 0.4);
+        }
+    }
+
+    // Constellation Grid
+    .constellation-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        max-width: 900px;
+        width: 100%;
+    }
+
+    // Individual Skill Constellation Card
+    .skill-constellation {
+        background: rgba(10, 15, 40, 0.6);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 1.8rem;
+        border: 1px solid rgba(130, 180, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s ease;
+
+        // Glowing border effect
+        &::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg,
+                    transparent 0deg,
+                    rgba(130, 180, 255, 0.1) 60deg,
+                    transparent 120deg);
+            animation: rotateBorder 8s linear infinite;
+            z-index: -1;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 1px;
+            background: rgba(10, 15, 40, 0.9);
+            border-radius: 19px;
+            z-index: -1;
+        }
+
+        &:hover {
+            transform: translateY(-5px);
+            border-color: rgba(130, 180, 255, 0.5);
+            box-shadow:
+                0 10px 40px rgba(130, 180, 255, 0.2),
+                inset 0 0 30px rgba(130, 180, 255, 0.05);
+        }
+
+        .constellation-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #fff;
+            letter-spacing: 0.05em;
+        }
+
+        .skill-stars {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+
+            span {
+                font-family: 'Inter', sans-serif;
+                font-size: 0.85rem;
+                color: rgba(255, 255, 255, 0.9);
+                background: linear-gradient(135deg,
+                        rgba(130, 180, 255, 0.15),
+                        rgba(180, 130, 255, 0.1));
+                padding: 0.5rem 1rem;
+                border-radius: 25px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                transition: all 0.3s ease;
+
+                &:hover {
+                    background: linear-gradient(135deg,
+                            rgba(130, 180, 255, 0.3),
+                            rgba(180, 130, 255, 0.2));
+                    border-color: rgba(255, 255, 255, 0.3);
+                    transform: scale(1.05);
+                }
+            }
+        }
+
+        // Category-specific accent colors
+        &.software {
+            border-left: 3px solid #61DAFB;
+
+            h3 {
+                color: #61DAFB;
+            }
+
+            .skill-stars span {
+                background: linear-gradient(135deg, rgba(97, 218, 251, 0.15), rgba(97, 218, 251, 0.05));
+            }
+        }
+
+        &.projects {
+            border-left: 3px solid #FF6B9D;
+
+            h3 {
+                color: #FF6B9D;
+            }
+
+            .skill-stars span {
+                background: linear-gradient(135deg, rgba(255, 107, 157, 0.15), rgba(255, 107, 157, 0.05));
+            }
+        }
+
+        &.mechanical {
+            border-left: 3px solid #FFB86C;
+
+            h3 {
+                color: #FFB86C;
+            }
+
+            .skill-stars span {
+                background: linear-gradient(135deg, rgba(255, 184, 108, 0.15), rgba(255, 184, 108, 0.05));
+            }
+        }
+
+        &.football {
+            border-left: 3px solid #50FA7B;
+
+            h3 {
+                color: #50FA7B;
+            }
+
+            .skill-stars span {
+                background: linear-gradient(135deg, rgba(80, 250, 123, 0.15), rgba(80, 250, 123, 0.05));
+            }
+        }
+    }
+
+    @keyframes rotateBorder {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes iconFloat {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-5px);
+        }
+    }
+}
+
+// Responsive - Space Skills
+@media (max-width: 768px) {
+    .space-skills-overlay {
+        padding: 3%;
+
+        .space-title {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            letter-spacing: 0.1em;
+        }
+
+        .constellation-grid {
+            grid-template-columns: 1fr;
+            gap: 1.2rem;
+        }
+
+        .skill-constellation {
+            padding: 1.2rem;
+
+            .constellation-icon {
+                font-size: 1.5rem;
+            }
+
+            h3 {
+                font-size: 1.1rem;
+            }
+
+            .skill-stars span {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .space-skills-overlay {
+        .space-title {
+            font-size: 1.2rem;
+        }
+
+        .skill-constellation {
+            padding: 1rem;
+
+            h3 {
+                font-size: 1rem;
+            }
+
+            .skill-stars {
+                gap: 0.4rem;
+
+                span {
+                    font-size: 0.7rem;
+                    padding: 0.3rem 0.6rem;
+                }
             }
         }
     }

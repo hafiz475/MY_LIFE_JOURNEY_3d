@@ -10,6 +10,7 @@ import StoryText3D from './StoryText3D';
 import Birds from './Birds';
 import WeatherSystem from './WeatherSystem';
 import SoundManager from './SoundManager';
+import SpaceScene from './SpaceScene';
 import * as THREE from 'three';
 
 function SceneContent({ section, onRainStart, isLanding, isStoryDone, hasStarted }) {
@@ -318,6 +319,11 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone, hasStarted
       });
     }
   };
+
+  // Section 2 = Space scene
+  if (section === 2) {
+    return <SpaceScene />;
+  }
 
   return (
     <>
