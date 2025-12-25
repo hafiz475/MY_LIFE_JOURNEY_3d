@@ -487,29 +487,34 @@ canvas {
     align-items: center;
     gap: 0.5rem;
     padding: 0.8rem 1.5rem;
-    background: linear-gradient(135deg, rgba(255, 107, 53, 0.9), rgba(247, 197, 159, 0.8));
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50px;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.7), rgba(178, 34, 34, 0.8));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.95);
+    font-family: 'Caveat', cursive;
+    font-size: 1.3rem;
+    font-weight: 600;
     cursor: pointer;
     pointer-events: auto;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4);
+    box-shadow: 0 4px 25px rgba(178, 34, 34, 0.4), 
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
 
     .land-icon {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
 
     &:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 30px rgba(255, 107, 53, 0.6);
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, rgba(139, 69, 19, 0.85), rgba(178, 34, 34, 0.95));
+        box-shadow: 0 6px 35px rgba(178, 34, 34, 0.6),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.35);
     }
 
     &:active {
-        transform: scale(0.98);
+        transform: translateY(0);
     }
 }
 
