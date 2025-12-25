@@ -38,6 +38,19 @@ function App() {
     }, 3000);
   };
 
+  // Handler to go back from space scene to sunset scene
+  const handleBack = () => {
+    setIsDark(true);
+
+    // After dark transition, go back to section 1
+    setTimeout(() => {
+      setSection(1);
+
+      // Fade out dark after scene loads
+      setTimeout(() => setIsDark(false), 500);
+    }, 1000);
+  };
+
   useEffect(() => {
     if (!hasStarted) return; // Disable scroll until started
 
@@ -47,6 +60,9 @@ function App() {
       if (!canScroll) return;
       if (locked) return;
       if (isLanding) return; // Block scroll during landing
+
+      // Disable scroll navigation on section 2 (space screen)
+      if (section === 2) return;
 
       if (e.deltaY > 0) {
         // Can only scroll to section 1, not 2.
@@ -66,7 +82,7 @@ function App() {
 
     window.addEventListener('wheel', onWheel, { passive: true });
     return () => window.removeEventListener('wheel', onWheel);
-  }, [hasStarted, canScroll, isLanding, hasScrolled]); // Locked dependency removed to avoid stale closures
+  }, [hasStarted, canScroll, isLanding, hasScrolled, section]); // Added section dependency
 
   // Story Timing for Scene 2
   const [isStoryDone, setIsStoryDone] = useState(false);
@@ -102,7 +118,7 @@ function App() {
 
       {hasStarted && (
         <>
-          <Overlay section={section} onLand={handleLand} isStoryDone={isStoryDone} />
+          <Overlay section={section} onLand={handleLand} onBack={handleBack} isStoryDone={isStoryDone} />
 
           {/* Scroll Prompt - section 0 only, and only if never scrolled before */}
           {canScroll && section === 0 && !hasScrolled && (
