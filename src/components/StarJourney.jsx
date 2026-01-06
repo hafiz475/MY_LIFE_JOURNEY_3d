@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import '../styles/star-journey.scss';
+import SpaceCube from './SpaceCube/SpaceCube';
 
 // Generate sparse, slow-moving stars
 const generateStars = (count) => {
@@ -42,6 +43,10 @@ export default function StarJourney({ onBack }) {
                     />
                 ))}
             </div>
+
+            {/* 3D Space Cube Navigation */}
+            <SpaceCube />
         </div>
     );
 }
+

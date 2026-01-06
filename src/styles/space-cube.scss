@@ -1,0 +1,358 @@
+// ================================================
+// SPACE CUBE - 3D Navigation Component
+// ================================================
+
+.space-cube-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 320px;
+    height: 320px;
+    perspective: 1200px;
+    z-index: 50;
+}
+
+.cube-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Individual Cube Faces
+.cube-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+    box-sizing: border-box;
+    backface-visibility: hidden;
+
+    // Glassmorphism effect
+    background: linear-gradient(135deg,
+            rgba(20, 30, 80, 0.7) 0%,
+            rgba(40, 20, 80, 0.6) 50%,
+            rgba(60, 40, 120, 0.5) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(130, 180, 255, 0.25);
+    border-radius: 20px;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 40px rgba(100, 130, 255, 0.15);
+
+    // Face positions (160px = half of 320px)
+    &.front {
+        transform: rotateY(0deg) translateZ(160px);
+    }
+
+    &.back {
+        transform: rotateY(180deg) translateZ(160px);
+    }
+
+    &.right {
+        transform: rotateY(90deg) translateZ(160px);
+    }
+
+    &.left {
+        transform: rotateY(-90deg) translateZ(160px);
+    }
+
+    &.top {
+        transform: rotateX(90deg) translateZ(160px);
+    }
+
+    &.bottom {
+        transform: rotateX(-90deg) translateZ(160px);
+    }
+}
+
+// Face Content Styling
+.face-title {
+    font-family: 'Caveat', cursive;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.8rem;
+    text-align: center;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.face-subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.75);
+    text-align: center;
+    line-height: 1.5;
+    max-width: 90%;
+}
+
+// Lottie Animation Container (Front Face)
+.lottie-container {
+    width: 140px;
+    height: 140px;
+    margin-bottom: 0.5rem;
+    filter: drop-shadow(0 4px 15px rgba(100, 130, 255, 0.3));
+}
+
+// Tech Stack Face
+.tech-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+    max-width: 100%;
+}
+
+.tech-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(100, 130, 255, 0.25);
+    border: 1px solid rgba(130, 180, 255, 0.3);
+    border-radius: 20px;
+    padding: 0.35rem 0.7rem;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: rgba(100, 130, 255, 0.4);
+        transform: scale(1.05);
+    }
+}
+
+// Contact Links (Bottom Face)
+.contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin-top: 0.8rem;
+}
+
+.contact-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(100, 130, 255, 0.2);
+    border-radius: 12px;
+    border: 1px solid rgba(130, 180, 255, 0.2);
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: rgba(100, 130, 255, 0.35);
+        transform: translateX(5px);
+        border-color: rgba(130, 180, 255, 0.4);
+    }
+
+    .link-icon {
+        font-size: 1.1rem;
+    }
+}
+
+// Story Summary (Left Face)
+.story-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+    text-align: center;
+    max-height: 180px;
+    overflow: hidden;
+}
+
+// Projects List (Right Face)
+.projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+    width: 100%;
+}
+
+.project-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.8rem;
+    background: rgba(255, 107, 53, 0.15);
+    border-radius: 12px;
+    border-left: 3px solid #FF6B35;
+
+    .project-icon {
+        font-size: 1.2rem;
+    }
+
+    .project-name {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.95);
+    }
+}
+
+// Fun Facts (Back Face)
+.facts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.8rem;
+}
+
+.fact-item {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.85);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+
+    .fact-emoji {
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+}
+
+// Navigation Hint
+.cube-nav-hint {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    white-space: nowrap;
+    animation: fadeInOut 3s ease-in-out infinite;
+}
+
+@keyframes fadeInOut {
+
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+}
+
+// Face Indicator
+.face-indicator {
+    position: absolute;
+    bottom: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+
+    .indicator-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+
+        &.active {
+            background: rgba(130, 180, 255, 0.9);
+            box-shadow: 0 0 10px rgba(130, 180, 255, 0.6);
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .space-cube-container {
+        width: 260px;
+        height: 260px;
+    }
+
+    .cube-face {
+        padding: 1rem;
+
+        &.front {
+            transform: rotateY(0deg) translateZ(130px);
+        }
+
+        &.back {
+            transform: rotateY(180deg) translateZ(130px);
+        }
+
+        &.right {
+            transform: rotateY(90deg) translateZ(130px);
+        }
+
+        &.left {
+            transform: rotateY(-90deg) translateZ(130px);
+        }
+
+        &.top {
+            transform: rotateX(90deg) translateZ(130px);
+        }
+
+        &.bottom {
+            transform: rotateX(-90deg) translateZ(130px);
+        }
+    }
+
+    .face-title {
+        font-size: 1.4rem;
+    }
+
+    .lottie-container {
+        width: 100px;
+        height: 100px;
+    }
+
+    .tech-tag {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .space-cube-container {
+        width: 220px;
+        height: 220px;
+    }
+
+    .cube-face {
+        &.front {
+            transform: rotateY(0deg) translateZ(110px);
+        }
+
+        &.back {
+            transform: rotateY(180deg) translateZ(110px);
+        }
+
+        &.right {
+            transform: rotateY(90deg) translateZ(110px);
+        }
+
+        &.left {
+            transform: rotateY(-90deg) translateZ(110px);
+        }
+
+        &.top {
+            transform: rotateX(90deg) translateZ(110px);
+        }
+
+        &.bottom {
+            transform: rotateX(-90deg) translateZ(110px);
+        }
+    }
+}
