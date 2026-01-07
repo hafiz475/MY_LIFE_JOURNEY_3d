@@ -1,6 +1,4 @@
-import React, { useState, useEffect, Suspense } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF, OrbitControls } from '@react-three/drei';
+import React, { useState, useEffect } from 'react';
 import Lottie from 'lottie-react';
 import footballAnimation from '../assets/lotties/football.json';
 import '../styles/room-scene.scss';
@@ -52,28 +50,7 @@ const softwareContent = {
     ]
 };
 
-// Hologram 3D Model
-function HologramModel() {
-    const { scene } = useGLTF('/assets/models/looking_glass_hologram_technology_meet_art.glb');
-    const modelRef = React.useRef();
-
-    useFrame((state) => {
-        if (modelRef.current) {
-            modelRef.current.rotation.y += 0.005;
-        }
-    });
-
-    return (
-        <primitive
-            ref={modelRef}
-            object={scene}
-            scale={2}
-            position={[0, -0.5, 0]}
-        />
-    );
-}
-
-// Software Scene Component
+// Software Scene Component (without 3D model)
 function SoftwareScene({ onBack }) {
     const [isVisible, setIsVisible] = useState(false);
 
@@ -89,22 +66,8 @@ function SoftwareScene({ onBack }) {
                 <span>← Back to Interests</span>
             </button>
 
-            {/* 3D Hologram Canvas */}
-            <div className="hologram-container">
-                <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-                    <Suspense fallback={null}>
-                        <ambientLight intensity={0.5} />
-                        <pointLight position={[5, 5, 5]} intensity={1} color="#00ffff" />
-                        <pointLight position={[-5, 5, 5]} intensity={1} color="#ff00ff" />
-                        <pointLight position={[0, -5, 5]} intensity={0.5} color="#ffffff" />
-                        <HologramModel />
-                        <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
-                    </Suspense>
-                </Canvas>
-            </div>
-
-            {/* Software Content */}
-            <div className="software-content">
+            {/* Software Content - Full width now without 3D model */}
+            <div className="software-content-full">
                 <h1 className="software-title">{softwareContent.title}</h1>
                 <h2 className="software-subtitle">{softwareContent.subtitle}</h2>
                 <p className="software-description">{softwareContent.description}</p>
@@ -146,8 +109,8 @@ export default function RoomScene({ onBack }) {
         return () => clearTimeout(timer);
     }, []);
 
-    // Handle cockpit enter
-    const handleEnterCockpit = () => {
+    // Handle software transition
+    const handleEnterSoftware = () => {
         setIsTransitioning(true);
         setTimeout(() => {
             setShowSoftware(true);
@@ -217,6 +180,15 @@ export default function RoomScene({ onBack }) {
                         ))}
                     </ul>
                 </div>
+
+                {/* Software Journey Button - Bottom Center */}
+                <div className="software-journey-section">
+                    <p className="journey-tagline">Ready to explore my professional side? <span className="tagline-icon">💻</span></p>
+                    <button className="journey-btn" onClick={handleEnterSoftware}>
+                        <span className="journey-text">EXPLORE SOFTWARE CRAFT</span>
+                        <div className="journey-underline"></div>
+                    </button>
+                </div>
             </div>
 
             {/* Football Lottie at side */}
@@ -227,16 +199,6 @@ export default function RoomScene({ onBack }) {
                     style={{ width: 120, height: 120 }}
                 />
             </div>
-
-            {/* Enter Cockpit Button */}
-            <button className="enter-cockpit-btn" onClick={handleEnterCockpit}>
-                <div className="cockpit-btn-content">
-                    <span className="cockpit-icon">🚀</span>
-                    <span className="cockpit-text">Enter Cockpit</span>
-                    <span className="cockpit-subtext">Explore my Software Journey</span>
-                </div>
-                <div className="cockpit-btn-glow"></div>
-            </button>
         </div>
     );
 }

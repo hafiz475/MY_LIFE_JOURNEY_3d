@@ -11,7 +11,8 @@
     width: 100%;
     height: 100%;
     background: linear-gradient(180deg, #0a0a0a 0%, #151515 50%, #0d0d0d 100%);
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -64,6 +65,7 @@
 .room-content {
     margin-top: 80px;
     padding: 0 5%;
+    padding-bottom: 60px;
     width: 100%;
     max-width: 900px;
     opacity: 0;
@@ -273,83 +275,98 @@
 }
 
 // ========================================
-// ENTER COCKPIT BUTTON
+// SOFTWARE JOURNEY BUTTON - Like the image style
 // ========================================
-.enter-cockpit-btn {
-    position: fixed;
-    bottom: 40px;
-    right: 40px;
-    background: linear-gradient(135deg, rgba(0, 200, 255, 0.2) 0%, rgba(150, 0, 255, 0.2) 100%);
-    border: 2px solid rgba(0, 200, 255, 0.5);
-    border-radius: 16px;
-    padding: 1.2rem 2rem;
+.software-journey-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+    padding: 2rem 0;
+}
+
+.journey-tagline {
+    font-family: 'Caveat', cursive;
+    font-size: 1.2rem;
+    font-style: italic;
+    background: linear-gradient(90deg, #00c8ff 0%, #ffffff 50%, #ff6b6b 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .tagline-icon {
+        -webkit-text-fill-color: initial;
+        animation: pulse 2s ease-in-out infinite;
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+.journey-btn {
+    background: transparent;
+    border: none;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 100;
-    overflow: hidden;
+    padding: 1rem 2rem;
+    position: relative;
+    transition: all 0.3s ease;
 
     &:hover {
-        transform: translateY(-5px) scale(1.02);
-        border-color: rgba(0, 200, 255, 0.8);
-        box-shadow:
-            0 10px 40px rgba(0, 200, 255, 0.3),
-            0 0 60px rgba(150, 0, 255, 0.2),
-            inset 0 0 30px rgba(0, 200, 255, 0.1);
+        transform: translateY(-3px);
 
-        .cockpit-btn-glow {
-            opacity: 1;
+        .journey-text {
+            letter-spacing: 0.25em;
         }
 
-        .cockpit-icon {
-            transform: translateX(5px) rotate(45deg);
+        .journey-underline {
+            width: 100%;
+            background: linear-gradient(90deg, #00c8ff 0%, #ff6b6b 100%);
         }
     }
 
-    .cockpit-btn-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.3rem;
-        position: relative;
-        z-index: 2;
-    }
-
-    .cockpit-icon {
-        font-size: 1.8rem;
-        transition: transform 0.4s ease;
-    }
-
-    .cockpit-text {
+    .journey-text {
         font-family: 'Inter', sans-serif;
-        font-size: 1rem;
-        font-weight: 600;
-        color: #fff;
+        font-size: 1.3rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
         text-transform: uppercase;
-        letter-spacing: 0.1em;
+        background: linear-gradient(90deg, #00c8ff 0%, #ffffff 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        transition: letter-spacing 0.3s ease;
     }
 
-    .cockpit-subtext {
-        font-family: 'Inter', sans-serif;
-        font-size: 0.7rem;
-        color: rgba(255, 255, 255, 0.6);
-    }
-
-    .cockpit-btn-glow {
+    .journey-underline {
         position: absolute;
-        top: 50%;
+        bottom: 0;
         left: 50%;
-        transform: translate(-50%, -50%);
-        width: 150%;
-        height: 150%;
-        background: radial-gradient(circle, rgba(0, 200, 255, 0.3) 0%, transparent 70%);
-        opacity: 0;
-        transition: opacity 0.4s ease;
-        pointer-events: none;
+        transform: translateX(-50%);
+        height: 3px;
+        width: 60%;
+        background: linear-gradient(90deg, #00c8ff 30%, #ff6b6b 100%);
+        border-radius: 2px;
+        transition: all 0.3s ease;
     }
 }
 
 // ========================================
-// SOFTWARE COCKPIT SCENE
+// SOFTWARE COCKPIT SCENE (Without 3D Model)
 // ========================================
 .software-cockpit {
     position: absolute;
@@ -359,10 +376,13 @@
     height: 100%;
     background: radial-gradient(ellipse at center, #0a0a15 0%, #000000 100%);
     display: flex;
+    justify-content: center;
+    align-items: center;
     z-index: 60;
     opacity: 0;
     transform: scale(0.95);
     transition: all 0.6s ease-out;
+    overflow-y: auto;
 
     &.visible {
         opacity: 1;
@@ -392,35 +412,16 @@
     }
 }
 
-.hologram-container {
-    width: 50%;
-    height: 100%;
-    position: relative;
-
-    &::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 30%;
-        background: linear-gradient(to top, rgba(0, 200, 255, 0.05) 0%, transparent 100%);
-        pointer-events: none;
-    }
-}
-
-.software-content {
-    width: 50%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 3rem;
-    overflow-y: auto;
+// Full width software content (no 3D model)
+.software-content-full {
+    max-width: 800px;
+    width: 90%;
+    padding: 4rem 2rem;
+    text-align: center;
 
     .software-title {
         font-family: 'Inter', sans-serif;
-        font-size: 2.5rem;
+        font-size: 3rem;
         font-weight: 700;
         background: linear-gradient(135deg, #00c8ff 0%, #ff00ff 50%, #00c8ff 100%);
         -webkit-background-clip: text;
@@ -431,68 +432,72 @@
 
     .software-subtitle {
         font-family: 'Caveat', cursive;
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         color: rgba(255, 255, 255, 0.6);
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
     }
 
     .software-description {
         font-family: 'Inter', sans-serif;
-        font-size: 1rem;
+        font-size: 1.1rem;
         color: rgba(255, 255, 255, 0.8);
-        line-height: 1.7;
-        margin-bottom: 2rem;
+        line-height: 1.8;
+        margin-bottom: 3rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .skills-section,
     .projects-section {
-        margin-bottom: 2rem;
+        margin-bottom: 2.5rem;
 
         h3 {
             font-family: 'Inter', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: 600;
             color: #00c8ff;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
         }
     }
 
     .skills-list {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.8rem;
+        justify-content: center;
+        gap: 1rem;
     }
 
     .skill-tag {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 0.8rem 1.2rem;
-        background: rgba(0, 200, 255, 0.1);
-        border: 1px solid rgba(0, 200, 255, 0.3);
+        padding: 1rem 1.5rem;
+        background: rgba(0, 200, 255, 0.08);
+        border: 1px solid rgba(0, 200, 255, 0.25);
         border-radius: 12px;
         transition: all 0.3s ease;
 
         &:hover {
-            background: rgba(0, 200, 255, 0.2);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 20px rgba(0, 200, 255, 0.2);
+            background: rgba(0, 200, 255, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 200, 255, 0.2);
         }
 
         .skill-name {
             font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #fff;
         }
 
         .skill-level {
             font-family: 'Inter', sans-serif;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: rgba(255, 255, 255, 0.5);
-            margin-top: 0.2rem;
+            margin-top: 0.3rem;
         }
     }
 
@@ -500,13 +505,15 @@
         list-style: none;
         padding: 0;
         margin: 0;
+        display: inline-block;
+        text-align: left;
 
         li {
             font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
+            font-size: 1rem;
             color: rgba(255, 255, 255, 0.8);
-            padding: 0.6rem 0;
-            padding-left: 1.5rem;
+            padding: 0.8rem 0;
+            padding-left: 1.8rem;
             position: relative;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
@@ -515,6 +522,11 @@
                 position: absolute;
                 left: 0;
                 color: #00c8ff;
+                font-size: 1.1rem;
+            }
+
+            &:last-child {
+                border-bottom: none;
             }
         }
     }
@@ -523,27 +535,6 @@
 // ========================================
 // RESPONSIVE
 // ========================================
-@media (max-width: 900px) {
-    .software-cockpit {
-        flex-direction: column;
-    }
-
-    .hologram-container {
-        width: 100%;
-        height: 40%;
-    }
-
-    .software-content {
-        width: 100%;
-        height: 60%;
-        padding: 2rem;
-
-        .software-title {
-            font-size: 1.8rem;
-        }
-    }
-}
-
 @media (max-width: 768px) {
     .room-content {
         margin-top: 100px;
@@ -579,13 +570,27 @@
         display: none;
     }
 
-    .enter-cockpit-btn {
-        right: 20px;
-        bottom: 20px;
-        padding: 1rem 1.5rem;
+    .journey-tagline {
+        font-size: 1rem;
+    }
 
-        .cockpit-text {
-            font-size: 0.85rem;
+    .journey-btn .journey-text {
+        font-size: 1rem;
+    }
+
+    .software-content-full {
+        padding: 3rem 1.5rem;
+
+        .software-title {
+            font-size: 2rem;
+        }
+
+        .software-subtitle {
+            font-size: 1.3rem;
+        }
+
+        .software-description {
+            font-size: 0.95rem;
         }
     }
 }
