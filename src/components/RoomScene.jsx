@@ -183,10 +183,19 @@ export default function RoomScene({ onBack }) {
 
                 {/* Software Journey Button - Bottom Center */}
                 <div className="software-journey-section">
-                    <p className="journey-tagline">Ready to explore my professional side? <span className="tagline-icon">💻</span></p>
+                    <p className="journey-tagline">
+                        Ready to explore my professional side?
+                        <span className="css-laptop">
+                            <span className="laptop-screen"></span>
+                            <span className="laptop-base"></span>
+                        </span>
+                    </p>
                     <button className="journey-btn" onClick={handleEnterSoftware}>
+                        <span className="btn-line btn-line-top"></span>
+                        <span className="btn-line btn-line-right"></span>
+                        <span className="btn-line btn-line-bottom"></span>
+                        <span className="btn-line btn-line-left"></span>
                         <span className="journey-text">EXPLORE SOFTWARE CRAFT</span>
-                        <div className="journey-underline"></div>
                     </button>
                 </div>
             </div>

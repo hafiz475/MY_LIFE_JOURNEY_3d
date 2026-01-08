@@ -289,7 +289,7 @@
     font-family: 'Caveat', cursive;
     font-size: 1.2rem;
     font-style: italic;
-    background: linear-gradient(90deg, #00c8ff 0%, #ffffff 50%, #ff6b6b 100%);
+    background: linear-gradient(90deg, #00f2ff 0%, #ffffff 50%, #ff0000 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -298,9 +298,45 @@
     align-items: center;
     gap: 0.5rem;
 
-    .tagline-icon {
-        -webkit-text-fill-color: initial;
-        animation: pulse 2s ease-in-out infinite;
+    // CSS Laptop Icon - Cyan & Red theme
+    .css-laptop {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1px;
+        margin-left: 8px;
+
+        .laptop-screen {
+            width: 18px;
+            height: 12px;
+            border: 2px solid #00f2ff;
+            border-bottom: none;
+            border-radius: 2px 2px 0 0;
+            background: #0a0a0a;
+            position: relative;
+            box-shadow: 0 0 6px rgba(0, 242, 255, 0.5);
+
+            // Screen content - code lines effect
+            &::after {
+                content: '';
+                position: absolute;
+                top: 3px;
+                left: 3px;
+                width: 8px;
+                height: 2px;
+                background: #00f2ff;
+                box-shadow:
+                    0 3px 0 #ff0000,
+                    4px 3px 0 #ff0000;
+            }
+        }
+
+        .laptop-base {
+            width: 24px;
+            height: 3px;
+            background: linear-gradient(90deg, #00f2ff 0%, #ff0000 100%);
+            border-radius: 0 0 2px 2px;
+        }
     }
 }
 
@@ -322,46 +358,135 @@
     background: transparent;
     border: none;
     cursor: pointer;
-    padding: 1rem 2rem;
+    padding: 1.2rem 3.5rem;
     position: relative;
+    overflow: hidden;
     transition: all 0.3s ease;
 
     &:hover {
-        transform: translateY(-3px);
+        transform: scale(1.1);
 
         .journey-text {
             letter-spacing: 0.25em;
         }
 
-        .journey-underline {
-            width: 100%;
-            background: linear-gradient(90deg, #00c8ff 0%, #ff6b6b 100%);
+        .btn-line {
+            filter: brightness(2) drop-shadow(0 0 8px #00f2ff);
+
+            &-bottom,
+            &-left {
+                filter: brightness(2) drop-shadow(0 0 8px #ff0000);
+            }
         }
+    }
+
+    &:active {
+        transform: scale(0.98);
     }
 
     .journey-text {
         font-family: 'Inter', sans-serif;
-        font-size: 1.3rem;
+        font-size: 1rem;
         font-weight: 700;
-        letter-spacing: 0.15em;
+        letter-spacing: 3px;
         text-transform: uppercase;
-        background: linear-gradient(90deg, #00c8ff 0%, #ffffff 100%);
+        background: linear-gradient(90deg, #00f2ff, #ff0000);
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
         transition: letter-spacing 0.3s ease;
     }
 
-    .journey-underline {
+
+
+    // Animated border lines - same as Enter Cockpit button
+    .btn-line {
         position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        height: 3px;
-        width: 60%;
-        background: linear-gradient(90deg, #00c8ff 30%, #ff6b6b 100%);
-        border-radius: 2px;
-        transition: all 0.3s ease;
+        display: block;
+
+        &-top {
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00f2ff);
+            animation: journey-btn-line-top 2s linear infinite;
+        }
+
+        &-right {
+            top: -100%;
+            right: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, #00f2ff);
+            animation: journey-btn-line-right 2s linear infinite;
+            animation-delay: 0.5s;
+        }
+
+        &-bottom {
+            bottom: 0;
+            right: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(270deg, transparent, #ff0000);
+            animation: journey-btn-line-bottom 2s linear infinite;
+            animation-delay: 1s;
+        }
+
+        &-left {
+            bottom: -100%;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(360deg, transparent, #ff0000);
+            animation: journey-btn-line-left 2s linear infinite;
+            animation-delay: 1.5s;
+        }
+    }
+}
+
+// Keyframes for animated border lines
+@keyframes journey-btn-line-top {
+    0% {
+        left: -100%;
+    }
+
+    50%,
+    100% {
+        left: 100%;
+    }
+}
+
+@keyframes journey-btn-line-right {
+    0% {
+        top: -100%;
+    }
+
+    50%,
+    100% {
+        top: 100%;
+    }
+}
+
+@keyframes journey-btn-line-bottom {
+    0% {
+        right: -100%;
+    }
+
+    50%,
+    100% {
+        right: 100%;
+    }
+}
+
+@keyframes journey-btn-line-left {
+    0% {
+        bottom: -100%;
+    }
+
+    50%,
+    100% {
+        bottom: 100%;
     }
 }
 
