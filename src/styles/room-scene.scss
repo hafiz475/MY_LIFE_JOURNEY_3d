@@ -387,37 +387,37 @@
 
         .border-line-top {
             top: 0;
-            left: -100%;
-            width: 100%;
+            left: -120%;
+            width: 120%;
             height: 2px;
-            animation: border-top 2s linear infinite;
+            animation: border-top 4s linear infinite;
         }
 
         .border-line-right {
-            top: -100%;
+            top: -120%;
             right: 0;
             width: 2px;
-            height: 100%;
-            animation: border-right 2s linear infinite;
-            animation-delay: 0.5s;
+            height: 120%;
+            animation: border-right 4s linear infinite;
+            animation-delay: 1s;
         }
 
         .border-line-bottom {
             bottom: 0;
-            right: -100%;
-            width: 100%;
+            right: -120%;
+            width: 120%;
             height: 2px;
-            animation: border-bottom 2s linear infinite;
-            animation-delay: 1s;
+            animation: border-bottom 4s linear infinite;
+            animation-delay: 2s;
         }
 
         .border-line-left {
-            bottom: -100%;
+            bottom: -120%;
             left: 0;
             width: 2px;
-            height: 100%;
-            animation: border-left 2s linear infinite;
-            animation-delay: 1.5s;
+            height: 120%;
+            animation: border-left 4s linear infinite;
+            animation-delay: 3s;
         }
 
         // Card 1 - Orange/Gold neon
@@ -583,48 +583,48 @@
         }
     }
 
-    // Keyframes for neon border animation
+    // Keyframes for neon border animation - slower and covers corners
     @keyframes border-top {
         0% {
-            left: -100%;
+            left: -120%;
         }
 
         50%,
         100% {
-            left: 100%;
+            left: 120%;
         }
     }
 
     @keyframes border-right {
         0% {
-            top: -100%;
+            top: -120%;
         }
 
         50%,
         100% {
-            top: 100%;
+            top: 120%;
         }
     }
 
     @keyframes border-bottom {
         0% {
-            right: -100%;
+            right: -120%;
         }
 
         50%,
         100% {
-            right: 100%;
+            right: 120%;
         }
     }
 
     @keyframes border-left {
         0% {
-            bottom: -100%;
+            bottom: -120%;
         }
 
         50%,
         100% {
-            bottom: 100%;
+            bottom: 120%;
         }
     }
 

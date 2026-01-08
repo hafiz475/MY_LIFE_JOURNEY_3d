@@ -17,7 +17,7 @@ const footballContent = {
             description: "Every weekend, the local pitch becomes my battlefield. Rain or shine, the game must go on."
         },
         {
-            icon: "🧠",
+            icon: "♟️",
             title: "Tactical Mind",
             description: "Reading the game, anticipating moves, and finding that perfect through ball. Football is chess at 100 km/h."
         },
