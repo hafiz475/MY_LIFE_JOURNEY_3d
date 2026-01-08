@@ -12,22 +12,22 @@ const footballContent = {
     ],
     cards: [
         {
-            icon: "⚽",
+            icon: "/assets/2dModels/football_img.png",
             title: "Weekend Warrior",
             description: "Every weekend, the local pitch becomes my battlefield. Rain or shine, the game must go on."
         },
         {
-            icon: "♟️",
+            icon: "/assets/2dModels/chess_img.png",
             title: "Tactical Mind",
             description: "Reading the game, anticipating moves, and finding that perfect through ball. Football is chess at 100 km/h."
         },
         {
-            icon: "🏆",
+            icon: "/assets/2dModels/trophy_img.png",
             title: "Team Leader",
             description: "Captain spirit runs deep. Leading by example, lifting the team when spirits are low."
         },
         {
-            icon: "❤️",
+            icon: "/assets/2dModels/heart_img.png",
             title: "Pure Passion",
             description: "From watching legends on TV to playing under streetlights. This love never fades."
         }
@@ -256,7 +256,12 @@ export default function RoomScene({ onBack }) {
                                         <span className="border-line border-line-bottom"></span>
                                         <span className="border-line border-line-left"></span>
 
-                                        <span className="card-icon">{card.icon}</span>
+                                        {/* Card icon - supports both images and emojis */}
+                                        {card.icon.startsWith('/') ? (
+                                            <img src={card.icon} alt={card.title} className="card-icon-img" />
+                                        ) : (
+                                            <span className="card-icon">{card.icon}</span>
+                                        )}
                                         <h4 className="card-title">{card.title}</h4>
                                         <p className="card-description">{card.description}</p>
                                     </div>

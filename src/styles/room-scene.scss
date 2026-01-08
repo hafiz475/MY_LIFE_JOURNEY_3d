@@ -565,6 +565,14 @@
             margin-bottom: 0.8rem;
         }
 
+        .card-icon-img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 0.8rem;
+        }
+
         .card-title {
             font-family: 'Caveat', cursive;
             font-size: 1.4rem;
