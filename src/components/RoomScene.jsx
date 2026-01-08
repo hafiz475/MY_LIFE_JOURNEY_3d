@@ -5,25 +5,67 @@ import '../styles/room-scene.scss';
 const footballContent = {
     title: "Football Passion",
     subtitle: "The Beautiful Game",
-    description: "Football isn't just a sport—it's a way of life. From weekend matches with friends to watching legendary games, the pitch has always been my second home. The camaraderie, the thrill of competition, and the pure joy of playing make every game memorable.",
-    highlights: [
-        "⚽ Weekend warrior on the local pitch",
-        "🧠 Tactical mind for the beautiful game",
-        "🏆 Team player with leadership spirit",
-        "❤️ Never-ending passion for the sport"
+    storyPoints: [
+        "District-level player — the Messi of my small town",
+        "Weekend matches with friends on dusty grounds",
+        "The pitch has always been my second home"
+    ],
+    cards: [
+        {
+            icon: "⚽",
+            title: "Weekend Warrior",
+            description: "Every weekend, the local pitch becomes my battlefield. Rain or shine, the game must go on."
+        },
+        {
+            icon: "🧠",
+            title: "Tactical Mind",
+            description: "Reading the game, anticipating moves, and finding that perfect through ball. Football is chess at 100 km/h."
+        },
+        {
+            icon: "🏆",
+            title: "Team Leader",
+            description: "Captain spirit runs deep. Leading by example, lifting the team when spirits are low."
+        },
+        {
+            icon: "❤️",
+            title: "Pure Passion",
+            description: "From watching legends on TV to playing under streetlights. This love never fades."
+        }
     ]
 };
 
-// Royal Enfield content
+// Royal Enfield content - My Real Story
 const royalEnfieldContent = {
-    title: "Royal Enfield",
-    subtitle: "The Torque Life",
-    description: "There's nothing quite like the thump of a Royal Enfield engine. The open road, the wind, and the machine that connects you to every mile traveled. Each ride is a journey of self-discovery and freedom that words cannot capture.",
-    highlights: [
-        "🛤️ Weekend road trips explorer",
-        "🔧 Mechanical soul & DIY enthusiast",
-        "🤝 Brotherhood of riders",
-        "🏍️ Freedom on two wheels"
+    title: "Royal Enfield Era",
+    subtitle: "Kaizen, Torque & 2,000 Bullets a Day",
+    storyPoints: [
+        "B.E. Mechanical Engineering → Robotics & Mechatronics",
+        "Kaizen Coordinator + Vehicle Assembly Supervisor",
+        "Coordinated with 500+ engineers daily",
+        "2,000 motorcycles rolled out every single day",
+        "'Torque it properly, macha!' — 17 times per shift 😄"
+    ],
+    cards: [
+        {
+            icon: "🏭",
+            title: "Production Floor",
+            description: "Supervising 2,000 motorcycles daily. Every bolt tightened, every engine tested — zero compromises."
+        },
+        {
+            icon: "📊",
+            title: "Kaizen Master",
+            description: "Continuous improvement wasn't just a buzzword. It was hunting inefficiencies and making processes bulletproof."
+        },
+        {
+            icon: "🔧",
+            title: "500+ Engineers",
+            description: "Coordinating with a massive team across shifts. Communication, leadership, and keeping the line moving."
+        },
+        {
+            icon: "⚡",
+            title: "The Pivot",
+            description: "Industry 4.0 hit the factory — robots, IoT, data everywhere. That's when I knew: time to learn code."
+        }
     ]
 };
 
@@ -100,6 +142,12 @@ export default function RoomScene({ onBack }) {
     const [isContentVisible, setIsContentVisible] = useState(false);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [showSoftware, setShowSoftware] = useState(false);
+    const [activeCardIndex, setActiveCardIndex] = useState(0);
+
+    // Reset card index when shirt changes
+    useEffect(() => {
+        setActiveCardIndex(0);
+    }, [selectedShirt]);
 
     // Fade in content after mount
     useEffect(() => {
@@ -171,11 +219,62 @@ export default function RoomScene({ onBack }) {
                 <div className={`passion-display ${selectedShirt}`}>
                     <h2 className="passion-title">{currentContent.title}</h2>
                     <h3 className="passion-subtitle">{currentContent.subtitle}</h3>
-                    <p className="passion-description">{currentContent.description}</p>
-                    <div className="passion-highlights">
-                        {currentContent.highlights.map((item, index) => (
-                            <span key={index} className="highlight-tag">{item}</span>
+
+                    {/* Story Points - Timeline Style */}
+                    <div className="story-points">
+                        {currentContent.storyPoints.map((point, index) => (
+                            <div key={index} className="story-point" style={{ animationDelay: `${0.5 + index * 0.15}s` }}>
+                                <span className="point-marker">▹</span>
+                                <span className="point-text">{point}</span>
+                            </div>
                         ))}
+                    </div>
+
+                    {/* Stacked Carousel */}
+                    <div className="carousel-container">
+                        <div className="carousel-stack">
+                            {currentContent.cards.map((card, index) => {
+                                // Calculate position relative to active card
+                                const position = index - activeCardIndex;
+                                let positionClass = '';
+
+                                if (position === 0) positionClass = 'active';
+                                else if (position === -1 || (activeCardIndex === 0 && index === currentContent.cards.length - 1)) positionClass = 'prev';
+                                else if (position === 1 || (activeCardIndex === currentContent.cards.length - 1 && index === 0)) positionClass = 'next';
+                                else if (position < -1) positionClass = 'prev-hidden';
+                                else positionClass = 'next-hidden';
+
+                                return (
+                                    <div
+                                        key={index}
+                                        className={`carousel-card ${positionClass}`}
+                                        onClick={() => setActiveCardIndex(index)}
+                                    >
+                                        {/* Animated neon border lines */}
+                                        <span className="border-line border-line-top"></span>
+                                        <span className="border-line border-line-right"></span>
+                                        <span className="border-line border-line-bottom"></span>
+                                        <span className="border-line border-line-left"></span>
+
+                                        <span className="card-icon">{card.icon}</span>
+                                        <h4 className="card-title">{card.title}</h4>
+                                        <p className="card-description">{card.description}</p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Dot Navigation */}
+                        <div className="carousel-dots">
+                            {currentContent.cards.map((_, index) => (
+                                <button
+                                    key={index}
+                                    className={`carousel-dot ${index === activeCardIndex ? 'active' : ''}`}
+                                    onClick={() => setActiveCardIndex(index)}
+                                    aria-label={`Go to card ${index + 1}`}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
 
