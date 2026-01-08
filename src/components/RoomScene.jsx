@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import Lottie from 'lottie-react';
-import footballAnimation from '../assets/lotties/football.json';
 import '../styles/room-scene.scss';
 
 // Football t-shirt content
 const footballContent = {
     title: "Football Passion",
     subtitle: "The Beautiful Game",
-    description: "Football isn't just a sport—it's a way of life. From weekend matches with friends to watching legendary games, the pitch has always been my second home.",
+    description: "Football isn't just a sport—it's a way of life. From weekend matches with friends to watching legendary games, the pitch has always been my second home. The camaraderie, the thrill of competition, and the pure joy of playing make every game memorable.",
     highlights: [
-        "Weekend warrior on the local pitch",
-        "Tactical mind for the beautiful game",
-        "Team player with leadership spirit",
-        "Never-ending passion for the sport"
+        "⚽ Weekend warrior on the local pitch",
+        "🧠 Tactical mind for the beautiful game",
+        "🏆 Team player with leadership spirit",
+        "❤️ Never-ending passion for the sport"
     ]
 };
 
@@ -20,12 +18,12 @@ const footballContent = {
 const royalEnfieldContent = {
     title: "Royal Enfield",
     subtitle: "The Torque Life",
-    description: "There's nothing quite like the thump of a Royal Enfield engine. The open road, the wind, and the machine that connects you to every mile traveled.",
+    description: "There's nothing quite like the thump of a Royal Enfield engine. The open road, the wind, and the machine that connects you to every mile traveled. Each ride is a journey of self-discovery and freedom that words cannot capture.",
     highlights: [
-        "Weekend road trips explorer",
-        "Mechanical soul & DIY enthusiast",
-        "Brotherhood of riders",
-        "Freedom on two wheels"
+        "🛤️ Weekend road trips explorer",
+        "🔧 Mechanical soul & DIY enthusiast",
+        "🤝 Brotherhood of riders",
+        "🏍️ Freedom on two wheels"
     ]
 };
 
@@ -169,16 +167,16 @@ export default function RoomScene({ onBack }) {
                     </div>
                 </div>
 
-                {/* Content Panel */}
-                <div className={`content-panel ${selectedShirt}`}>
-                    <h2 className="content-title">{currentContent.title}</h2>
-                    <h3 className="content-subtitle">{currentContent.subtitle}</h3>
-                    <p className="content-description">{currentContent.description}</p>
-                    <ul className="content-highlights">
+                {/* Content Display - No Card Design */}
+                <div className={`passion-display ${selectedShirt}`}>
+                    <h2 className="passion-title">{currentContent.title}</h2>
+                    <h3 className="passion-subtitle">{currentContent.subtitle}</h3>
+                    <p className="passion-description">{currentContent.description}</p>
+                    <div className="passion-highlights">
                         {currentContent.highlights.map((item, index) => (
-                            <li key={index}>{item}</li>
+                            <span key={index} className="highlight-tag">{item}</span>
                         ))}
-                    </ul>
+                    </div>
                 </div>
 
                 {/* Software Journey Button - Bottom Center */}
@@ -200,14 +198,6 @@ export default function RoomScene({ onBack }) {
                 </div>
             </div>
 
-            {/* Football Lottie at side */}
-            <div className="football-lottie">
-                <Lottie
-                    animationData={footballAnimation}
-                    loop={true}
-                    style={{ width: 120, height: 120 }}
-                />
-            </div>
         </div>
     );
 }
