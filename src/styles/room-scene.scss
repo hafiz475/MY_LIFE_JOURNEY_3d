@@ -217,19 +217,6 @@
     position: relative;
     animation: fadeSlideIn 0.6s ease-out;
 
-    // Gradient accent bar - matches button theme
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 80px;
-        height: 3px;
-        background: linear-gradient(90deg, #00f2ff 0%, #ff0000 100%);
-        border-radius: 2px;
-    }
-
     // Football theme - with gradient accent
     &.football {
         .passion-title {
@@ -240,11 +227,13 @@
         }
 
         .highlight-tag {
-            border-color: rgba(50, 205, 50, 0.4);
+            background: linear-gradient(135deg, rgba(0, 242, 255, 0.15) 0%, rgba(50, 205, 50, 0.15) 100%);
+            border-color: rgba(50, 205, 50, 0.5);
 
             &:hover {
+                background: linear-gradient(135deg, rgba(0, 242, 255, 0.25) 0%, rgba(50, 205, 50, 0.25) 100%);
                 border-color: #32CD32;
-                box-shadow: 0 0 15px rgba(50, 205, 50, 0.3);
+                box-shadow: 0 0 20px rgba(50, 205, 50, 0.4);
             }
         }
     }
@@ -259,11 +248,13 @@
         }
 
         .highlight-tag {
-            border-color: rgba(210, 105, 30, 0.4);
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.12) 0%, rgba(210, 105, 30, 0.15) 100%);
+            border-color: rgba(210, 105, 30, 0.5);
 
             &:hover {
+                background: linear-gradient(135deg, rgba(255, 0, 0, 0.22) 0%, rgba(210, 105, 30, 0.25) 100%);
                 border-color: #D2691E;
-                box-shadow: 0 0 15px rgba(210, 105, 30, 0.3);
+                box-shadow: 0 0 20px rgba(210, 105, 30, 0.4);
             }
         }
     }
@@ -274,6 +265,9 @@
         font-weight: 700;
         margin-bottom: 0.3rem;
         letter-spacing: 0.02em;
+        animation: typeIn 0.8s steps(20) forwards;
+        overflow: hidden;
+        white-space: nowrap;
     }
 
     .passion-subtitle {
@@ -285,6 +279,9 @@
         -webkit-text-fill-color: transparent;
         margin-bottom: 1.5rem;
         font-style: italic;
+        animation: typeIn 0.6s steps(15) 0.3s both;
+        overflow: hidden;
+        white-space: nowrap;
     }
 
     .passion-description {
@@ -296,6 +293,7 @@
         max-width: 650px;
         margin-left: auto;
         margin-right: auto;
+        animation: fadeTypeIn 1s ease-out 0.5s both;
     }
 
     .passion-highlights {
@@ -308,17 +306,35 @@
     .highlight-tag {
         font-family: 'Inter', sans-serif;
         font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.9);
-        padding: 0.6rem 1.2rem;
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.95);
+        padding: 0.7rem 1.4rem;
+        border: 1px solid rgba(0, 242, 255, 0.3);
         border-radius: 25px;
-        background: transparent;
+        background: linear-gradient(135deg, rgba(0, 242, 255, 0.1) 0%, rgba(0, 150, 200, 0.08) 100%);
         transition: all 0.3s ease;
         cursor: default;
+        backdrop-filter: blur(5px);
+        animation: tagSlideIn 0.5s ease-out backwards;
+
+        // Stagger animation for each tag
+        &:nth-child(1) {
+            animation-delay: 0.8s;
+        }
+
+        &:nth-child(2) {
+            animation-delay: 1s;
+        }
+
+        &:nth-child(3) {
+            animation-delay: 1.2s;
+        }
+
+        &:nth-child(4) {
+            animation-delay: 1.4s;
+        }
 
         &:hover {
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-3px) scale(1.02);
         }
     }
 }
@@ -332,6 +348,40 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes typeIn {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes fadeTypeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes tagSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
     }
 }
 
