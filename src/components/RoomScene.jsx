@@ -52,12 +52,12 @@ const royalEnfieldContent = {
             description: "Supervising 2,000 motorcycles daily. Every bolt tightened, every engine tested — zero compromises."
         },
         {
-            icon: "📊",
+            icon: "/assets/2dModels/kaizen_master.png",
             title: "Kaizen Master",
             description: "Continuous improvement wasn't just a buzzword. It was hunting inefficiencies and making processes bulletproof."
         },
         {
-            icon: "🔧",
+            icon: "/assets/2dModels/mechanical_engineer.png",
             title: "500+ Engineers",
             description: "Coordinating with a massive team across shifts. Communication, leadership, and keeping the line moving."
         },
