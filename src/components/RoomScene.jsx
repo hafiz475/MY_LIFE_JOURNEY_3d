@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ParticleEffect from './ParticleEffect';
 import '../styles/room-scene.scss';
 
 // Football t-shirt content
@@ -101,6 +102,9 @@ function SoftwareScene({ onBack }) {
 
     return (
         <div className={`software-cockpit ${isVisible ? 'visible' : ''}`}>
+            {/* Particle Effect Background */}
+            <ParticleEffect />
+
             {/* Back button */}
             <button className="back-to-room" onClick={onBack}>
                 <span>← Back to Interests</span>
