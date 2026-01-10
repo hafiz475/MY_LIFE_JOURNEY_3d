@@ -1047,59 +1047,98 @@
     }
 }
 
-// Full width software content (no 3D model)
+// Full width software content - INNOVATIVE DESIGN
 .software-content-full {
-    max-width: 800px;
+    max-width: 900px;
     width: 90%;
-    padding: 4rem 2rem;
+    padding: 3rem 2rem;
     text-align: center;
     position: relative;
     z-index: 10;
 
+    // Main title with animated gradient
     .software-title {
-        font-family: 'Inter', sans-serif;
-        font-size: 3rem;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 3.2rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #00c8ff 0%, #ff00ff 50%, #00c8ff 100%);
+        background: linear-gradient(135deg, #00c8ff, #ff00ff, #00c8ff);
+        background-size: 200% 200%;
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 0.5rem;
+        animation: gradientShift 4s ease infinite;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
     }
 
+    @keyframes gradientShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+
+    // Subtitle with glow
     .software-subtitle {
         font-family: 'Caveat', cursive;
         font-size: 1.8rem;
-        color: rgba(255, 255, 255, 0.6);
-        margin-bottom: 2rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 1.5rem;
+        text-shadow: 0 0 20px rgba(0, 200, 255, 0.3);
     }
 
+    // Description with glassmorphism container
     .software-description {
         font-family: 'Inter', sans-serif;
-        font-size: 1.1rem;
-        color: rgba(255, 255, 255, 0.8);
-        line-height: 1.8;
+        font-size: 1.05rem;
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.9;
         margin-bottom: 3rem;
-        max-width: 600px;
+        max-width: 650px;
         margin-left: auto;
         margin-right: auto;
+        padding: 1.5rem 2rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(10px);
     }
 
+    // Section headers with animated underline
     .skills-section,
     .projects-section {
-        margin-bottom: 2.5rem;
+        margin-bottom: 3rem;
 
         h3 {
-            font-family: 'Inter', sans-serif;
-            font-size: 1.2rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
             font-weight: 600;
             color: #00c8ff;
-            margin-bottom: 1.2rem;
+            margin-bottom: 1.5rem;
             text-transform: uppercase;
-            letter-spacing: 0.15em;
+            letter-spacing: 0.25em;
+            position: relative;
+            display: inline-block;
+            
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: -8px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 60px;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, #00c8ff, transparent);
+                animation: pulseWidth 2s ease-in-out infinite;
+            }
         }
     }
 
+    @keyframes pulseWidth {
+        0%, 100% { width: 60px; opacity: 1; }
+        50% { width: 100px; opacity: 0.7; }
+    }
+
+    // Skill tags - hexagonal inspired glass cards
     .skills-list {
         display: flex;
         flex-wrap: wrap;
@@ -1111,16 +1150,49 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 1rem 1.5rem;
-        background: rgba(0, 200, 255, 0.08);
-        border: 1px solid rgba(0, 200, 255, 0.25);
+        padding: 1.2rem 1.8rem;
+        background: linear-gradient(135deg, rgba(0, 200, 255, 0.08) 0%, rgba(255, 0, 255, 0.05) 100%);
+        border: 1px solid rgba(0, 200, 255, 0.2);
         border-radius: 12px;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+
+        // Animated shine effect
+        &::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.1) 50%, transparent 60%);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
 
         &:hover {
-            background: rgba(0, 200, 255, 0.15);
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 200, 255, 0.2);
+            transform: translateY(-8px) scale(1.02);
+            background: linear-gradient(135deg, rgba(0, 200, 255, 0.18) 0%, rgba(255, 0, 255, 0.12) 100%);
+            border-color: rgba(0, 200, 255, 0.5);
+            box-shadow: 
+                0 15px 40px rgba(0, 200, 255, 0.25),
+                0 0 30px rgba(0, 200, 255, 0.15) inset;
+
+            &::before {
+                opacity: 1;
+                animation: shine 0.8s ease forwards;
+            }
+
+            .skill-name {
+                text-shadow: 0 0 15px rgba(0, 200, 255, 0.6);
+            }
+        }
+
+        @keyframes shine {
+            0% { left: -50%; }
+            100% { left: 150%; }
         }
 
         .skill-name {
@@ -1128,42 +1200,62 @@
             font-size: 1rem;
             font-weight: 600;
             color: #fff;
+            transition: all 0.3s ease;
         }
 
         .skill-level {
             font-family: 'Inter', sans-serif;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
-            margin-top: 0.3rem;
+            font-size: 0.7rem;
+            color: #00c8ff;
+            margin-top: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.8;
         }
     }
 
+    // Projects list - floating cards style
     .projects-list {
         list-style: none;
         padding: 0;
         margin: 0;
-        display: inline-block;
-        text-align: left;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.8rem;
 
         li {
             font-family: 'Inter', sans-serif;
             font-size: 1rem;
-            color: rgba(255, 255, 255, 0.8);
-            padding: 0.8rem 0;
-            padding-left: 1.8rem;
+            color: rgba(255, 255, 255, 0.9);
+            padding: 1rem 2rem;
             position: relative;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            width: fit-content;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
 
             &::before {
                 content: '▸';
-                position: absolute;
-                left: 0;
                 color: #00c8ff;
-                font-size: 1.1rem;
+                font-size: 1rem;
+                text-shadow: 0 0 10px rgba(0, 200, 255, 0.5);
             }
 
-            &:last-child {
-                border-bottom: none;
+            &:hover {
+                background: rgba(0, 200, 255, 0.08);
+                border-color: rgba(0, 200, 255, 0.25);
+                transform: translateX(10px);
+                box-shadow: 0 5px 20px rgba(0, 200, 255, 0.15);
+
+                &::before {
+                    color: #ff00ff;
+                    text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+                }
             }
         }
     }
