@@ -206,15 +206,15 @@ export default function ParticleEffect() {
         containerRef.current.appendChild(renderer.domElement);
         rendererRef.current = renderer;
 
-        // Create particles on a grid
+        // Create particles - full screen coverage
         const particleCount = 3000;
         const positions = new Float32Array(particleCount * 3);
         const randoms = new Float32Array(particleCount);
 
-        // Distribute particles across view
+        // Distribute particles across full view with extra margin for edge coverage
         for (let i = 0; i < particleCount; i++) {
-            positions[i * 3] = (Math.random() - 0.5) * 4;     // x
-            positions[i * 3 + 1] = (Math.random() - 0.5) * 3; // y
+            positions[i * 3] = (Math.random() - 0.5) * 6;     // x: wider spread for edge coverage
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 4; // y: taller spread
             positions[i * 3 + 2] = (Math.random() - 0.5) * 0.5; // z (shallow depth)
             randoms[i] = Math.random();
         }
