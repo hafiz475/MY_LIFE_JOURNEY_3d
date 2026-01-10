@@ -166,6 +166,11 @@ export default function ParticleEffect() {
     useEffect(() => {
         if (!containerRef.current) return;
 
+        // Clean up any existing canvas (for React Strict Mode)
+        while (containerRef.current.firstChild) {
+            containerRef.current.removeChild(containerRef.current.firstChild);
+        }
+
         // Setup Three.js scene
         const scene = new THREE.Scene();
         sceneRef.current = scene;
@@ -187,6 +192,17 @@ export default function ParticleEffect() {
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Style the canvas for absolute positioning - use cssText to ensure it applies
+        renderer.domElement.style.cssText = `
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            pointer-events: none !important;
+        `;
+
         containerRef.current.appendChild(renderer.domElement);
         rendererRef.current = renderer;
 
@@ -280,13 +296,13 @@ export default function ParticleEffect() {
         <div
             ref={containerRef}
             style={{
-                position: 'fixed',
+                position: 'absolute',
                 top: 0,
                 left: 0,
                 width: '100%',
                 height: '100%',
                 pointerEvents: 'none',
-                zIndex: 1
+                zIndex: 5
             }}
         />
     );

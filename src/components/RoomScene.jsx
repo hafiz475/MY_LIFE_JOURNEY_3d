@@ -102,8 +102,10 @@ function SoftwareScene({ onBack }) {
 
     return (
         <div className={`software-cockpit ${isVisible ? 'visible' : ''}`}>
-            {/* Particle Effect Background */}
-            <ParticleEffect />
+            {/* Particle Effect Background - Fixed position wrapper */}
+            <div className="particle-wrapper">
+                <ParticleEffect />
+            </div>
 
             {/* Back button */}
             <button className="back-to-room" onClick={onBack}>
