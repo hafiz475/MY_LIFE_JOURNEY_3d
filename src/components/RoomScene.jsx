@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ParticleEffect from './ParticleEffect';
+import LaptopScene from './LaptopScene';
 import '../styles/room-scene.scss';
 
 // Football t-shirt content
@@ -92,54 +93,17 @@ const softwareContent = {
     ]
 };
 
-// Software Scene Component (without 3D model)
+// Software scene component - now uses 3D Laptop
 function SoftwareScene({ onBack }) {
-    const [isVisible, setIsVisible] = useState(false);
-
-    useEffect(() => {
-        const timer = setTimeout(() => setIsVisible(true), 100);
-        return () => clearTimeout(timer);
-    }, []);
-
     return (
-        <div className={`software-cockpit ${isVisible ? 'visible' : ''}`}>
-            {/* Particle Effect Background - Fixed position wrapper */}
-            <div className="particle-wrapper">
-                <ParticleEffect />
-            </div>
-
+        <div className={`software-cockpit visible`}>
             {/* Back button */}
             <button className="back-to-room" onClick={onBack}>
                 <span>← Back to Interests</span>
             </button>
 
-            {/* Software Content - Full width now without 3D model */}
-            <div className="software-content-full">
-                <h1 className="software-title">{softwareContent.title}</h1>
-                <h2 className="software-subtitle">{softwareContent.subtitle}</h2>
-                <p className="software-description">{softwareContent.description}</p>
-
-                <div className="skills-section">
-                    <h3>Tech Stack</h3>
-                    <div className="skills-list">
-                        {softwareContent.skills.map((skill, index) => (
-                            <div key={index} className="skill-tag">
-                                <span className="skill-name">{skill.name}</span>
-                                <span className="skill-level">{skill.level}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="projects-section">
-                    <h3>What I Build</h3>
-                    <ul className="projects-list">
-                        {softwareContent.projects.map((project, index) => (
-                            <li key={index}>{project}</li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
+            {/* 3D Laptop Scene */}
+            <LaptopScene />
         </div>
     );
 }

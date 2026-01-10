@@ -147,8 +147,8 @@ void main() {
     // Soft edges
     float alpha = smoothstep(0.5, 0.3, dist) * vAlpha;
     
-    // Blue color with glow
-    vec3 color = vec3(0.3, 0.5, 1.0);
+    // Purple/violet color for white background
+    vec3 color = vec3(0.42, 0.13, 0.66); // Purple #6b21a8
     
     gl_FragColor = vec4(color, alpha);
 }
