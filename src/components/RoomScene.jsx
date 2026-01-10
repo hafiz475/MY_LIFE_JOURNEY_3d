@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ParticleEffect from './ParticleEffect';
 import '../styles/room-scene.scss';
 
@@ -144,11 +145,15 @@ function SoftwareScene({ onBack }) {
 }
 
 export default function RoomScene({ onBack }) {
+    const navigate = useNavigate();
+    const location = useLocation();
     const [selectedShirt, setSelectedShirt] = useState('football');
     const [isContentVisible, setIsContentVisible] = useState(false);
     const [isTransitioning, setIsTransitioning] = useState(false);
-    const [showSoftware, setShowSoftware] = useState(false);
     const [activeCardIndex, setActiveCardIndex] = useState(0);
+
+    // Check if we're on the /software route
+    const showSoftware = location.pathname === '/software';
 
     // Reset card index when shirt changes
     useEffect(() => {
@@ -161,23 +166,23 @@ export default function RoomScene({ onBack }) {
         return () => clearTimeout(timer);
     }, []);
 
-    // Handle software transition
+    // Handle software transition - navigate to /software route
     const handleEnterSoftware = () => {
         setIsTransitioning(true);
         setTimeout(() => {
-            setShowSoftware(true);
+            navigate('/software');
         }, 800);
     };
 
-    // Handle back from software
+    // Handle back from software - navigate to /room route
     const handleBackFromSoftware = () => {
-        setShowSoftware(false);
         setIsTransitioning(false);
+        navigate('/room');
     };
 
     const currentContent = selectedShirt === 'football' ? footballContent : royalEnfieldContent;
 
-    // Show software scene
+    // Show software scene if on /software route
     if (showSoftware) {
         return <SoftwareScene onBack={handleBackFromSoftware} />;
     }

@@ -1,79 +1,49 @@
 import { useEffect, useState, Suspense } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import './styles/main.scss';
 import MainScene from './components/MainScene';
 import Overlay from './components/Overlay';
 import ExperienceStart from './components/ExperienceStart';
+import RoomScene from './components/RoomScene';
 
-function App() {
-  const [hasStarted, setHasStarted] = useState(false);
+// Main Experience Component - combines intro, flight, and sunset on single page
+function MainExperience() {
+  const navigate = useNavigate();
   const [showIntro, setShowIntro] = useState(true);
+  const [hasStarted, setHasStarted] = useState(false);
   const [section, setSection] = useState(0);
   const [canScroll, setCanScroll] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
-  const [isLanding, setIsLanding] = useState(false); // Landing animation in progress
-  const [isDark, setIsDark] = useState(false); // Dark transition screen
-  const maxSection = 1; // Only 0 and 1 via scroll, 2 via Land button
+  const [isLanding, setIsLanding] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+  const [isStoryDone, setIsStoryDone] = useState(false);
 
-  // Called from MainScene when rain starts
+  const handleStart = () => {
+    // Don't hide intro yet - let animation play
+    setHasStarted(true);
+  };
+
+  const handleExitComplete = () => {
+    // Hide intro after animation completes
+    setShowIntro(false);
+  };
+
   const handleRainStart = () => {
     setCanScroll(true);
   };
 
-  // Called when Land button is clicked
-  const handleLand = () => {
-    setIsLanding(true);
-
-    // After 3s landing animation, go dark
-    setTimeout(() => {
-      setIsDark(true);
-
-      // After 2s dark, show Scene 3
-      setTimeout(() => {
-        setSection(2);
-        setIsLanding(false);
-
-        // Fade out dark after scene loads
-        setTimeout(() => setIsDark(false), 500);
-      }, 2000);
-    }, 3000);
-  };
-
-  // Handler to go back from space scene to sunset scene
-  const handleBack = () => {
-    setIsDark(true);
-
-    // After dark transition, go back to section 1
-    setTimeout(() => {
-      setSection(1);
-
-      // Fade out dark after scene loads
-      setTimeout(() => setIsDark(false), 500);
-    }, 1000);
-  };
-
+  // Handle scroll to switch from section 0 to section 1
   useEffect(() => {
-    if (!hasStarted) return; // Disable scroll until started
+    if (!hasStarted || section !== 0) return;
 
     let locked = false;
 
     const onWheel = (e) => {
       if (!canScroll) return;
       if (locked) return;
-      if (isLanding) return; // Block scroll during landing
-
-      // Disable scroll navigation on section 2 (space screen)
-      if (section === 2) return;
 
       if (e.deltaY > 0) {
-        // Can only scroll to section 1, not 2.
-        // If already at section 1, only increment if story is done (Hi logic)
-        setSection((s) => {
-          if (s < 1) setHasScrolled(true);
-          if (s >= 1 && !isStoryDone) return 1; // Block until "Hi"
-          return Math.min(s + 1, maxSection);
-        });
-      } else {
-        setSection((s) => Math.max(s - 1, 0));
+        setSection(1);
+        setCanScroll(false);
       }
 
       locked = true;
@@ -82,21 +52,38 @@ function App() {
 
     window.addEventListener('wheel', onWheel, { passive: true });
     return () => window.removeEventListener('wheel', onWheel);
-  }, [hasStarted, canScroll, isLanding, hasScrolled, section]); // Added section dependency
+  }, [hasStarted, canScroll, section]);
 
-  // Story Timing for Scene 2
-  const [isStoryDone, setIsStoryDone] = useState(false);
+  // Story timing for section 1
   useEffect(() => {
-    if (section === 1) {
-      setIsStoryDone(false);
-      // 3.5s (enter delay) + 6s (read time) = 9.5s
-      const timer = setTimeout(() => setIsStoryDone(true), 9500);
-      return () => clearTimeout(timer);
-    } else {
-      setIsStoryDone(false);
-    }
+    if (section !== 1) return;
+    const timer = setTimeout(() => setIsStoryDone(true), 9500);
+    return () => clearTimeout(timer);
   }, [section]);
 
+  const handleLand = () => {
+    setIsLanding(true);
+
+    setTimeout(() => {
+      setIsDark(true);
+
+      setTimeout(() => {
+        navigate('/room');
+      }, 2000);
+    }, 3000);
+  };
+
+  // Show intro screen before starting (no 3D scene yet)
+  if (!hasStarted) {
+    return (
+      <ExperienceStart
+        onStart={handleStart}
+        onExitComplete={handleExitComplete}
+      />
+    );
+  }
+
+  // Show main experience - with intro overlay if still transitioning
   return (
     <div className="app-container">
       <Suspense fallback={null}>
@@ -109,30 +96,49 @@ function App() {
         />
       </Suspense>
 
+      {/* Intro overlay on top of 3D scene during transition */}
       {showIntro && (
         <ExperienceStart
-          onStart={() => setHasStarted(true)}
-          onExitComplete={() => setShowIntro(false)}
+          onStart={handleStart}
+          onExitComplete={handleExitComplete}
         />
       )}
 
-      {hasStarted && (
-        <>
-          <Overlay section={section} onLand={handleLand} onBack={handleBack} isStoryDone={isStoryDone} />
-
-          {/* Scroll Prompt - section 0 only, and only if never scrolled before */}
-          {canScroll && section === 0 && !hasScrolled && (
-            <div className="scroll-prompt">
-              <span>Scroll to continue</span>
-              <div className="scroll-arrow">↓</div>
-            </div>
-          )}
-
-          {/* Dark Transition Overlay */}
-          <div className={`dark-overlay ${isDark ? 'active' : ''}`} />
-        </>
+      {section === 0 && canScroll && (
+        <div className="scroll-prompt">
+          <span>Scroll to continue</span>
+          <div className="scroll-arrow">↓</div>
+        </div>
       )}
+
+      {section === 1 && (
+        <Overlay section={1} onLand={handleLand} onBack={() => { }} isStoryDone={isStoryDone} />
+      )}
+
+      <div className={`dark-overlay ${isDark ? 'active' : ''}`} />
     </div>
+  );
+}
+
+// Room Scene Wrapper with back navigation
+function RoomSceneWrapper() {
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate('/');
+  };
+
+  return <RoomScene onBack={handleBack} />;
+}
+
+// Main App with Routes - simplified to only / and /room
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<MainExperience />} />
+      <Route path="/room" element={<RoomSceneWrapper />} />
+      <Route path="/software" element={<RoomSceneWrapper />} />
+    </Routes>
   );
 }
 
