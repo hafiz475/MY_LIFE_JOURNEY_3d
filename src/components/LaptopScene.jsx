@@ -7,7 +7,8 @@ import {
     useGLTF,
     MeshReflectorMaterial,
     Float,
-    OrbitControls
+    OrbitControls,
+    useTexture
 } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { useNavigate } from 'react-router-dom';
@@ -87,152 +88,32 @@ function GamingLaptop() {
     );
 }
 
-// Reflective Floor/Desk surface component
+// Reflective Floor/Desk surface component with wooden texture
 function ReflectiveFloor() {
+    const texture = useTexture('/src/assets/wallpaper/laptop_wooden_texture.png');
+
+    // Configure texture repeat for larger floor
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(4, 4);
+
     return (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.8, 0]} receiveShadow>
             <planeGeometry args={[50, 50]} />
             <MeshReflectorMaterial
-                blur={[300, 100]}
+                blur={[200, 100]}
                 resolution={1024}
                 mixBlur={1}
-                mixStrength={40}
-                roughness={1}
+                mixStrength={20}
+                roughness={0.8}
                 depthScale={1.2}
                 minDepthThreshold={0.4}
                 maxDepthThreshold={1.4}
-                color="#050505"
-                metalness={0.5}
-                mirror={0.5}
+                color="#8b7355"
+                metalness={0.2}
+                mirror={0.3}
+                map={texture}
             />
         </mesh>
-    );
-}
-
-// Circuit Trace Line with animated pulse
-function CircuitLine({ points, delay, color }) {
-    const lineRef = useRef();
-    const pulseRef = useRef();
-
-    // Create line geometry from points
-    const linePoints = points.map(p => new THREE.Vector3(p[0], -1.78, p[1]));
-    const lineGeometry = new THREE.BufferGeometry().setFromPoints(linePoints);
-
-    // Calculate total line length for pulse animation
-    let totalLength = 0;
-    for (let i = 1; i < linePoints.length; i++) {
-        totalLength += linePoints[i].distanceTo(linePoints[i - 1]);
-    }
-
-    useFrame((state) => {
-        if (pulseRef.current) {
-            // Pulse travels along the line
-            const time = (state.clock.elapsedTime * 0.5 + delay) % 3;
-            const progress = time / 3;
-
-            // Find position along the path
-            let traveled = progress * totalLength;
-            let currentPos = linePoints[0].clone();
-
-            for (let i = 1; i < linePoints.length; i++) {
-                const segmentLength = linePoints[i].distanceTo(linePoints[i - 1]);
-                if (traveled <= segmentLength) {
-                    const t = traveled / segmentLength;
-                    currentPos.lerpVectors(linePoints[i - 1], linePoints[i], t);
-                    break;
-                }
-                traveled -= segmentLength;
-                currentPos = linePoints[i].clone();
-            }
-
-            pulseRef.current.position.copy(currentPos);
-            pulseRef.current.position.y = -1.76;
-
-            // Pulse opacity
-            const opacity = Math.sin(progress * Math.PI) * 0.8;
-            if (pulseRef.current.material) {
-                pulseRef.current.material.opacity = opacity;
-            }
-        }
-    });
-
-    return (
-        <group>
-            {/* Static trace line */}
-            <line ref={lineRef} geometry={lineGeometry}>
-                <lineBasicMaterial color={color} opacity={0.3} transparent linewidth={2} />
-            </line>
-
-            {/* Moving pulse dot */}
-            <mesh ref={pulseRef} position={[0, -1.76, 0]}>
-                <sphereGeometry args={[0.08, 16, 16]} />
-                <meshBasicMaterial color="#ff6600" transparent opacity={0.8} />
-            </mesh>
-        </group>
-    );
-}
-
-// Circuit Board Pattern on Floor
-function FloorCircuitBoard() {
-    // Define circuit trace paths emanating from keyboard center (0, 1)
-    const traces = [
-        // Front traces (towards viewer)
-        { points: [[0, 1], [0, 3], [-0.5, 3.5], [-0.5, 5]], delay: 0 },
-        { points: [[0, 1], [0.3, 2], [0.3, 4], [1, 4.5], [1, 6]], delay: 0.5 },
-        { points: [[0, 1], [-0.3, 2], [-0.3, 3], [-1.2, 3.5], [-1.2, 5.5]], delay: 1 },
-
-        // Left traces
-        { points: [[0, 1], [-0.5, 1.2], [-1.5, 1.2], [-2, 0.8], [-3, 0.8]], delay: 0.3 },
-        { points: [[0, 1], [-0.8, 0.5], [-2, 0.5], [-2.5, 1], [-4, 1]], delay: 0.8 },
-        { points: [[0, 1], [-0.5, 1.5], [-1, 2], [-2.5, 2], [-3.5, 1.5]], delay: 1.3 },
-
-        // Right traces
-        { points: [[0, 1], [0.5, 1.2], [1.5, 1.2], [2, 0.8], [3, 0.8]], delay: 0.2 },
-        { points: [[0, 1], [0.8, 0.5], [2, 0.5], [2.5, 1], [4, 1]], delay: 0.7 },
-        { points: [[0, 1], [0.5, 1.5], [1, 2], [2.5, 2], [3.5, 1.5]], delay: 1.2 },
-
-        // Back traces (away from viewer)
-        { points: [[0, 1], [0, 0], [0.5, -0.5], [0.5, -2]], delay: 0.4 },
-        { points: [[0, 1], [-0.3, 0], [-0.8, -0.5], [-0.8, -1.5], [-1.5, -2]], delay: 0.9 },
-        { points: [[0, 1], [0.3, 0], [0.8, -0.5], [1.5, -0.5], [2, -1.5]], delay: 1.4 },
-
-        // Diagonal traces
-        { points: [[0, 1], [-1, 2.5], [-2, 3], [-3, 3.5], [-4, 4.5]], delay: 0.6 },
-        { points: [[0, 1], [1, 2.5], [2, 3], [3, 3.5], [4, 4.5]], delay: 1.1 },
-        { points: [[0, 1], [-1.5, 0], [-2.5, -0.5], [-3.5, -1]], delay: 1.6 },
-        { points: [[0, 1], [1.5, 0], [2.5, -0.5], [3.5, -1]], delay: 2.1 },
-    ];
-
-    const traceColors = ['#f97316', '#fb923c', '#ea580c', '#ff7700'];
-
-    return (
-        <group>
-            {traces.map((trace, i) => (
-                <CircuitLine
-                    key={i}
-                    points={trace.points}
-                    delay={trace.delay}
-                    color={traceColors[i % traceColors.length]}
-                />
-            ))}
-
-            {/* Node points at junctions */}
-            {[[-0.5, 3.5], [0.3, 4], [-1.2, 3.5], [-2, 0.8], [-2.5, 2], [2, 0.8], [2.5, 2], [-0.8, -1.5], [1.5, -0.5]].map((pos, i) => (
-                <mesh key={i} position={[pos[0], -1.77, pos[1]]}>
-                    <circleGeometry args={[0.06, 16]} />
-                    <meshBasicMaterial color="#f97316" transparent opacity={0.5} side={THREE.DoubleSide} />
-                </mesh>
-            ))}
-
-            {/* Center glow under keyboard */}
-            <pointLight
-                position={[0, -1.5, 1]}
-                color="#f97316"
-                intensity={0.8}
-                distance={3}
-                decay={2}
-            />
-        </group>
     );
 }
 
@@ -581,9 +462,6 @@ export default function LaptopScene() {
 
                 {/* Reflective Floor Surface */}
                 <ReflectiveFloor />
-
-                {/* Animated Pulse Rings on Floor */}
-                <FloorCircuitBoard />
 
                 {/* Back Wall */}
                 <BackWall />
