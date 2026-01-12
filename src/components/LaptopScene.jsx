@@ -44,9 +44,11 @@ function GamingLaptop() {
                     className="laptop-screen-content"
                 >
                     <div className="neon-arcade-screen">
-                        {/* Back to Interests Button - Inside Screen */}
-                        <button className="screen-back-btn" onClick={() => { window.location.href = '/room'; }}>
-                            ← Back to Interests
+                        {/* Back to Interests - Neon Icon at top left */}
+                        <button className="neon-back-icon" onClick={() => { window.location.href = '/room'; }} title="Back to Interests">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>
                         </button>
 
                         <div className="arcade-header">

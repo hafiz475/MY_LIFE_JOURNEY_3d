@@ -501,10 +501,17 @@ export default function PinballGame({ onClose }) {
                 const s = gameStateRef.current;
                 s.plunger.isCharging = false;
                 if (!s.ball.active) {
-                    s.ball.vx = 0; s.ball.vy = -s.plunger.power * 28 - 14;
-                    s.ball.active = true; s.ball.launched = false; s.shake = 8; s.ball.color = '#ffffff';
+                    // Increased launch velocity for guaranteed exit
+                    const launchPower = s.plunger.power * 35 + 18;
+                    s.ball.vx = -2; // Slight left push to help navigate curve
+                    s.ball.vy = -launchPower;
+                    s.ball.active = true;
+                    s.ball.launched = false;
+                    s.shake = 8;
+                    s.ball.color = '#ffffff';
                     const { width, laneWidth, margin } = s;
                     s.ball.x = width - laneWidth / 2 - margin;
+                    s.ball.y = s.height - 110; // Start slightly higher
                 }
                 s.plunger.power = 0;
             }

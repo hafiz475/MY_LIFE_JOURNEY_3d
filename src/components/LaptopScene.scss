@@ -348,30 +348,41 @@
     }
 }
 
-// Screen Back Button - Inside Laptop Screen
-.screen-back-btn {
+// Neon Back Icon - Top Left Corner
+.neon-back-icon {
     position: absolute;
     top: 8px;
     left: 8px;
-    background: rgba(20, 20, 30, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
-    padding: 6px 12px;
-    font-family: 'Caveat', cursive;
-    font-size: 14px;
-    font-style: italic;
-    color: rgba(255, 255, 255, 0.8);
+    width: 32px;
+    height: 32px;
+    background: rgba(147, 51, 234, 0.2);
+    border: 2px solid rgba(147, 51, 234, 0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
     z-index: 100;
+    padding: 0;
+
+    svg {
+        width: 18px;
+        height: 18px;
+        color: #9333ea;
+        transition: all 0.3s ease;
+    }
 
     &:hover {
-        background: rgba(147, 51, 234, 0.3);
-        border-color: rgba(147, 51, 234, 0.5);
-        color: #fff;
-        transform: translateX(-2px);
+        background: rgba(147, 51, 234, 0.4);
+        border-color: #9333ea;
+        box-shadow: 0 0 20px rgba(147, 51, 234, 0.6);
+        transform: scale(1.1);
+
+        svg {
+            color: #fff;
+            transform: translateX(-2px);
+        }
     }
 }
 
