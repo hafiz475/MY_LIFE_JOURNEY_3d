@@ -242,58 +242,56 @@ export default function LaptopScene() {
 
             </Canvas>
 
-            {/* Phone Full Screen Overlay */}
+            {/* Phone Full Screen Overlay - Phone Frame with Black Panther Wallpaper */}
             {phoneActive && (
-                <div className="phone-fullscreen-overlay">
-                    <div className="phone-frame">
+                <div className="phone-overlay-container">
+                    {/* Phone Device Frame */}
+                    <div className="phone-device">
+                        {/* Phone Notch */}
                         <div className="phone-notch"></div>
-                        <div className="phone-screen">
-                            <div className="phone-status-bar">
-                                <span className="status-time">{currentTime || '12:00'}</span>
-                                <div className="status-icons">
-                                    <svg className="status-icon" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-                                        <path d="M2 22h2V12H2v10zm4 0h2V9H6v13zm4 0h2V6h-2v16zm4 0h2V3h-2v19z" />
-                                    </svg>
-                                    <svg className="status-icon" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-                                        <path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z" />
-                                    </svg>
-                                    <svg className="status-icon battery" viewBox="0 0 24 24" fill="currentColor" width="20" height="16">
-                                        <path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4zM13 18h-2v-2h2v2zm0-4h-2V9h2v5z" />
-                                    </svg>
-                                </div>
+
+                        {/* Phone Screen with Black Panther Wallpaper */}
+                        <div
+                            className="phone-screen-content"
+                            style={{ backgroundImage: `url('/src/assets/wallpaper/black-panther-home wallpaper.jpg')` }}
+                        >
+                            {/* Time Display */}
+                            <div className="phone-time-section">
+                                <span className="phone-clock">{currentTime || '12:00'}</span>
+                                <span className="phone-date">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</span>
                             </div>
-                            <div className="phone-time-large">{currentTime || '12:00'}</div>
-                            <div className="phone-icons">
-                                <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="phone-app whatsapp">
-                                    <svg className="app-icon-svg" viewBox="0 0 24 24" fill="currentColor">
+
+                            {/* Icons Only Grid */}
+                            <div className="phone-icons-grid">
+                                <a href="https://wa.me/918015662012" target="_blank" rel="noopener noreferrer" className="phone-icon-btn whatsapp">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                                     </svg>
-                                    <span className="app-name">WhatsApp</span>
                                 </a>
-                                <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="phone-app linkedin">
-                                    <svg className="app-icon-svg" viewBox="0 0 24 24" fill="currentColor">
+
+                                <a href="https://linkedin.com/in/md-hafizur-rahman" target="_blank" rel="noopener noreferrer" className="phone-icon-btn linkedin">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                                     </svg>
-                                    <span className="app-name">LinkedIn</span>
                                 </a>
-                                <a href="mailto:your.email@example.com" className="phone-app email">
-                                    <svg className="app-icon-svg" viewBox="0 0 24 24" fill="currentColor">
+
+                                <a href="mailto:hafizurrahman2020@gmail.com" className="phone-icon-btn email">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                                     </svg>
-                                    <span className="app-name">Email</span>
                                 </a>
-                                <a href="tel:+919876543210" className="phone-app phone">
-                                    <svg className="app-icon-svg" viewBox="0 0 24 24" fill="currentColor">
+
+                                <a href="tel:+918015662012" className="phone-icon-btn call">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
                                     </svg>
-                                    <span className="app-name">Call</span>
                                 </a>
                             </div>
-                            <div className="phone-dock">
-                                <button className="back-btn" onClick={() => setPhoneActive(false)}>
-                                    ← Back to Desk
-                                </button>
-                            </div>
+
+                            {/* Back Button */}
+                            <button className="phone-back-btn" onClick={() => setPhoneActive(false)}>
+                                ← Back to Desk
+                            </button>
                         </div>
                     </div>
                 </div>
