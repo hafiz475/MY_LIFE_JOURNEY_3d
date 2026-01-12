@@ -1,6 +1,15 @@
 import { useRef, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Html, Environment, ContactShadows, useGLTF } from '@react-three/drei';
+import {
+    Html,
+    Environment,
+    ContactShadows,
+    useGLTF,
+    MeshReflectorMaterial,
+    Float
+} from '@react-three/drei';
+import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
+import { useNavigate } from 'react-router-dom';
 import './LaptopScene.scss';
 
 // 3D Gaming Laptop Model Component with Screen Content
@@ -11,94 +20,100 @@ function GamingLaptop() {
     // Subtle floating animation
     useFrame((state) => {
         if (groupRef.current) {
-            // Subtle rotation wobble
-            groupRef.current.rotation.y = Math.PI - 0.5 + Math.sin(state.clock.elapsedTime * 0.3) * 0.02;
+            // Subtle rotation wobble - rotated 10 degrees anti-clockwise
+            groupRef.current.rotation.y = Math.PI - 0.325 + Math.sin(state.clock.elapsedTime * 0.3) * 0.02;
             groupRef.current.position.y = -1.2 + Math.sin(state.clock.elapsedTime * 0.5) * 0.01;
         }
     });
 
     return (
         // Centered position with proper rotation - scaled 30% more
-        <group ref={groupRef} position={[0, -1.2, 1]} rotation={[0.15, Math.PI - 0.5, 0]} scale={3.77}>
-            <primitive object={scene} castShadow receiveShadow />
+        <Float speed={1} rotationIntensity={0.1} floatIntensity={0.2}>
+            <group ref={groupRef} position={[0, -1.2, 1]} rotation={[0.15, Math.PI - 0.325, 0]} scale={3.77}>
+                <primitive object={scene} castShadow receiveShadow />
 
-            {/* Tech Stack Content on Screen */}
-            <Html
-                transform
-                occlude
-                position={[0.12, 0.55, 0.12]}
-                rotation={[0.18, Math.PI, 0]}
-                scale={0.038}
-                className="laptop-screen-content"
-            >
-                <div className="screen-wrapper">
-                    <div className="screen-header">
-                        <div className="window-controls">
-                            <span className="dot red"></span>
-                            <span className="dot yellow"></span>
-                            <span className="dot green"></span>
+                {/* Game Launch Screen Content */}
+                <Html
+                    transform
+                    occlude
+                    position={[0.19, 0.54, 0.12]}
+                    rotation={[0.18, Math.PI, 0]}
+                    scale={0.038}
+                    className="laptop-screen-content"
+                >
+                    <div className="screen-wrapper game-screen">
+                        <div className="screen-header">
+                            <div className="window-controls">
+                                <span className="dot red"></span>
+                                <span className="dot yellow"></span>
+                                <span className="dot green"></span>
+                            </div>
+                            <span className="tab-title">arcade.dev</span>
                         </div>
-                        <span className="tab-title">tech-stack.dev</span>
-                    </div>
-                    <div className="screen-body">
-                        <h1 className="tech-title">My Tech Stack</h1>
-                        <div className="tech-grid">
-                            <div className="tech-card react">
-                                <span className="tech-icon">⚛️</span>
-                                <span className="tech-name">React</span>
-                                <span className="tech-level">Expert</span>
+                        <div className="screen-body game-body">
+                            <div className="game-content">
+                                <div className="game-icon">🎮</div>
+                                <h1 className="game-title">ARCADE</h1>
+                                <p className="game-subtitle">Classic Pinball Experience</p>
+                                <button
+                                    className="play-button"
+                                    onClick={() => {
+                                        window.location.href = '/pinball';
+                                    }}
+                                >
+                                    <span className="play-icon">▶</span>
+                                    <span className="play-text">PLAY PINBALL</span>
+                                </button>
+                                <div className="game-stats">
+                                    <div className="stat">
+                                        <span className="stat-value">∞</span>
+                                        <span className="stat-label">High Score</span>
+                                    </div>
+                                    <div className="stat">
+                                        <span className="stat-value">3</span>
+                                        <span className="stat-label">Lives</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="tech-card node">
-                                <span className="tech-icon">🟢</span>
-                                <span className="tech-name">Node.js</span>
-                                <span className="tech-level">Advanced</span>
-                            </div>
-                            <div className="tech-card typescript">
-                                <span className="tech-icon">📘</span>
-                                <span className="tech-name">TypeScript</span>
-                                <span className="tech-level">Expert</span>
-                            </div>
-                            <div className="tech-card mongodb">
-                                <span className="tech-icon">🍃</span>
-                                <span className="tech-name">MongoDB</span>
-                                <span className="tech-level">Advanced</span>
-                            </div>
-                            <div className="tech-card threejs">
-                                <span className="tech-icon">🎨</span>
-                                <span className="tech-name">Three.js</span>
-                                <span className="tech-level">Intermediate</span>
-                            </div>
-                            <div className="tech-card nextjs">
-                                <span className="tech-icon">▲</span>
-                                <span className="tech-name">Next.js</span>
-                                <span className="tech-level">Advanced</span>
-                            </div>
-                        </div>
-                        <div className="what-i-build">
-                            <h2>What I Build</h2>
-                            <ul>
-                                <li>Enterprise chat applications</li>
-                                <li>3D portfolio experiences</li>
-                                <li>CRM integrations</li>
-                                <li>Workflow automation</li>
-                            </ul>
                         </div>
                     </div>
-                </div>
-            </Html>
-        </group>
+                </Html>
+            </group>
+        </Float>
     );
 }
 
-// Floor/Desk surface component
-function DeskSurface() {
+// Reflective Floor/Desk surface component
+function ReflectiveFloor() {
     return (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.8, 0]} receiveShadow>
-            <planeGeometry args={[20, 20]} />
+            <planeGeometry args={[50, 50]} />
+            <MeshReflectorMaterial
+                blur={[300, 100]}
+                resolution={1024}
+                mixBlur={1}
+                mixStrength={40}
+                roughness={1}
+                depthScale={1.2}
+                minDepthThreshold={0.4}
+                maxDepthThreshold={1.4}
+                color="#050505"
+                metalness={0.5}
+                mirror={0.5}
+            />
+        </mesh>
+    );
+}
+
+// Back Wall component
+function BackWall() {
+    return (
+        <mesh position={[0, 4, -8]} receiveShadow>
+            <planeGeometry args={[40, 15]} />
             <meshStandardMaterial
                 color="#0a0a0a"
                 roughness={0.9}
-                metalness={0.05}
+                metalness={0.1}
             />
         </mesh>
     );
@@ -127,48 +142,86 @@ export default function LaptopScene() {
                 camera={{ position: [0, 1.5, 5], fov: 45 }}
                 shadows
                 gl={{ antialias: true, alpha: true }}
+                dpr={[1, 2]}
             >
-                {/* Lighting - Premium look */}
-                <ambientLight intensity={0.4} />
+                {/* Fog for depth */}
+                <fog attach="fog" args={['#080808', 5, 25]} />
+
+                {/* Improved Lighting */}
+                <ambientLight intensity={0.2} />
+
+                {/* Main key light */}
                 <spotLight
-                    position={[5, 8, 5]}
-                    angle={0.4}
-                    penumbra={0.8}
-                    intensity={1.5}
+                    position={[5, 10, 5]}
+                    angle={0.3}
+                    penumbra={1}
+                    intensity={2}
                     castShadow
                     shadow-mapSize={[2048, 2048]}
+                    shadow-bias={-0.0001}
+                    color="#ffffff"
                 />
+
+                {/* Purple accent light */}
                 <spotLight
-                    position={[-5, 5, 3]}
+                    position={[-6, 6, 2]}
                     angle={0.5}
                     penumbra={1}
-                    intensity={0.5}
-                    color="#6b21a8"
+                    intensity={1.5}
+                    color="#8b5cf6"
                 />
-                <pointLight position={[0, 3, 2]} intensity={0.3} color="#ffffff" />
+
+                {/* Cyan rim light from back */}
+                <spotLight
+                    position={[0, 3, -8]}
+                    angle={0.8}
+                    penumbra={1}
+                    intensity={1}
+                    color="#06b6d4"
+                />
+
+                {/* Fill light */}
+                <pointLight position={[2, 2, 4]} intensity={0.5} color="#ffffff" />
+
+                {/* Keyboard glow effect */}
+                <pointLight position={[0, -0.5, 2]} intensity={0.3} color="#f97316" distance={3} />
 
                 {/* The Gaming Laptop Model */}
                 <Suspense fallback={<Loader />}>
                     <GamingLaptop />
                 </Suspense>
 
-                {/* Desk/Floor Surface */}
-                <DeskSurface />
+                {/* Reflective Floor Surface */}
+                <ReflectiveFloor />
+
+                {/* Back Wall */}
+                <BackWall />
 
                 {/* Subtle shadow on ground */}
                 <ContactShadows
                     position={[0, -1.79, 0]}
-                    opacity={0.7}
-                    scale={12}
-                    blur={2.5}
-                    far={6}
+                    opacity={0.8}
+                    scale={15}
+                    blur={2}
+                    far={8}
                 />
 
-                {/* Environment for realistic reflections */}
-                <Environment preset="city" />
+
+
+                {/* High quality environment for reflections */}
+                <Environment preset="night" />
+
+                {/* Post-processing effects */}
+                <EffectComposer>
+                    <Bloom
+                        intensity={0.3}
+                        luminanceThreshold={0.2}
+                        luminanceSmoothing={0.9}
+                    />
+                    <Vignette eskil={false} offset={0.1} darkness={0.5} />
+                </EffectComposer>
 
             </Canvas>
-
 
 
             {/* Contact Links - Circular icon buttons */}

@@ -5,6 +5,7 @@ import MainScene from './components/MainScene';
 import Overlay from './components/Overlay';
 import ExperienceStart from './components/ExperienceStart';
 import RoomScene from './components/RoomScene';
+import PinballGame from './components/PinballGame';
 
 // Main Experience Component - combines intro, flight, and sunset on single page
 function MainExperience() {
@@ -131,6 +132,17 @@ function RoomSceneWrapper() {
   return <RoomScene onBack={handleBack} />;
 }
 
+// Pinball Game Wrapper with back navigation
+function PinballGameWrapper() {
+  const navigate = useNavigate();
+
+  const handleClose = () => {
+    navigate('/software');
+  };
+
+  return <PinballGame onClose={handleClose} />;
+}
+
 // Main App with Routes - simplified to only / and /room
 function App() {
   return (
@@ -138,6 +150,7 @@ function App() {
       <Route path="/" element={<MainExperience />} />
       <Route path="/room" element={<RoomSceneWrapper />} />
       <Route path="/software" element={<RoomSceneWrapper />} />
+      <Route path="/pinball" element={<PinballGameWrapper />} />
     </Routes>
   );
 }
