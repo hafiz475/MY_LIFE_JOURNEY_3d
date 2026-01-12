@@ -1,199 +1,91 @@
-import { useRef } from 'react';
+import { useRef, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Html, Environment, ContactShadows, RoundedBox } from '@react-three/drei';
-import * as THREE from 'three';
+import { Html, Environment, ContactShadows, useGLTF } from '@react-three/drei';
 import './LaptopScene.scss';
 
-// 3D Laptop Model Component
-function Laptop() {
+// 3D Gaming Laptop Model Component with Screen Content
+function GamingLaptop() {
     const groupRef = useRef();
-    const screenRef = useRef();
+    const { scene } = useGLTF('/assets/models/gaming_laptop.glb');
 
     // Subtle floating animation
     useFrame((state) => {
         if (groupRef.current) {
-            groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.05 - 0.3;
-            groupRef.current.position.y = -0.3 + Math.sin(state.clock.elapsedTime * 0.5) * 0.03;
+            // Subtle rotation wobble
+            groupRef.current.rotation.y = Math.PI - 0.5 + Math.sin(state.clock.elapsedTime * 0.3) * 0.02;
+            groupRef.current.position.y = -1.2 + Math.sin(state.clock.elapsedTime * 0.5) * 0.01;
         }
     });
 
-    // Matte material colors
-    const matteGray = new THREE.Color('#2a2a2a');      // Dark matte gray for body
-    const matteBlack = new THREE.Color('#1a1a1a');     // Deep matte black for keyboard
-    const screenBezel = new THREE.Color('#0f0f0f');    // Almost black for screen bezel
-    const silverAccent = new THREE.Color('#4a4a4a');   // Subtle silver accent
-
-    // Keyboard key letters for display
-    const keyRows = [
-        ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '='],
-        ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']'],
-        ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'"],
-    ];
-
     return (
-        <group ref={groupRef} position={[0, -0.5, 0]} rotation={[0.2, -0.3, 0]} scale={0.70}>
-            {/* Laptop Base / Bottom - with rounded corners */}
-            <RoundedBox args={[3.2, 0.08, 2.1]} radius={0.03} smoothness={4} position={[0, -0.02, 0]} castShadow receiveShadow>
-                <meshStandardMaterial
-                    color={matteGray}
-                    roughness={0.8}
-                    metalness={0.1}
-                />
-            </RoundedBox>
+        // Centered position with proper rotation - scaled 30% more
+        <group ref={groupRef} position={[0, -1.2, 1]} rotation={[0.15, Math.PI - 0.5, 0]} scale={3.77}>
+            <primitive object={scene} castShadow receiveShadow />
 
-            {/* Keyboard Area (Top of base) */}
-            <mesh position={[0, 0.02, 0.15]} receiveShadow>
-                <boxGeometry args={[2.9, 0.02, 1.4]} />
-                <meshStandardMaterial
-                    color={matteBlack}
-                    roughness={0.9}
-                    metalness={0.05}
-                />
-            </mesh>
-
-            {/* Keyboard Keys - Row 1 with labels */}
-            {keyRows[0].map((key, i) => (
-                <group key={`key1-${i}`} position={[-1.25 + i * 0.22, 0.035, -0.25]}>
-                    <mesh receiveShadow>
-                        <boxGeometry args={[0.18, 0.015, 0.15]} />
-                        <meshStandardMaterial color="#222" roughness={0.85} metalness={0.1} />
-                    </mesh>
-                    <Html position={[0, 0.02, 0]} center scale={0.08} className="key-label">
-                        <span style={{ color: '#555', fontSize: '10px', fontFamily: 'monospace' }}>{key}</span>
-                    </Html>
-                </group>
-            ))}
-            {/* Keyboard Keys - Row 2 with labels */}
-            {keyRows[1].map((key, i) => (
-                <group key={`key2-${i}`} position={[-1.2 + i * 0.22, 0.035, -0.05]}>
-                    <mesh receiveShadow>
-                        <boxGeometry args={[0.18, 0.015, 0.15]} />
-                        <meshStandardMaterial color="#222" roughness={0.85} metalness={0.1} />
-                    </mesh>
-                    <Html position={[0, 0.02, 0]} center scale={0.08} className="key-label">
-                        <span style={{ color: '#555', fontSize: '10px', fontFamily: 'monospace' }}>{key}</span>
-                    </Html>
-                </group>
-            ))}
-            {/* Keyboard Keys - Row 3 with labels */}
-            {keyRows[2].map((key, i) => (
-                <group key={`key3-${i}`} position={[-1.1 + i * 0.22, 0.035, 0.15]}>
-                    <mesh receiveShadow>
-                        <boxGeometry args={[0.18, 0.015, 0.15]} />
-                        <meshStandardMaterial color="#222" roughness={0.85} metalness={0.1} />
-                    </mesh>
-                    <Html position={[0, 0.02, 0]} center scale={0.08} className="key-label">
-                        <span style={{ color: '#555', fontSize: '10px', fontFamily: 'monospace' }}>{key}</span>
-                    </Html>
-                </group>
-            ))}
-            {/* Spacebar */}
-            <mesh position={[0, 0.035, 0.35]} receiveShadow>
-                <boxGeometry args={[1.2, 0.015, 0.15]} />
-                <meshStandardMaterial color="#222" roughness={0.85} metalness={0.1} />
-            </mesh>
-
-            {/* Trackpad */}
-            <mesh position={[0, 0.03, 0.6]} receiveShadow>
-                <boxGeometry args={[0.8, 0.01, 0.5]} />
-                <meshStandardMaterial
-                    color={silverAccent}
-                    roughness={0.6}
-                    metalness={0.2}
-                />
-            </mesh>
-
-            {/* Screen Frame / Lid */}
-            <group ref={screenRef} position={[0, 1.1, -0.95]} rotation={[-0.15, 0, 0]}>
-                {/* Screen Back (Lid exterior) - with rounded corners */}
-                <RoundedBox args={[3.2, 2.1, 0.06]} radius={0.05} smoothness={4} position={[0, 0, -0.03]} castShadow>
-                    <meshStandardMaterial
-                        color={matteGray}
-                        roughness={0.8}
-                        metalness={0.1}
-                    />
-                </RoundedBox>
-
-                {/* Screen Bezel */}
-                <mesh position={[0, 0, 0.01]}>
-                    <boxGeometry args={[3.0, 1.95, 0.02]} />
-                    <meshStandardMaterial
-                        color={screenBezel}
-                        roughness={0.95}
-                        metalness={0}
-                    />
-                </mesh>
-
-                {/* Screen Display Area */}
-                <mesh position={[0, 0.05, 0.02]}>
-                    <planeGeometry args={[2.8, 1.75]} />
-                    <meshBasicMaterial color="#111111" />
-                </mesh>
-
-                {/* HTML Content on Screen */}
-                <Html
-                    transform
-                    occlude
-                    position={[0, 0.05, 0.025]}
-                    scale={0.14}
-                    className="laptop-screen-content"
-                >
-                    <div className="screen-wrapper">
-                        <div className="screen-header">
-                            <div className="window-controls">
-                                <span className="dot red"></span>
-                                <span className="dot yellow"></span>
-                                <span className="dot green"></span>
-                            </div>
-                            <span className="tab-title">tech-stack.dev</span>
+            {/* Tech Stack Content on Screen */}
+            <Html
+                transform
+                occlude
+                position={[0.12, 0.54, 0.12]}
+                rotation={[0.18, Math.PI, 0]}
+                scale={0.038}
+                className="laptop-screen-content"
+            >
+                <div className="screen-wrapper">
+                    <div className="screen-header">
+                        <div className="window-controls">
+                            <span className="dot red"></span>
+                            <span className="dot yellow"></span>
+                            <span className="dot green"></span>
                         </div>
-                        <div className="screen-body">
-                            <h1 className="tech-title">My Tech Stack</h1>
-                            <div className="tech-grid">
-                                <div className="tech-card react">
-                                    <span className="tech-icon">⚛️</span>
-                                    <span className="tech-name">React</span>
-                                    <span className="tech-level">Expert</span>
-                                </div>
-                                <div className="tech-card node">
-                                    <span className="tech-icon">🟢</span>
-                                    <span className="tech-name">Node.js</span>
-                                    <span className="tech-level">Advanced</span>
-                                </div>
-                                <div className="tech-card typescript">
-                                    <span className="tech-icon">📘</span>
-                                    <span className="tech-name">TypeScript</span>
-                                    <span className="tech-level">Expert</span>
-                                </div>
-                                <div className="tech-card mongodb">
-                                    <span className="tech-icon">🍃</span>
-                                    <span className="tech-name">MongoDB</span>
-                                    <span className="tech-level">Advanced</span>
-                                </div>
-                                <div className="tech-card threejs">
-                                    <span className="tech-icon">🎨</span>
-                                    <span className="tech-name">Three.js</span>
-                                    <span className="tech-level">Intermediate</span>
-                                </div>
-                                <div className="tech-card nextjs">
-                                    <span className="tech-icon">▲</span>
-                                    <span className="tech-name">Next.js</span>
-                                    <span className="tech-level">Advanced</span>
-                                </div>
+                        <span className="tab-title">tech-stack.dev</span>
+                    </div>
+                    <div className="screen-body">
+                        <h1 className="tech-title">My Tech Stack</h1>
+                        <div className="tech-grid">
+                            <div className="tech-card react">
+                                <span className="tech-icon">⚛️</span>
+                                <span className="tech-name">React</span>
+                                <span className="tech-level">Expert</span>
                             </div>
-                            <div className="what-i-build">
-                                <h2>What I Build</h2>
-                                <ul>
-                                    <li>Enterprise chat applications</li>
-                                    <li>3D portfolio experiences</li>
-                                    <li>CRM integrations</li>
-                                    <li>Workflow automation</li>
-                                </ul>
+                            <div className="tech-card node">
+                                <span className="tech-icon">🟢</span>
+                                <span className="tech-name">Node.js</span>
+                                <span className="tech-level">Advanced</span>
                             </div>
+                            <div className="tech-card typescript">
+                                <span className="tech-icon">📘</span>
+                                <span className="tech-name">TypeScript</span>
+                                <span className="tech-level">Expert</span>
+                            </div>
+                            <div className="tech-card mongodb">
+                                <span className="tech-icon">🍃</span>
+                                <span className="tech-name">MongoDB</span>
+                                <span className="tech-level">Advanced</span>
+                            </div>
+                            <div className="tech-card threejs">
+                                <span className="tech-icon">🎨</span>
+                                <span className="tech-name">Three.js</span>
+                                <span className="tech-level">Intermediate</span>
+                            </div>
+                            <div className="tech-card nextjs">
+                                <span className="tech-icon">▲</span>
+                                <span className="tech-name">Next.js</span>
+                                <span className="tech-level">Advanced</span>
+                            </div>
+                        </div>
+                        <div className="what-i-build">
+                            <h2>What I Build</h2>
+                            <ul>
+                                <li>Enterprise chat applications</li>
+                                <li>3D portfolio experiences</li>
+                                <li>CRM integrations</li>
+                                <li>Workflow automation</li>
+                            </ul>
                         </div>
                     </div>
-                </Html>
-            </group>
+                </div>
+            </Html>
         </group>
     );
 }
@@ -201,14 +93,29 @@ function Laptop() {
 // Floor/Desk surface component
 function DeskSurface() {
     return (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.85, 0]} receiveShadow>
-            <planeGeometry args={[10, 10]} />
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.8, 0]} receiveShadow>
+            <planeGeometry args={[20, 20]} />
             <meshStandardMaterial
-                color="#1a1a1a"
+                color="#0a0a0a"
                 roughness={0.9}
-                metalness={0.1}
+                metalness={0.05}
             />
         </mesh>
+    );
+}
+
+// Loading fallback
+function Loader() {
+    return (
+        <Html center>
+            <div style={{
+                color: '#9333ea',
+                fontSize: '1.2rem',
+                fontFamily: 'Inter, sans-serif'
+            }}>
+                Loading...
+            </div>
+        </Html>
     );
 }
 
@@ -217,17 +124,17 @@ export default function LaptopScene() {
     return (
         <div className="laptop-scene-container">
             <Canvas
-                camera={{ position: [0, 1.2, 4], fov: 45 }}
+                camera={{ position: [0, 1.5, 5], fov: 45 }}
                 shadows
                 gl={{ antialias: true, alpha: true }}
             >
-                {/* Lighting - Premium matte look */}
+                {/* Lighting - Premium look */}
                 <ambientLight intensity={0.4} />
                 <spotLight
                     position={[5, 8, 5]}
                     angle={0.4}
                     penumbra={0.8}
-                    intensity={1.2}
+                    intensity={1.5}
                     castShadow
                     shadow-mapSize={[2048, 2048]}
                 />
@@ -240,30 +147,29 @@ export default function LaptopScene() {
                 />
                 <pointLight position={[0, 3, 2]} intensity={0.3} color="#ffffff" />
 
-                {/* The Laptop */}
-                <Laptop />
+                {/* The Gaming Laptop Model */}
+                <Suspense fallback={<Loader />}>
+                    <GamingLaptop />
+                </Suspense>
 
                 {/* Desk/Floor Surface */}
                 <DeskSurface />
 
-                {/* Subtle reflection/shadow on ground */}
+                {/* Subtle shadow on ground */}
                 <ContactShadows
-                    position={[0, -0.84, 0]}
-                    opacity={0.5}
-                    scale={8}
-                    blur={2}
-                    far={4}
+                    position={[0, -1.79, 0]}
+                    opacity={0.7}
+                    scale={12}
+                    blur={2.5}
+                    far={6}
                 />
 
                 {/* Environment for realistic reflections */}
                 <Environment preset="city" />
+
             </Canvas>
 
-            {/* Title overlay */}
-            <div className="scene-overlay">
-                <h1 className="scene-title">Software Engineering</h1>
-                <p className="scene-subtitle">Crafting Digital Experiences</p>
-            </div>
+
 
             {/* Contact Links - Circular icon buttons */}
             <div className="contact-links-section">
@@ -285,3 +191,6 @@ export default function LaptopScene() {
         </div>
     );
 }
+
+// Preload the model
+useGLTF.preload('/assets/models/gaming_laptop.glb');
