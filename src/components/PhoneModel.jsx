@@ -24,7 +24,7 @@ export default function PhoneModel({ onClick }) {
         <Float speed={1.5} rotationIntensity={0.02} floatIntensity={0.02}>
             <group
                 ref={groupRef}
-                position={[2.0, -1.2, 1.2]}
+                position={[1.6, -1.2, 0.6]}
                 rotation={[-Math.PI / 2, 0, -0.1]}
                 scale={0.12}
                 onClick={onClick}

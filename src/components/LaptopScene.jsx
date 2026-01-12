@@ -30,7 +30,7 @@ function GamingLaptop() {
     return (
         // Centered position with proper rotation - scaled 30% more
         <Float speed={1} rotationIntensity={0.1} floatIntensity={0.2}>
-            <group ref={groupRef} position={[0, -1.2, 1]} rotation={[0.15, Math.PI - 0.325, 0]} scale={3.77}>
+            <group ref={groupRef} position={[0, -1.2, 1]} rotation={[0.05, Math.PI - 0.325, 0]} scale={3.77}>
                 <primitive object={scene} castShadow receiveShadow />
 
                 {/* Game Launch Screen Content */}
