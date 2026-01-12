@@ -11,6 +11,7 @@ import {
 } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { useNavigate } from 'react-router-dom';
+import * as THREE from 'three';
 import PhoneModel from './PhoneModel';
 import './LaptopScene.scss';
 
@@ -108,6 +109,133 @@ function ReflectiveFloor() {
     );
 }
 
+// Circuit Trace Line with animated pulse
+function CircuitLine({ points, delay, color }) {
+    const lineRef = useRef();
+    const pulseRef = useRef();
+
+    // Create line geometry from points
+    const linePoints = points.map(p => new THREE.Vector3(p[0], -1.78, p[1]));
+    const lineGeometry = new THREE.BufferGeometry().setFromPoints(linePoints);
+
+    // Calculate total line length for pulse animation
+    let totalLength = 0;
+    for (let i = 1; i < linePoints.length; i++) {
+        totalLength += linePoints[i].distanceTo(linePoints[i - 1]);
+    }
+
+    useFrame((state) => {
+        if (pulseRef.current) {
+            // Pulse travels along the line
+            const time = (state.clock.elapsedTime * 0.5 + delay) % 3;
+            const progress = time / 3;
+
+            // Find position along the path
+            let traveled = progress * totalLength;
+            let currentPos = linePoints[0].clone();
+
+            for (let i = 1; i < linePoints.length; i++) {
+                const segmentLength = linePoints[i].distanceTo(linePoints[i - 1]);
+                if (traveled <= segmentLength) {
+                    const t = traveled / segmentLength;
+                    currentPos.lerpVectors(linePoints[i - 1], linePoints[i], t);
+                    break;
+                }
+                traveled -= segmentLength;
+                currentPos = linePoints[i].clone();
+            }
+
+            pulseRef.current.position.copy(currentPos);
+            pulseRef.current.position.y = -1.76;
+
+            // Pulse opacity
+            const opacity = Math.sin(progress * Math.PI) * 0.8;
+            if (pulseRef.current.material) {
+                pulseRef.current.material.opacity = opacity;
+            }
+        }
+    });
+
+    return (
+        <group>
+            {/* Static trace line */}
+            <line ref={lineRef} geometry={lineGeometry}>
+                <lineBasicMaterial color={color} opacity={0.3} transparent linewidth={2} />
+            </line>
+
+            {/* Moving pulse dot */}
+            <mesh ref={pulseRef} position={[0, -1.76, 0]}>
+                <sphereGeometry args={[0.08, 16, 16]} />
+                <meshBasicMaterial color="#ff6600" transparent opacity={0.8} />
+            </mesh>
+        </group>
+    );
+}
+
+// Circuit Board Pattern on Floor
+function FloorCircuitBoard() {
+    // Define circuit trace paths emanating from keyboard center (0, 1)
+    const traces = [
+        // Front traces (towards viewer)
+        { points: [[0, 1], [0, 3], [-0.5, 3.5], [-0.5, 5]], delay: 0 },
+        { points: [[0, 1], [0.3, 2], [0.3, 4], [1, 4.5], [1, 6]], delay: 0.5 },
+        { points: [[0, 1], [-0.3, 2], [-0.3, 3], [-1.2, 3.5], [-1.2, 5.5]], delay: 1 },
+
+        // Left traces
+        { points: [[0, 1], [-0.5, 1.2], [-1.5, 1.2], [-2, 0.8], [-3, 0.8]], delay: 0.3 },
+        { points: [[0, 1], [-0.8, 0.5], [-2, 0.5], [-2.5, 1], [-4, 1]], delay: 0.8 },
+        { points: [[0, 1], [-0.5, 1.5], [-1, 2], [-2.5, 2], [-3.5, 1.5]], delay: 1.3 },
+
+        // Right traces
+        { points: [[0, 1], [0.5, 1.2], [1.5, 1.2], [2, 0.8], [3, 0.8]], delay: 0.2 },
+        { points: [[0, 1], [0.8, 0.5], [2, 0.5], [2.5, 1], [4, 1]], delay: 0.7 },
+        { points: [[0, 1], [0.5, 1.5], [1, 2], [2.5, 2], [3.5, 1.5]], delay: 1.2 },
+
+        // Back traces (away from viewer)
+        { points: [[0, 1], [0, 0], [0.5, -0.5], [0.5, -2]], delay: 0.4 },
+        { points: [[0, 1], [-0.3, 0], [-0.8, -0.5], [-0.8, -1.5], [-1.5, -2]], delay: 0.9 },
+        { points: [[0, 1], [0.3, 0], [0.8, -0.5], [1.5, -0.5], [2, -1.5]], delay: 1.4 },
+
+        // Diagonal traces
+        { points: [[0, 1], [-1, 2.5], [-2, 3], [-3, 3.5], [-4, 4.5]], delay: 0.6 },
+        { points: [[0, 1], [1, 2.5], [2, 3], [3, 3.5], [4, 4.5]], delay: 1.1 },
+        { points: [[0, 1], [-1.5, 0], [-2.5, -0.5], [-3.5, -1]], delay: 1.6 },
+        { points: [[0, 1], [1.5, 0], [2.5, -0.5], [3.5, -1]], delay: 2.1 },
+    ];
+
+    const traceColors = ['#f97316', '#fb923c', '#ea580c', '#ff7700'];
+
+    return (
+        <group>
+            {traces.map((trace, i) => (
+                <CircuitLine
+                    key={i}
+                    points={trace.points}
+                    delay={trace.delay}
+                    color={traceColors[i % traceColors.length]}
+                />
+            ))}
+
+            {/* Node points at junctions */}
+            {[[-0.5, 3.5], [0.3, 4], [-1.2, 3.5], [-2, 0.8], [-2.5, 2], [2, 0.8], [2.5, 2], [-0.8, -1.5], [1.5, -0.5]].map((pos, i) => (
+                <mesh key={i} position={[pos[0], -1.77, pos[1]]}>
+                    <circleGeometry args={[0.06, 16]} />
+                    <meshBasicMaterial color="#f97316" transparent opacity={0.5} side={THREE.DoubleSide} />
+                </mesh>
+            ))}
+
+            {/* Center glow under keyboard */}
+            <pointLight
+                position={[0, -1.5, 1]}
+                color="#f97316"
+                intensity={0.8}
+                distance={3}
+                decay={2}
+            />
+        </group>
+    );
+}
+
 // Back Wall component
 function BackWall() {
     return (
@@ -119,6 +247,102 @@ function BackWall() {
                 metalness={0.1}
             />
         </mesh>
+    );
+}
+
+// Batman Neon Logo Component - Dark Knight Style
+function BatmanNeonLogo() {
+    const groupRef = useRef();
+
+    // Pulsing glow animation
+    useFrame((state) => {
+        if (groupRef.current) {
+            const pulse = Math.sin(state.clock.elapsedTime * 2) * 0.15 + 0.85;
+            groupRef.current.children.forEach(child => {
+                if (child.material && child.material.emissiveIntensity !== undefined) {
+                    child.material.emissiveIntensity = pulse;
+                }
+            });
+        }
+    });
+
+    // Accurate Batman Dark Knight logo shape
+    const batShape = new THREE.Shape();
+    const s = 0.5; // scale
+
+    // Starting from center top (head)
+    // Head left ear
+    batShape.moveTo(0 * s, 0.3 * s);
+    batShape.lineTo(-0.15 * s, 0.6 * s);  // Left ear tip
+    batShape.lineTo(-0.25 * s, 0.25 * s); // Left ear base
+
+    // Left wing - upper curve going out
+    batShape.lineTo(-0.5 * s, 0.35 * s);
+    batShape.quadraticCurveTo(-1.2 * s, 0.5 * s, -2.0 * s, 0.15 * s);
+
+    // Left wing tip - sharp point
+    batShape.lineTo(-2.5 * s, 0 * s);  // Sharp wing tip
+
+    // Left wing - lower edge going back in
+    batShape.lineTo(-1.8 * s, -0.1 * s);
+    batShape.quadraticCurveTo(-1.2 * s, -0.15 * s, -0.8 * s, -0.25 * s);
+
+    // Left bottom scallop
+    batShape.quadraticCurveTo(-0.5 * s, -0.5 * s, -0.25 * s, -0.35 * s);
+
+    // Center bottom point
+    batShape.lineTo(0 * s, -0.55 * s);  // Bottom center point
+
+    // Right bottom scallop
+    batShape.lineTo(0.25 * s, -0.35 * s);
+    batShape.quadraticCurveTo(0.5 * s, -0.5 * s, 0.8 * s, -0.25 * s);
+
+    // Right wing - lower edge
+    batShape.quadraticCurveTo(1.2 * s, -0.15 * s, 1.8 * s, -0.1 * s);
+
+    // Right wing tip - sharp point
+    batShape.lineTo(2.5 * s, 0 * s);  // Sharp wing tip
+
+    // Right wing - upper curve
+    batShape.lineTo(2.0 * s, 0.15 * s);
+    batShape.quadraticCurveTo(1.2 * s, 0.5 * s, 0.5 * s, 0.35 * s);
+
+    // Right ear
+    batShape.lineTo(0.25 * s, 0.25 * s);
+    batShape.lineTo(0.15 * s, 0.6 * s);  // Right ear tip
+    batShape.lineTo(0 * s, 0.3 * s);     // Back to start
+
+    const extrudeSettings = {
+        depth: 0.08,
+        bevelEnabled: true,
+        bevelThickness: 0.015,
+        bevelSize: 0.015,
+        bevelSegments: 2
+    };
+
+    return (
+        <group ref={groupRef} position={[3.5, 3.2, -7.85]} rotation={[0, 0, 0]}>
+            {/* Batman logo - glowing yellow/gold */}
+            <mesh>
+                <extrudeGeometry args={[batShape, extrudeSettings]} />
+                <meshStandardMaterial
+                    color="#ffd700"
+                    emissive="#ffd700"
+                    emissiveIntensity={0.9}
+                    metalness={0.4}
+                    roughness={0.1}
+                />
+            </mesh>
+
+            {/* Glow light */}
+            <pointLight
+                position={[0, 0, 0.8]}
+                color="#ffd700"
+                intensity={3}
+                distance={5}
+                decay={2}
+            />
+        </group>
     );
 }
 
@@ -358,8 +582,14 @@ export default function LaptopScene() {
                 {/* Reflective Floor Surface */}
                 <ReflectiveFloor />
 
+                {/* Animated Pulse Rings on Floor */}
+                <FloorCircuitBoard />
+
                 {/* Back Wall */}
                 <BackWall />
+
+                {/* Batman Neon Logo on Wall */}
+                <BatmanNeonLogo />
 
                 {/* Subtle shadow on ground */}
                 <ContactShadows
