@@ -6,7 +6,8 @@ import {
     ContactShadows,
     useGLTF,
     MeshReflectorMaterial,
-    Float
+    Float,
+    OrbitControls
 } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { useNavigate } from 'react-router-dom';
@@ -37,12 +38,17 @@ function GamingLaptop() {
                 <Html
                     transform
                     occlude
-                    position={[0.19, 0.54, 0.12]}
+                    position={[0.5, 0.4, 0.7]}
                     rotation={[0.18, Math.PI, 0]}
-                    scale={0.038}
+                    scale={0.055}
                     className="laptop-screen-content"
                 >
                     <div className="neon-arcade-screen">
+                        {/* Back to Interests Button - Inside Screen */}
+                        <button className="screen-back-btn" onClick={() => { window.location.href = '/room'; }}>
+                            ← Back to Interests
+                        </button>
+
                         <div className="arcade-header">
                             <span className="arcade-icon">🎮</span>
                             <h1>ARCADE</h1>
@@ -283,6 +289,16 @@ export default function LaptopScene() {
                 dpr={[1, 2]}
                 style={{ display: phoneActive ? 'none' : 'block' }}
             >
+                {/* OrbitControls - Rotation only, no zoom */}
+                <OrbitControls
+                    enableZoom={false}
+                    enablePan={false}
+                    minPolarAngle={Math.PI / 4}
+                    maxPolarAngle={Math.PI / 2}
+                    minAzimuthAngle={-Math.PI / 10}
+                    maxAzimuthAngle={Math.PI / 10}
+                />
+
                 {/* Fog for depth */}
                 <fog attach="fog" args={['#080808', 5, 25]} />
 
@@ -375,26 +391,6 @@ export default function LaptopScene() {
                     currentTime={currentTime}
                     onClose={() => setPhoneActive(false)}
                 />
-            )}
-
-            {/* Contact Links - Circular icon buttons */}
-            {!phoneActive && (
-                <div className="contact-links-section">
-                    <div className="contact-links">
-                        <a href="mailto:your.email@example.com" className="contact-circle email" target="_blank" rel="noopener noreferrer" title="Email">
-                            <span className="contact-icon">✉️</span>
-                        </a>
-                        <a href="tel:+919876543210" className="contact-circle phone" target="_blank" rel="noopener noreferrer" title="Call">
-                            <span className="contact-icon">📞</span>
-                        </a>
-                        <a href="https://wa.me/919876543210" className="contact-circle whatsapp" target="_blank" rel="noopener noreferrer" title="WhatsApp">
-                            <span className="contact-icon">💬</span>
-                        </a>
-                        <a href="https://linkedin.com/in/yourprofile" className="contact-circle linkedin" target="_blank" rel="noopener noreferrer" title="LinkedIn">
-                            <span className="contact-icon">💼</span>
-                        </a>
-                    </div>
-                </div>
             )}
         </div>
     );
