@@ -23,8 +23,15 @@ function Laptop() {
     const screenBezel = new THREE.Color('#0f0f0f');    // Almost black for screen bezel
     const silverAccent = new THREE.Color('#4a4a4a');   // Subtle silver accent
 
+    // Keyboard key letters for display
+    const keyRows = [
+        ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '='],
+        ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']'],
+        ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'"],
+    ];
+
     return (
-        <group ref={groupRef} position={[0, -0.3, 0]} rotation={[0.2, -0.3, 0]} scale={0.85}>
+        <group ref={groupRef} position={[0, -0.5, 0]} rotation={[0.2, -0.3, 0]} scale={0.70}>
             {/* Laptop Base / Bottom - with rounded corners */}
             <RoundedBox args={[3.2, 0.08, 2.1]} radius={0.03} smoothness={4} position={[0, -0.02, 0]} castShadow receiveShadow>
                 <meshStandardMaterial
@@ -44,26 +51,41 @@ function Laptop() {
                 />
             </mesh>
 
-            {/* Keyboard Keys - Row 1 */}
-            {[...Array(12)].map((_, i) => (
-                <mesh key={`key1-${i}`} position={[-1.25 + i * 0.22, 0.035, -0.25]} receiveShadow>
-                    <boxGeometry args={[0.18, 0.015, 0.15]} />
-                    <meshStandardMaterial color="#222" roughness={0.85} metalness={0.1} />
-                </mesh>
+            {/* Keyboard Keys - Row 1 with labels */}
+            {keyRows[0].map((key, i) => (
+                <group key={`key1-${i}`} position={[-1.25 + i * 0.22, 0.035, -0.25]}>
+                    <mesh receiveShadow>
+                        <boxGeometry args={[0.18, 0.015, 0.15]} />
+                        <meshStandardMaterial color="#222" roughness={0.85} metalness={0.1} />
+                    </mesh>
+                    <Html position={[0, 0.02, 0]} center scale={0.08} className="key-label">
+                        <span style={{ color: '#555', fontSize: '10px', fontFamily: 'monospace' }}>{key}</span>
+                    </Html>
+                </group>
             ))}
-            {/* Keyboard Keys - Row 2 */}
-            {[...Array(12)].map((_, i) => (
-                <mesh key={`key2-${i}`} position={[-1.2 + i * 0.22, 0.035, -0.05]} receiveShadow>
-                    <boxGeometry args={[0.18, 0.015, 0.15]} />
-                    <meshStandardMaterial color="#222" roughness={0.85} metalness={0.1} />
-                </mesh>
+            {/* Keyboard Keys - Row 2 with labels */}
+            {keyRows[1].map((key, i) => (
+                <group key={`key2-${i}`} position={[-1.2 + i * 0.22, 0.035, -0.05]}>
+                    <mesh receiveShadow>
+                        <boxGeometry args={[0.18, 0.015, 0.15]} />
+                        <meshStandardMaterial color="#222" roughness={0.85} metalness={0.1} />
+                    </mesh>
+                    <Html position={[0, 0.02, 0]} center scale={0.08} className="key-label">
+                        <span style={{ color: '#555', fontSize: '10px', fontFamily: 'monospace' }}>{key}</span>
+                    </Html>
+                </group>
             ))}
-            {/* Keyboard Keys - Row 3 */}
-            {[...Array(11)].map((_, i) => (
-                <mesh key={`key3-${i}`} position={[-1.1 + i * 0.22, 0.035, 0.15]} receiveShadow>
-                    <boxGeometry args={[0.18, 0.015, 0.15]} />
-                    <meshStandardMaterial color="#222" roughness={0.85} metalness={0.1} />
-                </mesh>
+            {/* Keyboard Keys - Row 3 with labels */}
+            {keyRows[2].map((key, i) => (
+                <group key={`key3-${i}`} position={[-1.1 + i * 0.22, 0.035, 0.15]}>
+                    <mesh receiveShadow>
+                        <boxGeometry args={[0.18, 0.015, 0.15]} />
+                        <meshStandardMaterial color="#222" roughness={0.85} metalness={0.1} />
+                    </mesh>
+                    <Html position={[0, 0.02, 0]} center scale={0.08} className="key-label">
+                        <span style={{ color: '#555', fontSize: '10px', fontFamily: 'monospace' }}>{key}</span>
+                    </Html>
+                </group>
             ))}
             {/* Spacebar */}
             <mesh position={[0, 0.035, 0.35]} receiveShadow>
@@ -172,17 +194,21 @@ function Laptop() {
                     </div>
                 </Html>
             </group>
-
-            {/* Hinge */}
-            <mesh position={[0, 0.02, -0.95]} rotation={[Math.PI / 2, 0, 0]}>
-                <cylinderGeometry args={[0.04, 0.04, 2.8, 16]} />
-                <meshStandardMaterial
-                    color={silverAccent}
-                    roughness={0.5}
-                    metalness={0.3}
-                />
-            </mesh>
         </group>
+    );
+}
+
+// Floor/Desk surface component
+function DeskSurface() {
+    return (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.85, 0]} receiveShadow>
+            <planeGeometry args={[10, 10]} />
+            <meshStandardMaterial
+                color="#1a1a1a"
+                roughness={0.9}
+                metalness={0.1}
+            />
+        </mesh>
     );
 }
 
@@ -217,12 +243,15 @@ export default function LaptopScene() {
                 {/* The Laptop */}
                 <Laptop />
 
+                {/* Desk/Floor Surface */}
+                <DeskSurface />
+
                 {/* Subtle reflection/shadow on ground */}
                 <ContactShadows
-                    position={[0, -0.5, 0]}
-                    opacity={0.4}
+                    position={[0, -0.84, 0]}
+                    opacity={0.5}
                     scale={8}
-                    blur={2.5}
+                    blur={2}
                     far={4}
                 />
 
@@ -236,21 +265,20 @@ export default function LaptopScene() {
                 <p className="scene-subtitle">Crafting Digital Experiences</p>
             </div>
 
-            {/* Contact Links */}
+            {/* Contact Links - Circular icon buttons */}
             <div className="contact-links-section">
-                <h3 className="contact-title">Let's Connect</h3>
                 <div className="contact-links">
-                    <a href="mailto:your.email@example.com" className="contact-link email" target="_blank" rel="noopener noreferrer">
+                    <a href="mailto:your.email@example.com" className="contact-circle email" target="_blank" rel="noopener noreferrer" title="Email">
                         <span className="contact-icon">✉️</span>
-                        <span className="contact-label">Email</span>
                     </a>
-                    <a href="https://wa.me/919876543210" className="contact-link whatsapp" target="_blank" rel="noopener noreferrer">
+                    <a href="tel:+919876543210" className="contact-circle phone" target="_blank" rel="noopener noreferrer" title="Call">
+                        <span className="contact-icon">📞</span>
+                    </a>
+                    <a href="https://wa.me/919876543210" className="contact-circle whatsapp" target="_blank" rel="noopener noreferrer" title="WhatsApp">
                         <span className="contact-icon">💬</span>
-                        <span className="contact-label">WhatsApp</span>
                     </a>
-                    <a href="https://linkedin.com/in/yourprofile" className="contact-link linkedin" target="_blank" rel="noopener noreferrer">
+                    <a href="https://linkedin.com/in/yourprofile" className="contact-circle linkedin" target="_blank" rel="noopener noreferrer" title="LinkedIn">
                         <span className="contact-icon">💼</span>
-                        <span className="contact-label">LinkedIn</span>
                     </a>
                 </div>
             </div>
