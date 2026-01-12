@@ -498,3 +498,182 @@
         }
     }
 }
+
+// Neon Contact Card Styles
+.neon-contact-card {
+    width: 180px;
+    background: linear-gradient(135deg, #0a0a15 0%, #0f0f1f 100%);
+    border: 2px solid #ff0066;
+    border-radius: 15px;
+    padding: 15px;
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 0 20px rgba(255, 0, 102, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.5);
+
+    .neon-header {
+        text-align: center;
+        margin-bottom: 15px;
+
+        .neon-avatar {
+            font-size: 32px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            font-size: 14px;
+            letter-spacing: 3px;
+            margin: 0;
+            color: #00ffff;
+            text-shadow: 0 0 10px #00ffff;
+        }
+    }
+
+    .neon-links {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        .neon-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+
+            &.wa {
+                background: rgba(0, 255, 136, 0.1);
+                border: 1px solid #00ff88;
+                color: #00ff88;
+
+                &:hover {
+                    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+                }
+            }
+
+            &.li {
+                background: rgba(0, 170, 255, 0.1);
+                border: 1px solid #00aaff;
+                color: #00aaff;
+
+                &:hover {
+                    box-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+                }
+            }
+
+            &.em {
+                background: rgba(255, 0, 102, 0.1);
+                border: 1px solid #ff0066;
+                color: #ff0066;
+
+                &:hover {
+                    box-shadow: 0 0 15px rgba(255, 0, 102, 0.5);
+                }
+            }
+        }
+    }
+}
+
+// Neon Arcade Screen Styles (Dark transparent with neon cards)
+.neon-arcade-screen {
+    width: 320px;
+    height: 220px;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+
+    .arcade-header {
+        text-align: center;
+        margin-bottom: 20px;
+
+        .arcade-icon {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            font-size: 24px;
+            letter-spacing: 8px;
+            margin: 0 0 6px 0;
+            color: #ff3366;
+            text-shadow: 0 0 15px rgba(255, 51, 102, 0.6);
+        }
+
+        p {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 2px;
+            margin: 0;
+        }
+    }
+
+    .neon-game-cards {
+        display: flex;
+        gap: 15px;
+
+        .neon-game-card {
+            width: 80px;
+            height: 90px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+
+            .card-icon {
+                font-size: 28px;
+            }
+
+            .card-label {
+                font-size: 10px;
+                font-weight: bold;
+                letter-spacing: 1px;
+                color: #fff;
+            }
+
+            &:hover {
+                transform: translateY(-5px);
+            }
+
+            &.pinball {
+                border-color: #ff00ff;
+
+                &:hover {
+                    background: rgba(255, 0, 255, 0.15);
+                    box-shadow: 0 0 25px rgba(255, 0, 255, 0.5);
+                }
+            }
+
+            &.flappy {
+                border-color: #ffcc00;
+
+                &:hover {
+                    background: rgba(255, 204, 0, 0.15);
+                    box-shadow: 0 0 25px rgba(255, 204, 0, 0.5);
+                }
+            }
+
+            &.rubiks {
+                border-color: #00ffff;
+
+                &:hover {
+                    background: rgba(0, 255, 255, 0.15);
+                    box-shadow: 0 0 25px rgba(0, 255, 255, 0.5);
+                }
+            }
+        }
+    }
+}

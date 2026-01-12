@@ -42,43 +42,33 @@ function GamingLaptop() {
                     scale={0.038}
                     className="laptop-screen-content"
                 >
-                    <div className="screen-wrapper game-screen">
-                        <div className="screen-header">
-                            <div className="window-controls">
-                                <span className="dot red"></span>
-                                <span className="dot yellow"></span>
-                                <span className="dot green"></span>
-                            </div>
-                            <span className="tab-title">arcade.dev</span>
+                    <div className="neon-arcade-screen">
+                        <div className="arcade-header">
+                            <span className="arcade-icon">🎮</span>
+                            <h1>ARCADE</h1>
+                            <p>Choose Your Game</p>
                         </div>
-                        <div className="screen-body game-body">
-                            <div className="game-content">
-                                <div className="game-icon">🎮</div>
-                                <h1 className="game-title">ARCADE</h1>
-                                <p className="game-subtitle">Choose Your Game</p>
-                                <div className="game-selection">
-                                    <button
-                                        className="game-btn pinball-btn"
-                                        onClick={() => { window.location.href = '/pinball'; }}
-                                    >
-                                        <span className="btn-icon">🎱</span>
-                                        <span className="btn-text">Pinball</span>
-                                    </button>
-                                    <button
-                                        className="game-btn flappy-btn"
-                                        onClick={() => { window.location.href = '/flappy-bird'; }}
-                                    >
-                                        <span className="btn-icon">🐦</span>
-                                        <span className="btn-text">Flappy</span>
-                                    </button>
-                                    <button
-                                        className="game-btn rubiks-btn"
-                                        onClick={() => { window.location.href = '/rubiks-cube'; }}
-                                    >
-                                        <span className="btn-icon">🧊</span>
-                                        <span className="btn-text">Rubik's</span>
-                                    </button>
-                                </div>
+                        <div className="neon-game-cards">
+                            <div
+                                className="neon-game-card pinball"
+                                onClick={() => { window.location.href = '/pinball'; }}
+                            >
+                                <span className="card-icon">🎱</span>
+                                <span className="card-label">Pinball</span>
+                            </div>
+                            <div
+                                className="neon-game-card flappy"
+                                onClick={() => { window.location.href = '/flappy-bird'; }}
+                            >
+                                <span className="card-icon">🐦</span>
+                                <span className="card-label">Flappy</span>
+                            </div>
+                            <div
+                                className="neon-game-card rubiks"
+                                onClick={() => { window.location.href = '/rubiks-cube'; }}
+                            >
+                                <span className="card-icon">🧊</span>
+                                <span className="card-label">Rubik's</span>
                             </div>
                         </div>
                     </div>
