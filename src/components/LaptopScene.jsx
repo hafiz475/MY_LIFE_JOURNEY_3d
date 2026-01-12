@@ -1,4 +1,4 @@
-import { useRef, Suspense } from 'react';
+import { useRef, Suspense, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
     Html,
@@ -10,6 +10,7 @@ import {
 } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { useNavigate } from 'react-router-dom';
+import PhoneModel from './PhoneModel';
 import './LaptopScene.scss';
 
 // 3D Gaming Laptop Model Component with Screen Content
@@ -54,25 +55,29 @@ function GamingLaptop() {
                             <div className="game-content">
                                 <div className="game-icon">🎮</div>
                                 <h1 className="game-title">ARCADE</h1>
-                                <p className="game-subtitle">Classic Pinball Experience</p>
-                                <button
-                                    className="play-button"
-                                    onClick={() => {
-                                        window.location.href = '/pinball';
-                                    }}
-                                >
-                                    <span className="play-icon">▶</span>
-                                    <span className="play-text">PLAY PINBALL</span>
-                                </button>
-                                <div className="game-stats">
-                                    <div className="stat">
-                                        <span className="stat-value">∞</span>
-                                        <span className="stat-label">High Score</span>
-                                    </div>
-                                    <div className="stat">
-                                        <span className="stat-value">3</span>
-                                        <span className="stat-label">Lives</span>
-                                    </div>
+                                <p className="game-subtitle">Choose Your Game</p>
+                                <div className="game-selection">
+                                    <button
+                                        className="game-btn pinball-btn"
+                                        onClick={() => { window.location.href = '/pinball'; }}
+                                    >
+                                        <span className="btn-icon">🎱</span>
+                                        <span className="btn-text">Pinball</span>
+                                    </button>
+                                    <button
+                                        className="game-btn flappy-btn"
+                                        onClick={() => { window.location.href = '/flappy-bird'; }}
+                                    >
+                                        <span className="btn-icon">🐦</span>
+                                        <span className="btn-text">Flappy</span>
+                                    </button>
+                                    <button
+                                        className="game-btn rubiks-btn"
+                                        onClick={() => { window.location.href = '/rubiks-cube'; }}
+                                    >
+                                        <span className="btn-icon">🧊</span>
+                                        <span className="btn-text">Rubik's</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -136,6 +141,8 @@ function Loader() {
 
 // Main Scene Component
 export default function LaptopScene() {
+    const [phoneActive, setPhoneActive] = useState(false);
+
     return (
         <div className="laptop-scene-container">
             <Canvas
@@ -189,6 +196,14 @@ export default function LaptopScene() {
                 {/* The Gaming Laptop Model */}
                 <Suspense fallback={<Loader />}>
                     <GamingLaptop />
+                </Suspense>
+
+                {/* Phone Model with Contact Details */}
+                <Suspense fallback={null}>
+                    <PhoneModel
+                        onClick={() => setPhoneActive(!phoneActive)}
+                        isActive={phoneActive}
+                    />
                 </Suspense>
 
                 {/* Reflective Floor Surface */}

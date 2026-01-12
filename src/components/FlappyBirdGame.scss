@@ -1,0 +1,120 @@
+.flappy-game-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    font-family: 'JetBrains Mono', monospace;
+
+    .close-button {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 100, 100, 0.2);
+        border: 1px solid #ff6666;
+        color: #ff6666;
+        padding: 10px 20px;
+        font-size: 14px;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background: rgba(255, 100, 100, 0.4);
+            box-shadow: 0 0 15px rgba(255, 100, 100, 0.5);
+        }
+    }
+
+    .game-start-screen,
+    .game-over-screen {
+        text-align: center;
+        color: #fff;
+
+        .game-logo {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: #ffcc00;
+            text-shadow: 0 0 20px #ffcc00, 0 0 40px #ff8800;
+        }
+
+        p {
+            font-size: 18px;
+            color: #aaa;
+            margin-bottom: 30px;
+        }
+
+        .final-score {
+            font-size: 28px;
+            color: #00ff88;
+            margin-bottom: 30px;
+        }
+
+        .start-button,
+        .exit-button {
+            display: block;
+            margin: 10px auto;
+            padding: 15px 40px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .start-button {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            color: #000;
+
+            &:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+            }
+        }
+
+        .exit-button {
+            background: transparent;
+            border: 1px solid #666;
+            color: #666;
+
+            &:hover {
+                border-color: #fff;
+                color: #fff;
+            }
+        }
+    }
+
+    .canvas-wrapper {
+        cursor: pointer;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 0 40px rgba(0, 255, 136, 0.3);
+
+        .flappy-canvas {
+            display: block;
+        }
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-15px);
+        }
+    }
+}

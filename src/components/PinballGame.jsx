@@ -11,7 +11,7 @@ export default function PinballGame({ onClose }) {
 
     // Game state stored in a ref for smooth performance and physics access
     const gameStateRef = useRef({
-        ball: { x: 0, y: 0, vx: 0, vy: 0, radius: 10, history: [], active: false, color: '#ffffff' },
+        ball: { x: 0, y: 0, vx: 0, vy: 0, radius: 10, history: [], active: false, color: '#ffffff', launched: false },
         leftPaddle: { x: 70, y: 0, angle: 0.2, targetAngle: 0.2, isPressed: false, width: 80, height: 16 },
         rightPaddle: { x: 0, y: 0, angle: -0.2, targetAngle: -0.2, isPressed: false, width: 80, height: 16 },
         plunger: { power: 0, isCharging: false },
@@ -23,9 +23,10 @@ export default function PinballGame({ onClose }) {
         width: 400,
         height: 600,
         laneWidth: 50,
-        maxSpeed: 16,     // Terminal velocity
-        friction: 0.994,  // Air drag
-        gravity: 0.32     // Gravity strength
+        margin: 20,
+        maxSpeed: 16,
+        friction: 0.994,
+        gravity: 0.32
     });
 
     // Initialize game
@@ -33,25 +34,25 @@ export default function PinballGame({ onClose }) {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const width = canvas.width;
-        const height = canvas.height;
         const state = gameStateRef.current;
 
+        const { width, height, laneWidth, margin } = state;
         // Reset ball to plunger lane
         state.ball = {
-            x: width - state.laneWidth / 2,
+            x: width - laneWidth / 2 - margin,
             y: height - 100,
             vx: 0,
             vy: 0,
             radius: 10,
             history: [],
             active: false,
+            launched: false,
             color: '#ffffff'
         };
 
         // Paddle positions
         state.leftPaddle.y = height - 80;
-        state.rightPaddle.x = width - state.laneWidth - 70;
+        state.rightPaddle.x = width - state.laneWidth - margin - 70;
         state.rightPaddle.y = height - 80;
 
         // Create colorful bumpers
@@ -80,12 +81,7 @@ export default function PinballGame({ onClose }) {
     const createParticles = (x, y, color, count = 10) => {
         for (let i = 0; i < count; i++) {
             gameStateRef.current.particles.push({
-                x, y,
-                vx: (Math.random() - 0.5) * 8,
-                vy: (Math.random() - 0.5) * 8,
-                life: 1.0,
-                color,
-                size: Math.random() * 4 + 2
+                x, y, vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 0.5) * 8, life: 1.0, color, size: Math.random() * 4 + 2
             });
         }
     };
@@ -98,9 +94,8 @@ export default function PinballGame({ onClose }) {
     const updatePhysics = (dt) => {
         const state = gameStateRef.current;
         const ball = state.ball;
-        const { width, height, laneWidth, friction, gravity, maxSpeed } = state;
+        const { width, height, laneWidth, margin, friction, gravity, maxSpeed } = state;
 
-        // Plunger charging
         if (state.plunger.isCharging) {
             state.plunger.power = Math.min(state.plunger.power + 0.02, 1);
         }
@@ -112,11 +107,9 @@ export default function PinballGame({ onClose }) {
         state.rightPaddle.angle += (state.rightPaddle.targetAngle - state.rightPaddle.angle) * 0.35;
 
         if (ball.active) {
-            // APPLY PHYSICS
             ball.vy += gravity;
             ball.vx *= friction;
             ball.vy *= friction;
-
             ball.x += ball.vx;
             ball.y += ball.vy;
 
@@ -128,33 +121,103 @@ export default function PinballGame({ onClose }) {
             }
 
             const margin = 20;
-            const playAreaRight = width - laneWidth;
+            const playAreaRight = width - laneWidth - margin;
 
-            // Launch Lane logic
-            if (ball.x > playAreaRight - ball.radius) {
-                if (ball.y < 120) {
+            // --- Extended Barrel & Center Exit Logic ---
+            const inLaunchTunnel = !ball.launched;
+
+            if (inLaunchTunnel) {
+                // Determine if ball has reached the center exit (top-center)
+                if (ball.x < width / 2 && ball.y < 150) {
+                    ball.launched = true;
+                }
+
+                if (ball.y >= 150) {
+                    // Inside vertical lane - block by both left and right walls
+                    if (ball.x < playAreaRight + ball.radius) {
+                        ball.x = playAreaRight + ball.radius;
+                        ball.vx = Math.abs(ball.vx) * 0.4;
+                    }
                     if (ball.x > width - margin - ball.radius) {
                         ball.x = width - margin - ball.radius;
-                        ball.vx *= -0.4;
+                        ball.vx = -Math.abs(ball.vx) * 0.4;
                     }
                 } else {
-                    if (ball.vx > 0 && ball.x < playAreaRight) {
-                        ball.x = playAreaRight - ball.radius;
-                        ball.vx *= -0.4;
-                    } else if (ball.x > playAreaRight) {
-                        if (ball.x < playAreaRight + ball.radius) {
-                            ball.x = playAreaRight + ball.radius;
-                            ball.vx = Math.abs(ball.vx) * 0.4;
-                        }
-                        if (ball.x > width - margin - ball.radius) {
-                            ball.x = width - margin - ball.radius;
-                            ball.vx *= -0.4;
-                        }
+                    // Inside curved tunnel (Top-Right quadrant)
+                    const centerX = width / 2;
+                    const centerY = 150;
+                    const outerRadius = width / 2 - margin;
+                    const innerRadius = width / 2 - laneWidth - margin;
+
+                    const dx = ball.x - centerX;
+                    const dy = ball.y - centerY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    // Constrain between outer and inner rails
+                    if (dist > outerRadius - ball.radius) {
+                        const angle = Math.atan2(dy, dx);
+                        ball.x = centerX + Math.cos(angle) * (outerRadius - ball.radius);
+                        ball.y = centerY + Math.sin(angle) * (outerRadius - ball.radius);
+                        const normalX = Math.cos(angle);
+                        const normalY = Math.sin(angle);
+                        const dot = ball.vx * normalX + ball.vy * normalY;
+                        ball.vx = (ball.vx - 2 * dot * normalX) * 0.6;
+                        ball.vy = (ball.vy - 2 * dot * normalY) * 0.6;
+                    } else if (dist < innerRadius + ball.radius && ball.x > width / 2) {
+                        // Inner rail blocks until we reach the center exit
+                        const angle = Math.atan2(dy, dx);
+                        ball.x = centerX + Math.cos(angle) * (innerRadius + ball.radius);
+                        ball.y = centerY + Math.sin(angle) * (innerRadius + ball.radius);
+                        const normalX = Math.cos(angle);
+                        const normalY = Math.sin(angle);
+                        const dot = ball.vx * normalX + ball.vy * normalY;
+                        ball.vx = (ball.vx - 2 * dot * normalX) * 0.6;
+                        ball.vy = (ball.vy - 2 * dot * normalY) * 0.6;
+                    }
+
+                    // Force horizontal movement through curve
+                    if (ball.vx > -2 && ball.y < 120) ball.vx -= 0.5;
+                }
+            } else {
+                // Ball in playfield - lane wall blocks re-entry
+                if (ball.y >= 120 && ball.x + ball.radius > playAreaRight) {
+                    ball.x = playAreaRight - ball.radius;
+                    ball.vx = -Math.abs(ball.vx) * 0.4;
+                }
+
+                // Top curve inner rail blocks re-entry for launched ball
+                if (ball.y < 150 && ball.x > width / 2) {
+                    const centerX = width / 2;
+                    const centerY = 150;
+                    const innerRadius = width / 2 - laneWidth - margin;
+                    const dx = ball.x - centerX;
+                    const dy = ball.y - centerY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < innerRadius + ball.radius) {
+                        const angle = Math.atan2(dy, dx);
+                        ball.x = centerX + Math.cos(angle) * (innerRadius + ball.radius);
+                        ball.y = centerY + Math.sin(angle) * (innerRadius + ball.radius);
+                        const normalX = Math.cos(angle);
+                        const normalY = Math.sin(angle);
+                        const dot = ball.vx * normalX + ball.vy * normalY;
+                        ball.vx = (ball.vx - 2 * dot * normalX) * 0.6;
+                        ball.vy = (ball.vy - 2 * dot * normalY) * 0.6;
                     }
                 }
             }
 
-            // Margin collisions
+            // Fail-safe: if ball is in lane but falls back down, reset it to plunger
+            if (!ball.launched && ball.y > height - 80 && ball.vy > 0 && ball.x > playAreaRight) {
+                ball.active = false;
+                ball.vx = 0;
+                ball.vy = 0;
+                ball.y = height - 100;
+                ball.x = width - laneWidth / 2;
+                return; // Early exit, no life lost
+            }
+
+            // Margin collisions (Left, Top)
             if (ball.x < margin + ball.radius) {
                 ball.x = margin + ball.radius;
                 ball.vx = Math.abs(ball.vx) * 0.4;
@@ -164,14 +227,15 @@ export default function PinballGame({ onClose }) {
                 ball.vy = Math.abs(ball.vy) * 0.4;
             }
 
-            // Top curve
-            if (ball.y < 150) {
+            // Top curve guidance - subtle "vacuum" effect
+            if (ball.y < 180) {
                 const centerX = width / 2;
                 const centerY = 150;
                 const outerRadius = width / 2 - margin;
                 const dx = ball.x - centerX;
                 const dy = ball.y - centerY;
                 const dist = Math.sqrt(dx * dx + dy * dy);
+
                 if (dist > outerRadius) {
                     const angle = Math.atan2(dy, dx);
                     ball.x = centerX + Math.cos(angle) * (outerRadius - ball.radius);
@@ -181,6 +245,11 @@ export default function PinballGame({ onClose }) {
                     const dot = ball.vx * normalX + ball.vy * normalY;
                     ball.vx = (ball.vx - 2 * dot * normalX) * 0.65;
                     ball.vy = (ball.vy - 2 * dot * normalY) * 0.65;
+
+                    // Nudge towards center if launching
+                    if (!ball.launched || ball.vx > 0) {
+                        ball.vx -= 0.15;
+                    }
                 }
             }
 
@@ -192,7 +261,7 @@ export default function PinballGame({ onClose }) {
                 if (dist < ball.radius + bumper.radius) {
                     const angle = Math.atan2(dy, dx);
                     const currentSpeed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
-                    const reflectionSpeed = Math.min(Math.max(currentSpeed * 1.1, 10), maxSpeed);
+                    const reflectionSpeed = Math.min(Math.max(currentSpeed * 1.05, 10), maxSpeed);
                     ball.vx = Math.cos(angle) * reflectionSpeed;
                     ball.vy = Math.sin(angle) * reflectionSpeed;
                     ball.x = bumper.x + Math.cos(angle) * (ball.radius + bumper.radius + 1);
@@ -242,7 +311,7 @@ export default function PinballGame({ onClose }) {
                     const bounceY = -Math.abs(ball.vy) - 4 - kickPower;
                     ball.vx = (-rx * nSin + bounceY * nCos) * 0.9;
                     ball.vy = (rx * nCos + bounceY * nSin) * 0.9;
-                    ball.y = paddle.y - 20;
+                    ball.y = paddle.y - 18;
                     ball.color = '#ffffff';
                     if (kickPower > 2) {
                         state.shake = 3;
@@ -276,7 +345,7 @@ export default function PinballGame({ onClose }) {
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         const state = gameStateRef.current;
-        const { width, height, laneWidth } = state;
+        const { width, height, laneWidth, margin } = state;
 
         for (let i = 0; i < 6; i++) updatePhysics(1 / 60 / 6);
 
@@ -286,27 +355,42 @@ export default function PinballGame({ onClose }) {
         ctx.fillStyle = '#050505';
         ctx.fillRect(0, 0, width, height);
 
-        // Grid (Subtle)
+        // Grid
         ctx.strokeStyle = 'rgba(0, 255, 255, 0.03)';
         for (let x = 0; x < width; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke(); }
         for (let y = 0; y < height; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke(); }
 
-        // Rails
+        // --- DRAWING RAILS ---
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
         ctx.lineWidth = 3;
+
+        // 1. Outer Frame (Playfield + Barrel Outer)
         ctx.beginPath();
-        ctx.moveTo(width - laneWidth, height);
-        ctx.lineTo(width - laneWidth, 150);
-        ctx.arc(width / 2, 150, width / 2 - 20, 0, Math.PI, true);
-        ctx.lineTo(20, height);
+        ctx.moveTo(width - margin, height);
+        ctx.lineTo(width - margin, 150);
+        ctx.arc(width / 2, 150, width / 2 - margin, 0, Math.PI, true);
+        ctx.lineTo(margin, height);
+        ctx.stroke();
+
+        // 2. Extended Barrel Inner Wall
+        ctx.beginPath();
+        ctx.moveTo(width - laneWidth - margin, height);
+        ctx.lineTo(width - laneWidth - margin, 150);
+        // Barrel Curve (to center)
+        ctx.arc(width / 2, 150, width / 2 - laneWidth - margin, 0, -Math.PI / 2, true);
+        ctx.stroke();
+
+        // 3. Playfield Upper Left Inner Rail
+        ctx.beginPath();
+        ctx.arc(width / 2, 150, width / 2 - laneWidth - margin, -Math.PI / 2, -Math.PI, true);
         ctx.stroke();
 
         // Plunger lane wall glow
         ctx.strokeStyle = 'rgba(0, 255, 255, 0.2)';
-        ctx.beginPath(); ctx.moveTo(width - laneWidth, 150); ctx.lineTo(width - laneWidth, height); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(width - laneWidth - margin, 150); ctx.lineTo(width - laneWidth - margin, height); ctx.stroke();
 
         // Plunger
-        const plungerX = width - laneWidth / 2;
+        const plungerX = width - laneWidth / 2 - margin;
         const plungerY = height - 40;
         const compress = state.plunger.power * 40;
         ctx.fillStyle = '#ef4444';
@@ -355,7 +439,7 @@ export default function PinballGame({ onClose }) {
         const drawP = (p, c) => {
             ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.angle);
             ctx.fillStyle = c; ctx.shadowColor = c; ctx.shadowBlur = 12;
-            const rx = p.x < width / 2 ? 0 : -p.width;
+            const rx = p.x < (width - laneWidth) / 2 ? 0 : -p.width;
             ctx.fillRect(rx, -p.height / 2, p.width, p.height);
             ctx.restore();
         };
@@ -417,8 +501,10 @@ export default function PinballGame({ onClose }) {
                 const s = gameStateRef.current;
                 s.plunger.isCharging = false;
                 if (!s.ball.active) {
-                    s.ball.vx = 0; s.ball.vy = -s.plunger.power * 28 - 10;
-                    s.ball.active = true; s.shake = 8; s.ball.color = '#ffffff';
+                    s.ball.vx = 0; s.ball.vy = -s.plunger.power * 28 - 14;
+                    s.ball.active = true; s.ball.launched = false; s.shake = 8; s.ball.color = '#ffffff';
+                    const { width, laneWidth, margin } = s;
+                    s.ball.x = width - laneWidth / 2 - margin;
                 }
                 s.plunger.power = 0;
             }
@@ -449,7 +535,7 @@ export default function PinballGame({ onClose }) {
                 </div>
             ) : gameOver ? (
                 <div className="game-over-screen">
-                    <h1 style={{ color: '#ff00ff' }}>GAEM OVER</h1>
+                    <h1 style={{ color: '#ff00ff' }}>MISSION OVER</h1>
                     <p className="final-score">Final Score: {score}</p>
                     <button className="start-button" onClick={() => initGame() || setGameOver(false)}>↻ REBOOT</button>
                     <button className="exit-button" onClick={onClose}>EXIT</button>

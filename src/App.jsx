@@ -6,6 +6,9 @@ import Overlay from './components/Overlay';
 import ExperienceStart from './components/ExperienceStart';
 import RoomScene from './components/RoomScene';
 import PinballGame from './components/PinballGame';
+import FlappyBirdGame from './components/FlappyBirdGame';
+import RubiksCubeGame from './components/RubiksCubeGame';
+import GameLoader from './components/GameLoader';
 
 // Main Experience Component - combines intro, flight, and sunset on single page
 function MainExperience() {
@@ -135,15 +138,40 @@ function RoomSceneWrapper() {
 // Pinball Game Wrapper with back navigation
 function PinballGameWrapper() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
-  const handleClose = () => {
-    navigate('/software');
-  };
+  if (loading) {
+    return <GameLoader gameType="pinball" onComplete={() => setLoading(false)} />;
+  }
 
-  return <PinballGame onClose={handleClose} />;
+  return <PinballGame onClose={() => navigate('/software')} />;
 }
 
-// Main App with Routes - simplified to only / and /room
+// Flappy Bird Game Wrapper
+function FlappyBirdGameWrapper() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
+  if (loading) {
+    return <GameLoader gameType="flappy" onComplete={() => setLoading(false)} />;
+  }
+
+  return <FlappyBirdGame onClose={() => navigate('/software')} />;
+}
+
+// Rubik's Cube Game Wrapper
+function RubiksCubeGameWrapper() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
+  if (loading) {
+    return <GameLoader gameType="rubiks" onComplete={() => setLoading(false)} />;
+  }
+
+  return <RubiksCubeGame onClose={() => navigate('/software')} />;
+}
+
+// Main App with Routes
 function App() {
   return (
     <Routes>
@@ -151,6 +179,8 @@ function App() {
       <Route path="/room" element={<RoomSceneWrapper />} />
       <Route path="/software" element={<RoomSceneWrapper />} />
       <Route path="/pinball" element={<PinballGameWrapper />} />
+      <Route path="/flappy-bird" element={<FlappyBirdGameWrapper />} />
+      <Route path="/rubiks-cube" element={<RubiksCubeGameWrapper />} />
     </Routes>
   );
 }

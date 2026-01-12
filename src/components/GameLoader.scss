@@ -1,0 +1,86 @@
+.game-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    font-family: 'JetBrains Mono', monospace;
+
+    .loader-content {
+        text-align: center;
+
+        .game-emoji {
+            font-size: 100px;
+            margin-bottom: 30px;
+            animation: pulse 1.5s ease-in-out infinite, float 2s ease-in-out infinite;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 40px;
+            letter-spacing: 4px;
+        }
+
+        .progress-bar {
+            width: 300px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0 auto 20px;
+
+            .progress-fill {
+                height: 100%;
+                border-radius: 3px;
+                transition: width 0.1s ease;
+            }
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: #666;
+            letter-spacing: 3px;
+            animation: blink 1s ease-in-out infinite;
+        }
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0px) scale(1);
+        }
+
+        50% {
+            transform: translateY(-10px) scale(1.1);
+        }
+    }
+
+    @keyframes blink {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.3;
+        }
+    }
+}
