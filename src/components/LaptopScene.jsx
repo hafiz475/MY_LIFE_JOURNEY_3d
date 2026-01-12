@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Html, Environment, ContactShadows } from '@react-three/drei';
+import { Html, Environment, ContactShadows, RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
 import './LaptopScene.scss';
 
@@ -13,7 +13,7 @@ function Laptop() {
     useFrame((state) => {
         if (groupRef.current) {
             groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.05 - 0.3;
-            groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.05;
+            groupRef.current.position.y = -0.3 + Math.sin(state.clock.elapsedTime * 0.5) * 0.03;
         }
     });
 
@@ -24,16 +24,15 @@ function Laptop() {
     const silverAccent = new THREE.Color('#4a4a4a');   // Subtle silver accent
 
     return (
-        <group ref={groupRef} position={[0, 0, 0]} rotation={[0.2, -0.3, 0]}>
-            {/* Laptop Base / Bottom */}
-            <mesh position={[0, -0.02, 0]} castShadow receiveShadow>
-                <boxGeometry args={[3.2, 0.08, 2.1]} />
+        <group ref={groupRef} position={[0, -0.3, 0]} rotation={[0.2, -0.3, 0]} scale={0.85}>
+            {/* Laptop Base / Bottom - with rounded corners */}
+            <RoundedBox args={[3.2, 0.08, 2.1]} radius={0.03} smoothness={4} position={[0, -0.02, 0]} castShadow receiveShadow>
                 <meshStandardMaterial
                     color={matteGray}
                     roughness={0.8}
                     metalness={0.1}
                 />
-            </mesh>
+            </RoundedBox>
 
             {/* Keyboard Area (Top of base) */}
             <mesh position={[0, 0.02, 0.15]} receiveShadow>
@@ -43,6 +42,33 @@ function Laptop() {
                     roughness={0.9}
                     metalness={0.05}
                 />
+            </mesh>
+
+            {/* Keyboard Keys - Row 1 */}
+            {[...Array(12)].map((_, i) => (
+                <mesh key={`key1-${i}`} position={[-1.25 + i * 0.22, 0.035, -0.25]} receiveShadow>
+                    <boxGeometry args={[0.18, 0.015, 0.15]} />
+                    <meshStandardMaterial color="#222" roughness={0.85} metalness={0.1} />
+                </mesh>
+            ))}
+            {/* Keyboard Keys - Row 2 */}
+            {[...Array(12)].map((_, i) => (
+                <mesh key={`key2-${i}`} position={[-1.2 + i * 0.22, 0.035, -0.05]} receiveShadow>
+                    <boxGeometry args={[0.18, 0.015, 0.15]} />
+                    <meshStandardMaterial color="#222" roughness={0.85} metalness={0.1} />
+                </mesh>
+            ))}
+            {/* Keyboard Keys - Row 3 */}
+            {[...Array(11)].map((_, i) => (
+                <mesh key={`key3-${i}`} position={[-1.1 + i * 0.22, 0.035, 0.15]} receiveShadow>
+                    <boxGeometry args={[0.18, 0.015, 0.15]} />
+                    <meshStandardMaterial color="#222" roughness={0.85} metalness={0.1} />
+                </mesh>
+            ))}
+            {/* Spacebar */}
+            <mesh position={[0, 0.035, 0.35]} receiveShadow>
+                <boxGeometry args={[1.2, 0.015, 0.15]} />
+                <meshStandardMaterial color="#222" roughness={0.85} metalness={0.1} />
             </mesh>
 
             {/* Trackpad */}
@@ -57,15 +83,14 @@ function Laptop() {
 
             {/* Screen Frame / Lid */}
             <group ref={screenRef} position={[0, 1.1, -0.95]} rotation={[-0.15, 0, 0]}>
-                {/* Screen Back (Lid exterior) */}
-                <mesh position={[0, 0, -0.03]} castShadow>
-                    <boxGeometry args={[3.2, 2.1, 0.06]} />
+                {/* Screen Back (Lid exterior) - with rounded corners */}
+                <RoundedBox args={[3.2, 2.1, 0.06]} radius={0.05} smoothness={4} position={[0, 0, -0.03]} castShadow>
                     <meshStandardMaterial
                         color={matteGray}
                         roughness={0.8}
                         metalness={0.1}
                     />
-                </mesh>
+                </RoundedBox>
 
                 {/* Screen Bezel */}
                 <mesh position={[0, 0, 0.01]}>
@@ -166,7 +191,7 @@ export default function LaptopScene() {
     return (
         <div className="laptop-scene-container">
             <Canvas
-                camera={{ position: [0, 2, 5], fov: 45 }}
+                camera={{ position: [0, 1.2, 4], fov: 45 }}
                 shadows
                 gl={{ antialias: true, alpha: true }}
             >
@@ -209,6 +234,25 @@ export default function LaptopScene() {
             <div className="scene-overlay">
                 <h1 className="scene-title">Software Engineering</h1>
                 <p className="scene-subtitle">Crafting Digital Experiences</p>
+            </div>
+
+            {/* Contact Links */}
+            <div className="contact-links-section">
+                <h3 className="contact-title">Let's Connect</h3>
+                <div className="contact-links">
+                    <a href="mailto:your.email@example.com" className="contact-link email" target="_blank" rel="noopener noreferrer">
+                        <span className="contact-icon">✉️</span>
+                        <span className="contact-label">Email</span>
+                    </a>
+                    <a href="https://wa.me/919876543210" className="contact-link whatsapp" target="_blank" rel="noopener noreferrer">
+                        <span className="contact-icon">💬</span>
+                        <span className="contact-label">WhatsApp</span>
+                    </a>
+                    <a href="https://linkedin.com/in/yourprofile" className="contact-link linkedin" target="_blank" rel="noopener noreferrer">
+                        <span className="contact-icon">💼</span>
+                        <span className="contact-label">LinkedIn</span>
+                    </a>
+                </div>
             </div>
         </div>
     );
