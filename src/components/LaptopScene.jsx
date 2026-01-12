@@ -26,7 +26,7 @@ function GamingLaptop() {
             <Html
                 transform
                 occlude
-                position={[0.12, 0.54, 0.12]}
+                position={[0.12, 0.55, 0.12]}
                 rotation={[0.18, Math.PI, 0]}
                 scale={0.038}
                 className="laptop-screen-content"
