@@ -15,7 +15,6 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.2",
     "@react-three/postprocessing": "^3.0.4",
-    "@splinetool/react-spline": "^4.1.0",
     "gsap": "^3.14.2",
     "lottie-react": "^2.4.1",
     "postprocessing": "^6.38.0",

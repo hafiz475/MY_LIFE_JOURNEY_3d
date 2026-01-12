@@ -1,5 +1,5 @@
 // ========================================
-// 3D DESK SCENE STYLES
+// 3D LAPTOP SCENE STYLES
 // ========================================
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -10,7 +10,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(180deg, #1a1814 0%, #0f0d0a 100%);
+    background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
     z-index: 60;
 }
 
@@ -28,7 +28,7 @@
         font-family: 'Inter', sans-serif;
         font-size: 2.5rem;
         font-weight: 700;
-        background: linear-gradient(135deg, #c4a574, #e8d5b0, #c4a574);
+        background: linear-gradient(135deg, #6b21a8, #9333ea, #6b21a8);
         background-size: 200% 200%;
         -webkit-background-clip: text;
         background-clip: text;
@@ -41,9 +41,8 @@
     .scene-subtitle {
         font-family: 'Inter', sans-serif;
         font-size: 1rem;
-        color: rgba(255, 255, 255, 0.4);
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.5);
+        letter-spacing: 0.1em;
     }
 
     @keyframes gradientShift {
@@ -60,7 +59,7 @@
 }
 
 // ========================================
-// MONITOR SCREEN STYLES
+// LAPTOP SCREEN CONTENT STYLES
 // ========================================
 
 .laptop-screen-content {
@@ -70,16 +69,11 @@
 
 .screen-wrapper {
     width: 420px;
-    height: 280px;
-    background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
+    height: 260px;
+    background: linear-gradient(180deg, #1a1a1a 0%, #121212 100%);
     border-radius: 4px;
     overflow: hidden;
     font-family: 'Inter', sans-serif;
-
-    &.monitor-screen {
-        width: 480px;
-        height: 320px;
-    }
 }
 
 // Browser-like header
@@ -87,8 +81,8 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 14px;
-    background: #252525;
+    padding: 8px 12px;
+    background: #2a2a2a;
     border-bottom: 1px solid #333;
 
     .window-controls {
@@ -116,24 +110,24 @@
 
     .tab-title {
         font-size: 11px;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(255, 255, 255, 0.6);
         font-family: 'JetBrains Mono', monospace;
     }
 }
 
 // Main screen content
 .screen-body {
-    padding: 20px;
-    height: calc(100% - 40px);
+    padding: 16px;
+    height: calc(100% - 35px);
     overflow: hidden;
 
     .tech-title {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
-        color: #c4a574;
-        margin-bottom: 16px;
+        color: #9333ea;
+        margin-bottom: 12px;
         text-align: center;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.05em;
     }
 }
 
@@ -141,41 +135,41 @@
 .tech-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 8px;
+    margin-bottom: 12px;
 }
 
 .tech-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 12px 8px;
+    padding: 10px 6px;
     background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
     transition: all 0.3s ease;
 
     &:hover {
-        background: rgba(196, 165, 116, 0.1);
-        border-color: rgba(196, 165, 116, 0.3);
+        background: rgba(147, 51, 234, 0.1);
+        border-color: rgba(147, 51, 234, 0.3);
         transform: translateY(-2px);
     }
 
     .tech-icon {
-        font-size: 20px;
-        margin-bottom: 6px;
+        font-size: 18px;
+        margin-bottom: 4px;
     }
 
     .tech-name {
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 600;
         color: #fff;
-        margin-bottom: 3px;
+        margin-bottom: 2px;
     }
 
     .tech-level {
-        font-size: 9px;
-        color: rgba(255, 255, 255, 0.4);
+        font-size: 8px;
+        color: rgba(255, 255, 255, 0.5);
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
@@ -208,16 +202,16 @@
 
 // What I Build section
 .what-i-build {
-    padding-top: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 
     h2 {
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 600;
-        color: #c4a574;
-        margin-bottom: 8px;
+        color: #9333ea;
+        margin-bottom: 6px;
         text-transform: uppercase;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.1em;
     }
 
     ul {
@@ -226,21 +220,21 @@
         margin: 0;
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 5px;
+        gap: 4px;
 
         li {
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.6);
-            padding: 4px 0;
-            padding-left: 14px;
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 3px 0;
+            padding-left: 12px;
             position: relative;
 
             &::before {
                 content: '▸';
                 position: absolute;
                 left: 0;
-                color: #c4a574;
-                font-size: 9px;
+                color: #9333ea;
+                font-size: 8px;
             }
         }
     }
