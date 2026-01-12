@@ -1,15 +1,22 @@
 import { useRef } from 'react';
-import { useGLTF, Html, Float } from '@react-three/drei';
+import { useGLTF, Float } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 
-export default function PhoneModel({ onClick, isActive }) {
+export default function PhoneModel({ onClick }) {
     const groupRef = useRef();
+    const dotRef = useRef();
     const { scene } = useGLTF('/assets/models/phone_free.glb');
 
     useFrame((state) => {
-        if (groupRef.current && !isActive) {
-            // Subtle floating animation when not active
+        if (groupRef.current) {
+            // Subtle floating animation
             groupRef.current.position.y = -1.2 + Math.sin(state.clock.elapsedTime * 0.8) * 0.005;
+        }
+        // Pulsing dot animation
+        if (dotRef.current) {
+            const pulse = 0.5 + Math.sin(state.clock.elapsedTime * 3) * 0.3;
+            dotRef.current.scale.setScalar(pulse);
+            dotRef.current.material.opacity = 0.6 + Math.sin(state.clock.elapsedTime * 3) * 0.4;
         }
     });
 
@@ -17,48 +24,27 @@ export default function PhoneModel({ onClick, isActive }) {
         <Float speed={1.5} rotationIntensity={0.02} floatIntensity={0.02}>
             <group
                 ref={groupRef}
-                position={[3.2, -1.2, 0.8]}
-                rotation={[-Math.PI / 2, 0, -0.2]}
+                position={[2.0, -1.2, 1.2]}
+                rotation={[-Math.PI / 2, 0, -0.1]}
                 scale={0.12}
                 onClick={onClick}
             >
                 <primitive object={scene} />
 
-                {/* Contact Details Screen - Neon Styled */}
-                {isActive && (
-                    <Html
-                        transform
-                        occlude
-                        position={[0, 0, 0.3]}
-                        rotation={[Math.PI / 2, 0, 0]}
-                        scale={0.7}
-                        className="phone-screen-content"
-                    >
-                        <div className="neon-contact-card">
-                            <div className="neon-header">
-                                <span className="neon-avatar">⚡</span>
-                                <h2>CONNECT</h2>
-                            </div>
-                            <div className="neon-links">
-                                <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="neon-link wa">
-                                    <span className="neon-icon">💬</span>
-                                    <span>WhatsApp</span>
-                                </a>
-                                <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="neon-link li">
-                                    <span className="neon-icon">💼</span>
-                                    <span>LinkedIn</span>
-                                </a>
-                                <a href="mailto:your.email@example.com" className="neon-link em">
-                                    <span className="neon-icon">📧</span>
-                                    <span>Email</span>
-                                </a>
-                            </div>
-                        </div>
-                    </Html>
-                )}
+                {/* Pulsing indicator dot */}
+                <mesh ref={dotRef} position={[0, 0, 0.4]}>
+                    <sphereGeometry args={[0.15, 16, 16]} />
+                    <meshBasicMaterial color="#ffffff" transparent opacity={0.8} />
+                </mesh>
+
+                {/* Glow ring around the dot */}
+                <mesh position={[0, 0, 0.38]} rotation={[Math.PI / 2, 0, 0]}>
+                    <ringGeometry args={[0.2, 0.35, 32]} />
+                    <meshBasicMaterial color="#00ffff" transparent opacity={0.3} />
+                </mesh>
 
                 {/* Phone glow */}
-                <pointLight position={[0, 0, 0.5]} intensity={0.4} color="#ff0066" distance={1.5} />
+                <pointLight position={[0, 0, 0.5]} intensity={0.4} color="#00ffff" distance={1.5} />
             </group>
         </Float>
     );

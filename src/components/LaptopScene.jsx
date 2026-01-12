@@ -191,8 +191,7 @@ export default function LaptopScene() {
                 {/* Phone Model with Contact Details */}
                 <Suspense fallback={null}>
                     <PhoneModel
-                        onClick={() => setPhoneActive(!phoneActive)}
-                        isActive={phoneActive}
+                        onClick={() => setPhoneActive(true)}
                     />
                 </Suspense>
 
@@ -228,24 +227,60 @@ export default function LaptopScene() {
 
             </Canvas>
 
+            {/* Phone Full Screen Overlay */}
+            {phoneActive && (
+                <div className="phone-fullscreen-overlay">
+                    <div className="phone-frame">
+                        <div className="phone-notch"></div>
+                        <div className="phone-screen">
+                            <div className="phone-time">12:42</div>
+                            <div className="phone-icons">
+                                <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" className="phone-app whatsapp">
+                                    <span className="app-icon">💬</span>
+                                    <span className="app-name">WhatsApp</span>
+                                </a>
+                                <a href="https://linkedin.com/in/yourprofile" target="_blank" rel="noopener noreferrer" className="phone-app linkedin">
+                                    <span className="app-icon">💼</span>
+                                    <span className="app-name">LinkedIn</span>
+                                </a>
+                                <a href="mailto:your.email@example.com" className="phone-app email">
+                                    <span className="app-icon">📧</span>
+                                    <span className="app-name">Email</span>
+                                </a>
+                                <a href="tel:+919876543210" className="phone-app phone">
+                                    <span className="app-icon">📞</span>
+                                    <span className="app-name">Call</span>
+                                </a>
+                            </div>
+                            <div className="phone-dock">
+                                <button className="back-btn" onClick={() => setPhoneActive(false)}>
+                                    ← Back to Desk
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Contact Links - Circular icon buttons */}
-            <div className="contact-links-section">
-                <div className="contact-links">
-                    <a href="mailto:your.email@example.com" className="contact-circle email" target="_blank" rel="noopener noreferrer" title="Email">
-                        <span className="contact-icon">✉️</span>
-                    </a>
-                    <a href="tel:+919876543210" className="contact-circle phone" target="_blank" rel="noopener noreferrer" title="Call">
-                        <span className="contact-icon">📞</span>
-                    </a>
-                    <a href="https://wa.me/919876543210" className="contact-circle whatsapp" target="_blank" rel="noopener noreferrer" title="WhatsApp">
-                        <span className="contact-icon">💬</span>
-                    </a>
-                    <a href="https://linkedin.com/in/yourprofile" className="contact-circle linkedin" target="_blank" rel="noopener noreferrer" title="LinkedIn">
-                        <span className="contact-icon">💼</span>
-                    </a>
+            {!phoneActive && (
+                <div className="contact-links-section">
+                    <div className="contact-links">
+                        <a href="mailto:your.email@example.com" className="contact-circle email" target="_blank" rel="noopener noreferrer" title="Email">
+                            <span className="contact-icon">✉️</span>
+                        </a>
+                        <a href="tel:+919876543210" className="contact-circle phone" target="_blank" rel="noopener noreferrer" title="Call">
+                            <span className="contact-icon">📞</span>
+                        </a>
+                        <a href="https://wa.me/919876543210" className="contact-circle whatsapp" target="_blank" rel="noopener noreferrer" title="WhatsApp">
+                            <span className="contact-icon">💬</span>
+                        </a>
+                        <a href="https://linkedin.com/in/yourprofile" className="contact-circle linkedin" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+                            <span className="contact-icon">💼</span>
+                        </a>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }

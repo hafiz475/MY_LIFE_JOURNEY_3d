@@ -677,3 +677,162 @@
         }
     }
 }
+
+// Phone Full Screen Overlay
+.phone-fullscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.5s ease;
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    .phone-frame {
+        width: 320px;
+        height: 640px;
+        background: linear-gradient(180deg, #1a1a2e 0%, #0a0a15 100%);
+        border-radius: 40px;
+        border: 3px solid #333;
+        padding: 15px;
+        box-shadow: 0 0 60px rgba(0, 255, 255, 0.2), inset 0 0 30px rgba(0, 0, 0, 0.5);
+        position: relative;
+
+        .phone-notch {
+            width: 120px;
+            height: 25px;
+            background: #000;
+            border-radius: 0 0 15px 15px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding-top: 40px;
+
+            .phone-time {
+                text-align: center;
+                font-size: 48px;
+                font-weight: 200;
+                color: #fff;
+                margin-bottom: 30px;
+                font-family: 'JetBrains Mono', monospace;
+            }
+
+            .phone-icons {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+                padding: 20px;
+                flex: 1;
+
+                .phone-app {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;
+                    padding: 25px;
+                    border-radius: 20px;
+                    text-decoration: none;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+
+                    .app-icon {
+                        font-size: 40px;
+                    }
+
+                    .app-name {
+                        font-size: 12px;
+                        font-weight: bold;
+                        letter-spacing: 1px;
+                        color: #fff;
+                    }
+
+                    &.whatsapp {
+                        background: rgba(37, 211, 102, 0.15);
+                        border: 2px solid #25d366;
+
+                        &:hover {
+                            box-shadow: 0 0 30px rgba(37, 211, 102, 0.5);
+                            transform: scale(1.05);
+                        }
+                    }
+
+                    &.linkedin {
+                        background: rgba(0, 119, 181, 0.15);
+                        border: 2px solid #0077b5;
+
+                        &:hover {
+                            box-shadow: 0 0 30px rgba(0, 119, 181, 0.5);
+                            transform: scale(1.05);
+                        }
+                    }
+
+                    &.email {
+                        background: rgba(255, 100, 100, 0.15);
+                        border: 2px solid #ff6464;
+
+                        &:hover {
+                            box-shadow: 0 0 30px rgba(255, 100, 100, 0.5);
+                            transform: scale(1.05);
+                        }
+                    }
+
+                    &.phone {
+                        background: rgba(0, 255, 136, 0.15);
+                        border: 2px solid #00ff88;
+
+                        &:hover {
+                            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+                            transform: scale(1.05);
+                        }
+                    }
+                }
+            }
+
+            .phone-dock {
+                padding: 20px;
+                text-align: center;
+
+                .back-btn {
+                    background: rgba(255, 255, 255, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    color: #fff;
+                    padding: 12px 30px;
+                    font-size: 14px;
+                    border-radius: 25px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    font-family: 'JetBrains Mono', monospace;
+
+                    &:hover {
+                        background: rgba(255, 255, 255, 0.2);
+                        border-color: #00ffff;
+                        color: #00ffff;
+                    }
+                }
+            }
+        }
+    }
+}
