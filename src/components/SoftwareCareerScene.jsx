@@ -14,26 +14,18 @@ import './SoftwareCareerScene.scss';
 function AnimatedLaptop({ isOpen, onLaptopClick }) {
     const groupRef = useRef();
     const { scene, nodes } = useGLTF('/assets/models/gaming_laptop.glb');
-    const [currentLidAngle, setCurrentLidAngle] = useState(Math.PI * 0.45); // Start closed (~81 degrees)
-    const targetLidAngle = isOpen ? 0 : Math.PI * 0.45; // 0 = open (upright), positive = closed onto keyboard
+    const [currentLidAngle, setCurrentLidAngle] = useState(Math.PI * 0.5); // Start closed (90 degrees)
+    const targetLidAngle = isOpen ? 0 : Math.PI * 0.5; // 0 = open, positive = closed
     const screenRef = useRef(null);
 
-    // Find and store reference to the screen/monitor (Cube_1)
+    // Find the monitor/screen - Cube_1
     useEffect(() => {
         if (scene) {
             scene.traverse((child) => {
-                // Cube_1 is the monitor/screen part
                 if (child.name === 'Cube_1') {
                     screenRef.current = child;
-                    // Store original position BEFORE any modification
-                    if (!child.userData.originalY) {
-                        child.userData.originalY = child.position.y;
-                        child.userData.originalZ = child.position.z;
-                    }
-
-                    // Apply closed state immediately (screen folded down)
-                    const closedAngle = Math.PI * 0.45; // ~81 degrees
-                    child.rotation.x = closedAngle;
+                    // Apply closed state immediately (screen folded onto keyboard)
+                    child.rotation.x = Math.PI * 0.5;
                 }
             });
         }
