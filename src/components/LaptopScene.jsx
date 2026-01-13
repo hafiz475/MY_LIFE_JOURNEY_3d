@@ -131,6 +131,258 @@ function BackWall() {
     );
 }
 
+// Storm Window Component - with lightning, rain and clouds
+function StormWindow() {
+    const groupRef = useRef();
+    const lightningRef = useRef();
+    const skyFlashRef = useRef();
+    const roomLightRef = useRef();
+    const [lightningActive, setLightningActive] = useState(false);
+    const lastFlashTime = useRef(0);
+
+    // Lightning flash animation - more frequent and dramatic
+    useFrame((state) => {
+        const time = state.clock.elapsedTime;
+
+        // Trigger lightning every 2-4 seconds randomly
+        if (time - lastFlashTime.current > 2 + Math.random() * 2) {
+            lastFlashTime.current = time;
+
+            // First flash
+            setLightningActive(true);
+            setTimeout(() => setLightningActive(false), 150);
+
+            // Double flash effect
+            setTimeout(() => {
+                setLightningActive(true);
+                setTimeout(() => setLightningActive(false), 100);
+            }, 200);
+
+            // Sometimes triple flash
+            if (Math.random() < 0.4) {
+                setTimeout(() => {
+                    setLightningActive(true);
+                    setTimeout(() => setLightningActive(false), 80);
+                }, 350);
+            }
+        }
+
+        // Update all lightning lights
+        const intensity = lightningActive ? 1 : 0;
+        if (lightningRef.current) {
+            lightningRef.current.intensity = lightningActive ? 80 : 0;
+        }
+        if (skyFlashRef.current) {
+            skyFlashRef.current.material.opacity = lightningActive ? 0.95 : 0;
+        }
+        if (roomLightRef.current) {
+            roomLightRef.current.intensity = lightningActive ? 50 : 0;
+        }
+    });
+
+    return (
+        <group ref={groupRef} position={[3.5, 0.8, -7.8]}>
+            {/* Window Frame */}
+            <mesh position={[0, 0, 0.05]}>
+                <boxGeometry args={[2.6, 2.5, 0.15]} />
+                <meshStandardMaterial color="#1a1a1a" metalness={0.5} roughness={0.7} />
+            </mesh>
+
+            {/* Window Glass - dark stormy sky visible */}
+            <mesh position={[0, 0, 0.1]}>
+                <planeGeometry args={[2.2, 2.1]} />
+                <meshStandardMaterial
+                    color="#0a1525"
+                    transparent
+                    opacity={0.85}
+                    roughness={0.1}
+                    metalness={0.3}
+                    emissive="#0a1520"
+                    emissiveIntensity={0.1}
+                />
+            </mesh>
+
+            {/* Sky flash - bright white flash behind clouds during lightning */}
+            <mesh ref={skyFlashRef} position={[0, 0, 0.09]}>
+                <planeGeometry args={[2.2, 2.1]} />
+                <meshBasicMaterial
+                    color="#e8f0ff"
+                    transparent
+                    opacity={0}
+                />
+            </mesh>
+
+            {/* Storm Clouds - dark layered clouds */}
+            <mesh position={[0, 0.6, 0.12]}>
+                <planeGeometry args={[2, 0.8]} />
+                <meshBasicMaterial
+                    color="#1a1a2e"
+                    transparent
+                    opacity={0.9}
+                />
+            </mesh>
+            <mesh position={[-0.4, 0.5, 0.13]}>
+                <circleGeometry args={[0.4, 32]} />
+                <meshBasicMaterial color="#151525" transparent opacity={0.85} />
+            </mesh>
+            <mesh position={[0.3, 0.7, 0.13]}>
+                <circleGeometry args={[0.35, 32]} />
+                <meshBasicMaterial color="#1a1a30" transparent opacity={0.8} />
+            </mesh>
+            <mesh position={[0.6, 0.45, 0.13]}>
+                <circleGeometry args={[0.3, 32]} />
+                <meshBasicMaterial color="#151528" transparent opacity={0.85} />
+            </mesh>
+
+            {/* Lightning Bolt - Zigzag shape visible during flash */}
+            {lightningActive && (
+                <group position={[0.1, 0, 0.14]}>
+                    {/* Main bolt */}
+                    <mesh position={[0, 0.5, 0]} rotation={[0, 0, 0.2]}>
+                        <planeGeometry args={[0.08, 0.3]} />
+                        <meshBasicMaterial color="#ffffff" />
+                    </mesh>
+                    <mesh position={[0.08, 0.25, 0]} rotation={[0, 0, -0.4]}>
+                        <planeGeometry args={[0.06, 0.25]} />
+                        <meshBasicMaterial color="#ffffff" />
+                    </mesh>
+                    <mesh position={[0, 0, 0]} rotation={[0, 0, 0.3]}>
+                        <planeGeometry args={[0.07, 0.3]} />
+                        <meshBasicMaterial color="#ffffff" />
+                    </mesh>
+                    <mesh position={[0.1, -0.2, 0]} rotation={[0, 0, -0.2]}>
+                        <planeGeometry args={[0.05, 0.25]} />
+                        <meshBasicMaterial color="#ffffff" />
+                    </mesh>
+                    <mesh position={[0.05, -0.4, 0]} rotation={[0, 0, 0.1]}>
+                        <planeGeometry args={[0.04, 0.2]} />
+                        <meshBasicMaterial color="#f0f8ff" />
+                    </mesh>
+                    {/* Glow around bolt */}
+                    <mesh position={[0.05, 0.1, -0.01]}>
+                        <planeGeometry args={[0.5, 1.2]} />
+                        <meshBasicMaterial color="#a8c8ff" transparent opacity={0.3} />
+                    </mesh>
+                </group>
+            )}
+
+            {/* Rain streaks - multiple thin lines */}
+            {[...Array(15)].map((_, i) => (
+                <mesh key={i} position={[(i - 7) * 0.15, -0.3 + (i % 4) * 0.12, 0.14]}>
+                    <planeGeometry args={[0.012, 0.25 + (i % 3) * 0.08]} />
+                    <meshBasicMaterial
+                        color="#6a8fc5"
+                        transparent
+                        opacity={0.5 + (i % 3) * 0.1}
+                    />
+                </mesh>
+            ))}
+
+            {/* Window dividers (cross pattern) */}
+            <mesh position={[0, 0, 0.16]}>
+                <boxGeometry args={[0.08, 2.2, 0.03]} />
+                <meshStandardMaterial color="#0a0a0a" metalness={0.6} roughness={0.4} />
+            </mesh>
+            <mesh position={[0, 0, 0.16]}>
+                <boxGeometry args={[2.3, 0.08, 0.03]} />
+                <meshStandardMaterial color="#0a0a0a" metalness={0.6} roughness={0.4} />
+            </mesh>
+
+            {/* Window sill */}
+            <mesh position={[0, -1.15, 0.2]}>
+                <boxGeometry args={[2.7, 0.12, 0.35]} />
+                <meshStandardMaterial color="#1a1a1a" metalness={0.4} roughness={0.6} />
+            </mesh>
+
+            {/* Lightning Light from window - illuminates the scene */}
+            <pointLight
+                ref={lightningRef}
+                position={[0, 0, 3]}
+                color="#c8e0ff"
+                intensity={0}
+                distance={25}
+                decay={1.5}
+            />
+
+            {/* Room-filling lightning light - for dramatic effect */}
+            <pointLight
+                ref={roomLightRef}
+                position={[-3, 2, 5]}
+                color="#d8e8ff"
+                intensity={0}
+                distance={30}
+                decay={1}
+            />
+
+            {/* Ambient storm glow */}
+            <pointLight
+                position={[0, 0.3, 0.5]}
+                color="#1a2a4a"
+                intensity={0.5}
+                distance={4}
+                decay={2}
+            />
+        </group>
+    );
+}
+
+// Lightning Flash Effect - creates dramatic room illumination
+function LightningReflection() {
+    const lightRef = useRef();
+    const spotRef = useRef();
+    const lastFlashTime = useRef(0);
+    const [flashActive, setFlashActive] = useState(false);
+
+    useFrame((state) => {
+        const time = state.clock.elapsedTime;
+
+        // Sync with storm window - same timing
+        if (time - lastFlashTime.current > 2 + Math.random() * 2) {
+            lastFlashTime.current = time;
+
+            setFlashActive(true);
+            setTimeout(() => setFlashActive(false), 150);
+
+            setTimeout(() => {
+                setFlashActive(true);
+                setTimeout(() => setFlashActive(false), 100);
+            }, 200);
+        }
+
+        if (lightRef.current) {
+            lightRef.current.intensity = flashActive ? 30 : 0;
+        }
+        if (spotRef.current) {
+            spotRef.current.intensity = flashActive ? 40 : 0;
+        }
+    });
+
+    return (
+        <group>
+            {/* Main reflection light on laptop */}
+            <pointLight
+                ref={lightRef}
+                position={[2, 1, 2]}
+                color="#d0e0ff"
+                intensity={0}
+                distance={15}
+                decay={1.5}
+            />
+            {/* Spotlight for dramatic floor/desk reflection */}
+            <spotLight
+                ref={spotRef}
+                position={[4, 5, 0]}
+                angle={0.8}
+                penumbra={1}
+                color="#b8d0ff"
+                intensity={0}
+                distance={20}
+                decay={1}
+            />
+        </group>
+    );
+}
+
 // Batman Neon Logo Component - Dark Knight Style
 function BatmanNeonLogo() {
     const groupRef = useRef();
@@ -468,6 +720,12 @@ export default function LaptopScene() {
 
                 {/* Batman Neon Logo on Wall */}
                 <BatmanNeonLogo />
+
+                {/* Storm Window with Lightning - below Batman logo */}
+                <StormWindow />
+
+                {/* Lightning Reflection on Laptop */}
+                <LightningReflection />
 
                 {/* Subtle shadow on ground */}
                 <ContactShadows
