@@ -1,4 +1,4 @@
-import { useRef, Suspense, useState, useEffect } from 'react';
+import { useRef, Suspense, useState, useEffect, useLayoutEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
     Html,
@@ -13,25 +13,40 @@ import './SoftwareCareerScene.scss';
 // Animated Gaming Laptop - starts closed, can be opened
 function AnimatedLaptop({ isOpen, onLaptopClick }) {
     const groupRef = useRef();
-    const { scene, nodes } = useGLTF('/assets/models/gaming_laptop.glb');
-    const [currentLidAngle, setCurrentLidAngle] = useState(Math.PI * 0.5); // Start closed (90 degrees)
-    const targetLidAngle = isOpen ? 0 : Math.PI * 0.5; // 0 = open, positive = closed
+    const { scene } = useGLTF('/assets/models/gaming_laptop.glb');
+    const [currentLidAngle, setCurrentLidAngle] = useState(Math.PI * 0.5); // Start closed
+    const targetLidAngle = isOpen ? 0 : Math.PI * 0.5; // isOpen=true means OPENED (0), isOpen=false means CLOSED (0.5)
     const screenRef = useRef(null);
+    const [isReady, setIsReady] = useState(false); // Hide until closed state is applied
 
-    // Find the monitor/screen - Cube_1
-    useEffect(() => {
+    // Apply closed state and then show the model
+    useLayoutEffect(() => {
         if (scene) {
             scene.traverse((child) => {
                 if (child.name === 'Cube_1') {
                     screenRef.current = child;
-                    // Apply closed state immediately (screen folded onto keyboard)
+                    // Apply closed state first
                     child.rotation.x = Math.PI * 0.5;
                 }
             });
+            // Now that closed state is applied, make visible
+            setIsReady(true);
         }
     }, [scene]);
 
+    const firstFrame = useRef(true);
+
     useFrame(() => {
+        // On FIRST frame, force the closed state
+        if (firstFrame.current && screenRef.current) {
+            screenRef.current.rotation.x = Math.PI * 0.5;
+            firstFrame.current = false;
+            setIsReady(true);
+            return;
+        }
+
+        if (!isReady) return;
+
         // Smooth screen animation
         setCurrentLidAngle(prev => {
             const diff = targetLidAngle - prev;
@@ -52,6 +67,7 @@ function AnimatedLaptop({ isOpen, onLaptopClick }) {
             rotation={[0, Math.PI - 0.2, 0]}
             scale={3}
             onClick={onLaptopClick}
+            visible={isReady} // Hide until ready
         >
             <primitive object={scene} castShadow receiveShadow />
 
@@ -147,35 +163,35 @@ export default function SoftwareCareerScene() {
                 <pointLight position={[-5, 3, 3]} intensity={0.8} color="#8b5cf6" />
                 <pointLight position={[0, -2, 3]} intensity={0.5} color="#ff4444" />
 
-                {/* Strong light to illuminate the red wall */}
+                {/* Strong lights to illuminate the red wall and floor */}
                 <spotLight
-                    position={[0, 5, 2]}
-                    angle={0.8}
-                    penumbra={0.5}
-                    intensity={3}
+                    position={[0, 8, 5]}
+                    angle={1}
+                    penumbra={0.3}
+                    intensity={8}
                     color="#ffffff"
-                    target-position={[0, 0, -5]}
                 />
-                <pointLight position={[0, 2, -3]} intensity={2} color="#ff6666" distance={15} />
+                <spotLight
+                    position={[0, 5, -2]}
+                    angle={1.2}
+                    penumbra={0.5}
+                    intensity={6}
+                    color="#ffffff"
+                />
+                <pointLight position={[0, 3, -3]} intensity={5} color="#ff4444" distance={20} />
+                <pointLight position={[-5, 2, 0]} intensity={3} color="#ff6666" distance={15} />
+                <pointLight position={[5, 2, 0]} intensity={3} color="#ff6666" distance={15} />
 
-                {/* Matte Red Back Wall */}
-                <mesh position={[0, 2, -5]} receiveShadow>
+                {/* FULL BRIGHTNESS Matte Red Back Wall */}
+                <mesh position={[0, 2, -5]}>
                     <planeGeometry args={[30, 15]} />
-                    <meshStandardMaterial
-                        color="#cc0000"
-                        roughness={0.95}
-                        metalness={0}
-                    />
+                    <meshBasicMaterial color="#ff3333" />
                 </mesh>
 
-                {/* Dark Floor */}
-                <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.8, 0]} receiveShadow>
+                {/* FULL BRIGHTNESS Matte Red Floor */}
+                <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.8, 0]}>
                     <planeGeometry args={[30, 20]} />
-                    <meshStandardMaterial
-                        color="#1a1a1a"
-                        roughness={0.9}
-                        metalness={0.1}
-                    />
+                    <meshBasicMaterial color="#dd2222" />
                 </mesh>
 
                 {/* The Laptop - click to open */}
