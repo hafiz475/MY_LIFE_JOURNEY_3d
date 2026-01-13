@@ -9,6 +9,7 @@ import PinballGame from './components/PinballGame';
 import FlappyBirdGame from './components/FlappyBirdGame';
 import RubiksCubeGame from './components/RubiksCubeGame';
 import GameLoader from './components/GameLoader';
+import SoftwareCareerScene from './components/SoftwareCareerScene';
 
 // Main Experience Component - combines intro, flight, and sunset on single page
 function MainExperience() {
@@ -171,6 +172,11 @@ function RubiksCubeGameWrapper() {
   return <RubiksCubeGame onClose={() => navigate('/software')} />;
 }
 
+// Software Career Scene Wrapper
+function SoftwareCareerWrapper() {
+  return <SoftwareCareerScene />;
+}
+
 // Main App with Routes
 function App() {
   return (
@@ -178,6 +184,7 @@ function App() {
       <Route path="/" element={<MainExperience />} />
       <Route path="/room" element={<RoomSceneWrapper />} />
       <Route path="/software" element={<RoomSceneWrapper />} />
+      <Route path="/softwareCareer" element={<SoftwareCareerWrapper />} />
       <Route path="/pinball" element={<PinballGameWrapper />} />
       <Route path="/flappy-bird" element={<FlappyBirdGameWrapper />} />
       <Route path="/rubiks-cube" element={<RubiksCubeGameWrapper />} />
