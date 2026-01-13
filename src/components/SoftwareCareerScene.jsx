@@ -3,50 +3,39 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import {
     Html,
     Environment,
-    useGLTF
+    useGLTF,
+    ContactShadows,
+    OrbitControls
 } from '@react-three/drei';
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 import './SoftwareCareerScene.scss';
 
-// Animated Gaming Laptop - starts closed, can be opened
+// Animated Gaming Laptop - starts open, click to close
 function AnimatedLaptop({ isOpen, onLaptopClick }) {
     const groupRef = useRef();
     const { scene } = useGLTF('/assets/models/gaming_laptop.glb');
-    const [currentLidAngle, setCurrentLidAngle] = useState(Math.PI * 0.5); // Start closed
-    const targetLidAngle = isOpen ? 0 : Math.PI * 0.5; // isOpen=true means OPENED (0), isOpen=false means CLOSED (0.5)
+    const [currentLidAngle, setCurrentLidAngle] = useState(0); // Start open (native state)
+    const targetLidAngle = isOpen ? Math.PI * 0.5 : 0; // isOpen=true means CLOSED (0.5), isOpen=false means OPEN (0)
     const screenRef = useRef(null);
-    const [isReady, setIsReady] = useState(false); // Hide until closed state is applied
+    // Store original position
+    const originalPos = useRef({ y: 0, z: 0 });
 
-    // Apply closed state and then show the model
+    // Find the screen reference and store original position
     useLayoutEffect(() => {
         if (scene) {
             scene.traverse((child) => {
                 if (child.name === 'Cube_1') {
                     screenRef.current = child;
-                    // Apply closed state first
-                    child.rotation.x = Math.PI * 0.5;
+                    originalPos.current.y = child.position.y;
+                    originalPos.current.z = child.position.z;
                 }
             });
-            // Now that closed state is applied, make visible
-            setIsReady(true);
         }
     }, [scene]);
 
-    const firstFrame = useRef(true);
-
     useFrame(() => {
-        // On FIRST frame, force the closed state
-        if (firstFrame.current && screenRef.current) {
-            screenRef.current.rotation.x = Math.PI * 0.5;
-            firstFrame.current = false;
-            setIsReady(true);
-            return;
-        }
-
-        if (!isReady) return;
-
         // Smooth screen animation
         setCurrentLidAngle(prev => {
             const diff = targetLidAngle - prev;
@@ -54,9 +43,14 @@ function AnimatedLaptop({ isOpen, onLaptopClick }) {
             return prev + diff * 0.06;
         });
 
-        // Apply rotation to the screen/monitor
+        // Apply rotation and position adjustment to simulate hinge
         if (screenRef.current) {
             screenRef.current.rotation.x = currentLidAngle;
+
+            // Adjust position to close the gap - move screen down and forward as it closes
+            const hingeOffset = 0.15; // Adjust this value to close the gap
+            screenRef.current.position.y = originalPos.current.y - Math.sin(currentLidAngle) * hingeOffset;
+            screenRef.current.position.z = originalPos.current.z + (1 - Math.cos(currentLidAngle)) * hingeOffset * 0.5;
         }
     });
 
@@ -67,12 +61,12 @@ function AnimatedLaptop({ isOpen, onLaptopClick }) {
             rotation={[0, Math.PI - 0.2, 0]}
             scale={3}
             onClick={onLaptopClick}
-            visible={isReady} // Hide until ready
+            visible={true}
         >
             <primitive object={scene} castShadow receiveShadow />
 
-            {/* Arcade Screen Content - only visible when fully open */}
-            {isOpen && currentLidAngle < 0.1 && (
+            {/* Arcade Screen Content - visible AFTER clicking the laptop */}
+            {isOpen && currentLidAngle > 0.4 && (
                 <Html
                     transform
                     occlude
@@ -83,7 +77,7 @@ function AnimatedLaptop({ isOpen, onLaptopClick }) {
                 >
                     <div className="neon-arcade-screen">
                         {/* Back to Interests */}
-                        <button className="neon-back-icon" onClick={() => { window.location.href = '/room'; }} title="Back to Interests">
+                        <button className="neon-back-icon" onClick={(e) => { e.stopPropagation(); window.location.href = '/room'; }} title="Back to Interests">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M19 12H5M12 19l-7-7 7-7" />
                             </svg>
@@ -97,21 +91,21 @@ function AnimatedLaptop({ isOpen, onLaptopClick }) {
                         <div className="neon-game-cards">
                             <div
                                 className="neon-game-card pinball"
-                                onClick={() => { window.location.href = '/pinball'; }}
+                                onClick={(e) => { e.stopPropagation(); window.location.href = '/pinball'; }}
                             >
                                 <span className="card-icon">🎱</span>
                                 <span className="card-label">Pinball</span>
                             </div>
                             <div
                                 className="neon-game-card flappy"
-                                onClick={() => { window.location.href = '/flappy-bird'; }}
+                                onClick={(e) => { e.stopPropagation(); window.location.href = '/flappy-bird'; }}
                             >
                                 <span className="card-icon">🐦</span>
                                 <span className="card-label">Flappy</span>
                             </div>
                             <div
                                 className="neon-game-card rubiks"
-                                onClick={() => { window.location.href = '/rubiks-cube'; }}
+                                onClick={(e) => { e.stopPropagation(); window.location.href = '/rubiks-cube'; }}
                             >
                                 <span className="card-icon">🧊</span>
                                 <span className="card-label">Rubik's</span>
@@ -139,12 +133,10 @@ function Loader() {
     );
 }
 
-// Main Scene Component - Minimal: just laptop in empty space
+// Main Scene Component - Laptop with bright red wall
 export default function SoftwareCareerScene() {
     const navigate = useNavigate();
     const [isLaptopOpen, setIsLaptopOpen] = useState(false);
-
-    // Laptop stays closed initially - no auto-open
 
     return (
         <div className="software-career-scene">
@@ -153,9 +145,16 @@ export default function SoftwareCareerScene() {
                 gl={{ antialias: true, alpha: true }}
                 dpr={[1, 2]}
             >
+                {/* Matte black background */}
+                <color attach="background" args={['#0a0a0a']} />
 
-                {/* Dark void background */}
-                <color attach="background" args={['#0a0000']} />
+                {/* Orbit Controls */}
+                <OrbitControls
+                    enablePan={false}
+                    enableZoom={true}
+                    minDistance={2}
+                    maxDistance={10}
+                />
 
                 {/* Simple lighting */}
                 <ambientLight intensity={0.4} />
@@ -163,7 +162,7 @@ export default function SoftwareCareerScene() {
                 <pointLight position={[-5, 3, 3]} intensity={0.8} color="#8b5cf6" />
                 <pointLight position={[0, -2, 3]} intensity={0.5} color="#ff4444" />
 
-                {/* Strong lights to illuminate the red wall and floor */}
+                {/* Strong lights */}
                 <spotLight
                     position={[0, 8, 5]}
                     angle={1}
@@ -178,23 +177,14 @@ export default function SoftwareCareerScene() {
                     intensity={6}
                     color="#ffffff"
                 />
-                <pointLight position={[0, 3, -3]} intensity={5} color="#ff4444" distance={20} />
-                <pointLight position={[-5, 2, 0]} intensity={3} color="#ff6666" distance={15} />
-                <pointLight position={[5, 2, 0]} intensity={3} color="#ff6666" distance={15} />
 
-                {/* FULL BRIGHTNESS Matte Red Back Wall */}
+                {/* Matte Black Back Wall */}
                 <mesh position={[0, 2, -5]}>
                     <planeGeometry args={[30, 15]} />
-                    <meshBasicMaterial color="#ff3333" />
+                    <meshBasicMaterial color="#1a1a1a" />
                 </mesh>
 
-                {/* FULL BRIGHTNESS Matte Red Floor */}
-                <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.8, 0]}>
-                    <planeGeometry args={[30, 20]} />
-                    <meshBasicMaterial color="#dd2222" />
-                </mesh>
-
-                {/* The Laptop - click to open */}
+                {/* The Laptop - click to close */}
                 <Suspense fallback={<Loader />}>
                     <AnimatedLaptop
                         isOpen={isLaptopOpen}
@@ -218,10 +208,10 @@ export default function SoftwareCareerScene() {
                 <span>Back to Interests</span>
             </button>
 
-            {/* Opening hint */}
+            {/* Click to close hint */}
             {!isLaptopOpen && (
                 <div className="open-hint">
-                    <span>Opening laptop...</span>
+                    <span>Click laptop to close</span>
                 </div>
             )}
         </div>

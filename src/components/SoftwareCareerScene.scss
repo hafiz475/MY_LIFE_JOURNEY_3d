@@ -5,8 +5,25 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(135deg, #1a0000 0%, #2d0000 50%, #0a0000 100%);
+    background: #0a0a0a; // Matte black fallback
     overflow: hidden;
+}
+
+// Canvas wrapper - hides canvas until laptop is in closed state
+.canvas-wrapper {
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.3s ease;
+
+    &.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &.visible {
+        opacity: 1;
+        pointer-events: all;
+    }
 }
 
 // Back button
