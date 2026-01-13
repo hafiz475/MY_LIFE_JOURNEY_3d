@@ -1,0 +1,223 @@
+.asus-scene-container {
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #050505 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+// UI Overlay
+.asus-ui-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+
+    > * {
+        pointer-events: auto;
+    }
+}
+
+// Back Button
+.asus-back-button {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: rgba(255, 60, 0, 0.1);
+    border: 1px solid rgba(255, 60, 0, 0.3);
+    border-radius: 12px;
+    color: #ff3c00;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+
+    svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    &:hover {
+        background: rgba(255, 60, 0, 0.2);
+        border-color: rgba(255, 60, 0, 0.5);
+        transform: translateX(-4px);
+        box-shadow: 0 0 20px rgba(255, 60, 0, 0.3);
+    }
+}
+
+// Title
+.asus-title {
+    position: absolute;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #ff3c00 0%, #ff6a00 50%, #ff3c00 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 40px rgba(255, 60, 0, 0.4);
+        letter-spacing: 0.2em;
+        margin: 0;
+    }
+
+    p {
+        font-size: 0.85rem;
+        color: rgba(255, 106, 0, 0.7);
+        font-family: 'Inter', sans-serif;
+        letter-spacing: 0.3em;
+        margin: 0.5rem 0 0 0;
+        text-transform: uppercase;
+    }
+}
+
+// Toggle Button
+.asus-toggle-button {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    background: rgba(255, 60, 0, 0.15);
+    border: 2px solid rgba(255, 60, 0, 0.4);
+    border-radius: 50px;
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    backdrop-filter: blur(15px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    min-width: 220px;
+    justify-content: center;
+
+    .toggle-icon {
+        font-size: 1.5rem;
+        transition: transform 0.4s ease;
+    }
+
+    .toggle-text {
+        transition: all 0.3s ease;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        background: linear-gradient(45deg, #ff3c00, #ff6a00, #00ffff, #ff3c00);
+        background-size: 300% 300%;
+        border-radius: 52px;
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        animation: gradient-rotate 4s ease infinite;
+    }
+
+    &:hover:not(:disabled) {
+        background: rgba(255, 60, 0, 0.25);
+        transform: translateX(-50%) scale(1.05);
+        box-shadow: 
+            0 0 30px rgba(255, 60, 0, 0.4),
+            0 0 60px rgba(255, 60, 0, 0.2);
+
+        &::before {
+            opacity: 0.3;
+        }
+
+        .toggle-icon {
+            transform: scale(1.2);
+        }
+    }
+
+    &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    &.animating {
+        background: rgba(255, 106, 0, 0.2);
+        border-color: rgba(255, 106, 0, 0.6);
+
+        .toggle-icon {
+            animation: pulse-icon 0.6s ease infinite;
+        }
+    }
+
+    &.open {
+        background: rgba(0, 255, 255, 0.15);
+        border-color: rgba(0, 255, 255, 0.4);
+        color: #00ffff;
+
+        &:hover:not(:disabled) {
+            background: rgba(0, 255, 255, 0.25);
+            box-shadow: 
+                0 0 30px rgba(0, 255, 255, 0.4),
+                0 0 60px rgba(0, 255, 255, 0.2);
+        }
+    }
+}
+
+// Animations
+@keyframes gradient-rotate {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes pulse-icon {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.3);
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .asus-title {
+        h1 {
+            font-size: 1.8rem;
+        }
+
+        p {
+            font-size: 0.7rem;
+        }
+    }
+
+    .asus-back-button {
+        top: 1rem;
+        left: 1rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    .asus-toggle-button {
+        bottom: 2rem;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        min-width: 180px;
+
+        .toggle-icon {
+            font-size: 1.3rem;
+        }
+    }
+}
