@@ -1,0 +1,232 @@
+.island-scene-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(180deg, #b8d4e8 0%, #c5dced 30%, #d4e6f2 60%, #e8f0f5 100%);
+}
+
+.island-ui-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+// Back Button
+.island-back-button {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50px;
+    color: #3a6a8a;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+    svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+    }
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.4);
+        transform: translateX(-3px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+        transform: translateX(-3px) scale(0.98);
+    }
+}
+
+// Title
+.island-title {
+    position: absolute;
+    bottom: 8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    pointer-events: none;
+
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        font-family: 'Inter', sans-serif;
+        color: #2a5a7a;
+        margin: 0 0 0.5rem 0;
+        text-shadow: 0 2px 20px rgba(255, 255, 255, 0.6);
+        letter-spacing: -0.02em;
+    }
+
+    p {
+        font-size: 1rem;
+        font-weight: 400;
+        font-family: 'Inter', sans-serif;
+        color: #4a7a9a;
+        margin: 0;
+        opacity: 0.9;
+    }
+}
+
+// Navigation Hotspot Buttons
+.island-nav-hotspots {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1.5rem;
+    pointer-events: auto;
+}
+
+.island-hotspot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: hotspot-pulse 2s ease-in-out infinite;
+
+    .hotspot-icon {
+        font-size: 2rem;
+        line-height: 1;
+    }
+
+    .hotspot-label {
+        font-size: 0.95rem;
+        font-weight: 600;
+        font-family: 'Inter', sans-serif;
+        color: #2a4a6a;
+        white-space: nowrap;
+    }
+
+    &:hover {
+        transform: scale(1.08) translateY(-4px);
+        background: rgba(255, 255, 255, 0.35);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+        transform: scale(1.02) translateY(-2px);
+    }
+}
+
+.island-hotspot-house {
+    border-color: rgba(255, 180, 60, 0.5);
+    box-shadow: 0 4px 20px rgba(255, 180, 60, 0.25);
+
+    &:hover {
+        border-color: rgba(255, 180, 60, 0.8);
+        box-shadow: 0 8px 35px rgba(255, 180, 60, 0.4);
+    }
+}
+
+.island-hotspot-plane {
+    border-color: rgba(60, 180, 255, 0.5);
+    box-shadow: 0 4px 20px rgba(60, 180, 255, 0.25);
+
+    &:hover {
+        border-color: rgba(60, 180, 255, 0.8);
+        box-shadow: 0 8px 35px rgba(60, 180, 255, 0.4);
+    }
+}
+
+@keyframes hotspot-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 20px rgba(100, 150, 200, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 6px 30px rgba(100, 150, 200, 0.4);
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+    .island-back-button {
+        top: 1rem;
+        left: 1rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+    }
+
+    .island-title {
+        bottom: 7rem;
+
+        h1 {
+            font-size: 1.8rem;
+        }
+
+        p {
+            font-size: 0.9rem;
+        }
+    }
+
+    .island-nav-hotspots {
+        gap: 1rem;
+    }
+
+    .island-hotspot {
+        padding: 0.75rem 1.5rem;
+
+        .hotspot-icon {
+            font-size: 1.6rem;
+        }
+
+        .hotspot-label {
+            font-size: 0.85rem;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .island-back-button {
+        top: 0.75rem;
+        left: 0.75rem;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .island-title {
+        bottom: 1rem;
+
+        h1 {
+            font-size: 1.4rem;
+        }
+
+        p {
+            font-size: 0.8rem;
+        }
+    }
+}

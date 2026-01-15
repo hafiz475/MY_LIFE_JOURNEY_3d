@@ -12,6 +12,8 @@ import GameLoader from './components/GameLoader';
 import SoftwareCareerScene from './components/SoftwareCareerScene';
 import AsusLaptopScene from './components/AsusLaptopScene';
 import LandingScene from './components/LandingScene';
+import IslandScene from './components/IslandScene';
+import PolyThemeScene from './components/PolyThemeScene';
 
 // Main Experience Component - combines intro, flight, and sunset on single page
 function MainExperience() {
@@ -189,6 +191,16 @@ function LandingSceneWrapper() {
   return <LandingScene />;
 }
 
+// Island Scene Wrapper
+function IslandSceneWrapper() {
+  return <IslandScene />;
+}
+
+// PolyTheme Scene Wrapper
+function PolyThemeSceneWrapper() {
+  return <PolyThemeScene />;
+}
+
 // Main App with Routes
 function App() {
   return (
@@ -202,6 +214,8 @@ function App() {
       <Route path="/rubiks-cube" element={<RubiksCubeGameWrapper />} />
       <Route path="/asus" element={<AsusSceneWrapper />} />
       <Route path="/landing" element={<LandingSceneWrapper />} />
+      <Route path="/island" element={<IslandSceneWrapper />} />
+      <Route path="/polyTheme" element={<PolyThemeSceneWrapper />} />
     </Routes>
   );
 }
