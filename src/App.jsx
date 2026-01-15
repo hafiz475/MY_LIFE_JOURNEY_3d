@@ -11,6 +11,7 @@ import RubiksCubeGame from './components/RubiksCubeGame';
 import GameLoader from './components/GameLoader';
 import SoftwareCareerScene from './components/SoftwareCareerScene';
 import AsusLaptopScene from './components/AsusLaptopScene';
+import LandingScene from './components/LandingScene';
 
 // Main Experience Component - combines intro, flight, and sunset on single page
 function MainExperience() {
@@ -183,6 +184,11 @@ function AsusSceneWrapper() {
   return <AsusLaptopScene />;
 }
 
+// Landing Scene Wrapper
+function LandingSceneWrapper() {
+  return <LandingScene />;
+}
+
 // Main App with Routes
 function App() {
   return (
@@ -195,6 +201,7 @@ function App() {
       <Route path="/flappy-bird" element={<FlappyBirdGameWrapper />} />
       <Route path="/rubiks-cube" element={<RubiksCubeGameWrapper />} />
       <Route path="/asus" element={<AsusSceneWrapper />} />
+      <Route path="/landing" element={<LandingSceneWrapper />} />
     </Routes>
   );
 }
