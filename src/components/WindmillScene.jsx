@@ -1,8 +1,9 @@
-import { useRef, Suspense } from 'react';
+import { useRef, Suspense, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import {
     Html,
     useGLTF,
+    useAnimations,
     OrbitControls,
     Environment,
     ContactShadows
@@ -10,14 +11,27 @@ import {
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
-import './PolyThemeScene.scss';
+import './WindmillScene.scss';
 
-// The 3D Model inside the sphere
-function WorkingModel() {
+// The Windmill 3D Model with Animation
+function WindmillModel() {
     const groupRef = useRef();
-    const { scene } = useGLTF('/assets/models/landingscene/working.glb');
+    const { scene, animations } = useGLTF('/assets/models/landingscene/working2.glb');
+    const { actions } = useAnimations(animations, scene);
 
-    // Gentle rotation animation
+    // Play all animations on mount
+    useEffect(() => {
+        if (actions) {
+            // Play all available animations
+            Object.values(actions).forEach(action => {
+                if (action) {
+                    action.play();
+                }
+            });
+        }
+    }, [actions]);
+
+    // Gentle rotation animation for the whole model
     useFrame((state) => {
         if (groupRef.current) {
             groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
@@ -33,49 +47,21 @@ function WorkingModel() {
     });
 
     return (
-        <group ref={groupRef} position={[0, -1.5, 0]} scale={0.4}>
+        <group ref={groupRef} position={[0, 0, 0]} scale={0.5}>
             <primitive object={scene} />
         </group>
     );
 }
 
-// Transparent Glass Sphere enclosure
-function GlassSphere() {
-    const sphereRef = useRef();
-
-    useFrame((state) => {
-        if (sphereRef.current) {
-            sphereRef.current.rotation.y = state.clock.elapsedTime * 0.05;
-        }
-    });
-
-    return (
-        <mesh ref={sphereRef} position={[0, 0, 0]}>
-            <sphereGeometry args={[4, 64, 64]} />
-            <meshPhysicalMaterial
-                transparent
-                opacity={0.2}
-                roughness={0.05}
-                metalness={0.1}
-                transmission={0.85}
-                thickness={0.8}
-                envMapIntensity={1.5}
-                color="#ffffff"
-                side={THREE.DoubleSide}
-            />
-        </mesh>
-    );
-}
-
-// Transparent floor inside the sphere with shadow reception
+// Transparent floor with shadow reception
 function TransparentFloor() {
     return (
         <mesh
             rotation={[-Math.PI / 2, 0, 0]}
-            position={[0, -1.5, 0]}
+            position={[0, -3.75, 0]}
             receiveShadow
         >
-            <circleGeometry args={[3, 64]} />
+            <circleGeometry args={[6, 64]} />
             <shadowMaterial
                 transparent
                 opacity={0.4}
@@ -85,7 +71,7 @@ function TransparentFloor() {
     );
 }
 
-// Very bright sun light source inside the sphere
+// Very bright sun light source for shadows
 function BrightSun() {
     const sunRef = useRef();
 
@@ -129,7 +115,7 @@ function BrightSun() {
                 color="#fff5e0"
             />
 
-            {/* Additional fill lights for the sphere interior */}
+            {/* Additional fill lights */}
             <pointLight
                 position={[-2, 3, -2]}
                 intensity={1}
@@ -156,18 +142,18 @@ function Loader() {
                 fontFamily: 'Inter, sans-serif',
                 textShadow: '0 0 20px #00f9ff'
             }}>
-                Loading PolyTheme...
+                Loading Windmill...
             </div>
         </Html>
     );
 }
 
 // Main Scene Component
-export default function PolyThemeScene() {
+export default function WindmillScene() {
     const navigate = useNavigate();
 
     return (
-        <div className="polytheme-scene-container">
+        <div className="windmill-scene-container">
             <Canvas
                 camera={{ position: [0, 3, 12], fov: 45 }}
                 shadows
@@ -190,20 +176,18 @@ export default function PolyThemeScene() {
                     autoRotateSpeed={0.5}
                 />
 
-                {/* Background color */}
+                {/* Background color - same as PolyTheme */}
                 <color attach="background" args={['#00f9ff']} />
 
                 {/* Ambient lighting */}
                 <ambientLight intensity={0.5} />
 
-                {/* Bright sun inside the sphere */}
+                {/* Bright sun for shadows */}
                 <BrightSun />
-
-                {/* Glass Sphere removed */}
 
                 {/* The 3D Model */}
                 <Suspense fallback={<Loader />}>
-                    <WorkingModel />
+                    <WindmillModel />
                 </Suspense>
 
                 {/* Transparent Floor with Shadows */}
@@ -211,7 +195,7 @@ export default function PolyThemeScene() {
 
                 {/* Contact Shadows for extra depth */}
                 <ContactShadows
-                    position={[0, -1.49, 0]}
+                    position={[0, -3.74, 0]}
                     opacity={0.6}
                     scale={8}
                     blur={2.5}
@@ -234,10 +218,10 @@ export default function PolyThemeScene() {
             </Canvas>
 
             {/* UI Overlay */}
-            <div className="polytheme-ui-overlay">
+            <div className="windmill-ui-overlay">
                 {/* Back Button */}
                 <button
-                    className="polytheme-back-button"
+                    className="windmill-back-button"
                     onClick={() => navigate('/')}
                 >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -247,8 +231,8 @@ export default function PolyThemeScene() {
                 </button>
 
                 {/* Title */}
-                <div className="polytheme-title">
-                    <h1>PolyTheme</h1>
+                <div className="windmill-title">
+                    <h1>Windmill</h1>
                     <p>3D Model Showcase</p>
                 </div>
             </div>
@@ -257,4 +241,4 @@ export default function PolyThemeScene() {
 }
 
 // Preload the model
-useGLTF.preload('/assets/models/landingscene/working.glb');
+useGLTF.preload('/assets/models/landingscene/working2.glb');

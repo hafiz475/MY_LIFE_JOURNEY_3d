@@ -14,6 +14,7 @@ import AsusLaptopScene from './components/AsusLaptopScene';
 import LandingScene from './components/LandingScene';
 import IslandScene from './components/IslandScene';
 import PolyThemeScene from './components/PolyThemeScene';
+import WindmillScene from './components/WindmillScene';
 
 // Main Experience Component - combines intro, flight, and sunset on single page
 function MainExperience() {
@@ -201,6 +202,11 @@ function PolyThemeSceneWrapper() {
   return <PolyThemeScene />;
 }
 
+// Windmill Scene Wrapper
+function WindmillSceneWrapper() {
+  return <WindmillScene />;
+}
+
 // Main App with Routes
 function App() {
   return (
@@ -216,6 +222,7 @@ function App() {
       <Route path="/landing" element={<LandingSceneWrapper />} />
       <Route path="/island" element={<IslandSceneWrapper />} />
       <Route path="/polyTheme" element={<PolyThemeSceneWrapper />} />
+      <Route path="/windmill" element={<WindmillSceneWrapper />} />
     </Routes>
   );
 }
