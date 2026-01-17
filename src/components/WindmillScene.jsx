@@ -389,8 +389,61 @@ function SeaplaneLanding() {
     });
 
     return (
-        <group ref={groupRef} position={[START_POS.x, START_POS.y, START_POS.z]} scale={0.6}>
+        <group ref={groupRef} position={[START_POS.x, START_POS.y, START_POS.z]} scale={0.78}>
             <primitive object={scene} />
+        </group>
+    );
+}
+
+// Welcome Sign - wooden sign board with text
+function WelcomeSign() {
+    const { scene } = useGLTF('/assets/models/landingscene/low_poly_sign_board__stylized_wooden_sign.glb');
+
+    useEffect(() => {
+        scene.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+    }, [scene]);
+
+    return (
+        <group position={[2, -3.75, 3]} scale={0.35} rotation={[0, 0.5 + Math.PI, 0]}>
+            <primitive object={scene} />
+            {/* Text overlay on the sign */}
+            <Html
+                position={[0, 2.5, 0.1]}
+                center
+                transform
+                occlude
+                style={{
+                    width: '100px',
+                    textAlign: 'center',
+                    pointerEvents: 'none',
+                }}
+            >
+                <div style={{
+                    fontFamily: "'Georgia', 'Times New Roman', serif",
+                    fontStyle: 'italic',
+                    fontSize: '10px',
+                    fontWeight: '600',
+                    background: 'white',
+                    padding: '6px 10px',
+                    borderRadius: '4px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                }}>
+                    <span style={{
+                        background: 'linear-gradient(135deg, #00CED1 0%, #FF69B4 50%, #FF6B6B 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                    }}>
+                        Welcome to<br />
+                        Starfish Island!
+                    </span>
+                </div>
+            </Html>
         </group>
     );
 }
@@ -558,6 +611,9 @@ export default function WindmillScene() {
                 {/* Cute Toon Trees around the windmill */}
                 <ToonTrees />
 
+                {/* Welcome Sign */}
+                <WelcomeSign />
+
                 {/* Animated Seaplane - circles and lands */}
                 <SeaplaneLanding />
 
@@ -608,3 +664,4 @@ useGLTF.preload('/assets/models/cloud.glb');
 useGLTF.preload('/assets/models/landingscene/cute_toon_tree.glb');
 useGLTF.preload('/assets/models/gottfried_freiherr_von_banfields_seaplane.glb');
 useGLTF.preload('/assets/models/landingscene/snow_mountain.glb');
+useGLTF.preload('/assets/models/landingscene/low_poly_sign_board__stylized_wooden_sign.glb');
