@@ -114,9 +114,9 @@ function AnimatedWater() {
             <meshStandardMaterial
                 color="#1E90FF"
                 transparent
-                opacity={0.9}
-                roughness={0.1}
-                metalness={0.4}
+                opacity={0.85}
+                roughness={0.6}
+                metalness={0}
                 side={THREE.DoubleSide}
             />
         </mesh>
@@ -424,14 +424,14 @@ function WelcomeSign() {
                 }}
             >
                 <div style={{
-                    fontFamily: "'Georgia', 'Times New Roman', serif",
-                    fontStyle: 'italic',
-                    fontSize: '10px',
-                    fontWeight: '600',
+                    fontFamily: "'Caveat', cursive",
+                    fontSize: '14px',
+                    fontWeight: '700',
                     background: 'white',
                     padding: '6px 10px',
                     borderRadius: '4px',
                     boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                    transform: 'scaleX(-1)',
                 }}>
                     <span style={{
                         background: 'linear-gradient(135deg, #00CED1 0%, #FF69B4 50%, #FF6B6B 100%)',
