@@ -62,10 +62,100 @@ function GrassFloor() {
             position={[0, -3.75, 0]}
             receiveShadow
         >
-            <circleGeometry args={[50, 64]} />
+            <circleGeometry args={[18, 64]} />
             <meshStandardMaterial
                 color="#32CD32"
                 roughness={0.8}
+                metalness={0}
+            />
+        </mesh>
+    );
+}
+
+// Animated Water - stylized low-poly water around the island
+function AnimatedWater() {
+    const waterRef = useRef();
+
+    // Create water geometry - a ring around the island (hole in middle)
+    const waterGeometry = useMemo(() => {
+        // Inner radius = island size (20), outer radius = water extent
+        const geo = new THREE.RingGeometry(20, 150, 64, 20);
+        return geo;
+    }, []);
+
+    // Animate water waves
+    useFrame((state) => {
+        if (waterRef.current) {
+            const positions = waterRef.current.geometry.attributes.position;
+            const time = state.clock.elapsedTime;
+
+            for (let i = 0; i < positions.count; i++) {
+                const x = positions.getX(i);
+                const y = positions.getY(i);
+
+                // Create gentle wave pattern
+                const wave1 = Math.sin(x * 0.05 + time * 0.5) * 0.15;
+                const wave2 = Math.cos(y * 0.05 + time * 0.3) * 0.1;
+
+                positions.setZ(i, wave1 + wave2);
+            }
+            positions.needsUpdate = true;
+        }
+    });
+
+    return (
+        <mesh
+            ref={waterRef}
+            rotation={[-Math.PI / 2, 0, 0]}
+            position={[0, -3.9, 0]}
+            receiveShadow
+        >
+            <primitive object={waterGeometry} attach="geometry" />
+            <meshStandardMaterial
+                color="#1E90FF"
+                transparent
+                opacity={0.9}
+                roughness={0.1}
+                metalness={0.4}
+                side={THREE.DoubleSide}
+            />
+        </mesh>
+    );
+}
+
+// Shoreline Foam - animated waves at the edge where water meets land
+function ShorelineFoam() {
+    const foamRef = useRef();
+    const materialRef = useRef();
+
+    // Animate foam opacity for wave effect
+    useFrame((state) => {
+        if (materialRef.current) {
+            const time = state.clock.elapsedTime;
+            // Pulsing opacity to simulate waves washing up
+            const wave = (Math.sin(time * 2) + 1) * 0.5; // 0 to 1
+            materialRef.current.opacity = 0.4 + wave * 0.4; // 0.4 to 0.8
+        }
+        if (foamRef.current) {
+            // Subtle scale pulsing
+            const scale = 1 + Math.sin(state.clock.elapsedTime * 1.5) * 0.02;
+            foamRef.current.scale.set(scale, scale, 1);
+        }
+    });
+
+    return (
+        <mesh
+            ref={foamRef}
+            rotation={[-Math.PI / 2, 0, 0]}
+            position={[0, -3.72, 0]}
+        >
+            <ringGeometry args={[17.5, 21, 64]} />
+            <meshStandardMaterial
+                ref={materialRef}
+                color="#ffffff"
+                transparent
+                opacity={0.6}
+                roughness={1}
                 metalness={0}
             />
         </mesh>
@@ -195,7 +285,7 @@ function SeaplaneLanding() {
     const hasLandedRef = useRef(false);
 
     // Landing animation duration
-    const FLIGHT_DURATION = 12; // 12 seconds total
+    const FLIGHT_DURATION = 18; // 18 seconds total (slower)
 
     // Starting position (opposite quadrant - far side)
     const START_POS = { x: -12, y: 5, z: -12 };
@@ -455,6 +545,12 @@ export default function WindmillScene() {
 
                 {/* Green Grass Floor */}
                 <GrassFloor />
+
+                {/* Animated Water around the island */}
+                <AnimatedWater />
+
+                {/* Shoreline foam waves at the edge */}
+                <ShorelineFoam />
 
                 {/* Animated Clouds drifting across the sky */}
                 <AnimatedClouds />
