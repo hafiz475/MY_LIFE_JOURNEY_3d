@@ -14,16 +14,17 @@ import * as THREE from 'three';
 import './WindmillScene.scss';
 import { useMemo } from 'react';
 
-// The Windmill 3D Model with Animation
-function WindmillModel() {
+// The Windmill 3D Model with Animation - Clickable to go to /landing
+function WindmillModel({ onClick }) {
     const groupRef = useRef();
+    const starLightRef = useRef();
     const { scene, animations } = useGLTF('/assets/models/landingscene/working2.glb');
     const { actions } = useAnimations(animations, scene);
+    const [hovered, setHovered] = useState(false);
 
     // Play all animations on mount
     useEffect(() => {
         if (actions) {
-            // Play all available animations
             Object.values(actions).forEach(action => {
                 if (action) {
                     action.play();
@@ -32,10 +33,16 @@ function WindmillModel() {
         }
     }, [actions]);
 
-    // Gentle rotation animation for the whole model
+    // Gentle rotation + blinking star light
     useFrame((state) => {
         if (groupRef.current) {
             groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
+        }
+        // Blinking star light effect
+        if (starLightRef.current) {
+            const blink = (Math.sin(state.clock.elapsedTime * 4) + 1) * 0.5;
+            starLightRef.current.intensity = 2 + blink * 3;
+            starLightRef.current.scale.setScalar(0.08 + blink * 0.04);
         }
     });
 
@@ -47,9 +54,28 @@ function WindmillModel() {
         }
     });
 
+    // Change cursor on hover
+    useEffect(() => {
+        document.body.style.cursor = hovered ? 'pointer' : 'auto';
+        return () => { document.body.style.cursor = 'auto'; };
+    }, [hovered]);
+
     return (
-        <group ref={groupRef} position={[0, 0, 0]} scale={0.5}>
+        <group
+            ref={groupRef}
+            position={[0, 0, 0]}
+            scale={0.5}
+            onClick={onClick}
+            onPointerOver={() => setHovered(true)}
+            onPointerOut={() => setHovered(false)}
+        >
             <primitive object={scene} />
+            {/* Blinking star indicator on windmill center */}
+            <mesh ref={starLightRef} position={[0, 4, 0.5]}>
+                <sphereGeometry args={[0.1, 16, 16]} />
+                <meshBasicMaterial color="#FFD700" />
+            </mesh>
+            <pointLight position={[0, 4, 0.5]} color="#FFD700" intensity={3} distance={5} />
         </group>
     );
 }
@@ -276,16 +302,23 @@ function ToonTrees() {
     return <group ref={groupRef} />;
 }
 
-// Animated Seaplane - Starts from camera, makes one big smooth arc around windmill, lands gracefully
-function SeaplaneLanding() {
+// Animated Seaplane - Lands, then can takeoff when clicked
+function SeaplaneLanding({ onTakeoffComplete }) {
     const groupRef = useRef();
+    const starLightRef = useRef();
     const { scene, animations } = useGLTF('/assets/models/gottfried_freiherr_von_banfields_seaplane.glb');
     const { actions } = useAnimations(animations, scene);
     const startTimeRef = useRef(null);
     const hasLandedRef = useRef(false);
+    const [isLanded, setIsLanded] = useState(false);
+    const [isTakingOff, setIsTakingOff] = useState(false);
+    const takeoffStartRef = useRef(null);
+    const [hovered, setHovered] = useState(false);
 
     // Landing animation duration
-    const FLIGHT_DURATION = 18; // 18 seconds total (slower)
+    const FLIGHT_DURATION = 18;
+    const TAKEOFF_PHASE1 = 3; // 3 seconds straight up
+    const TAKEOFF_PHASE2 = 3; // 3 seconds at 30 degrees
 
     // Starting position (opposite quadrant - far side)
     const START_POS = { x: -12, y: 5, z: -12 };
@@ -311,10 +344,72 @@ function SeaplaneLanding() {
         }
     }, [scene, actions]);
 
+    // Change cursor when hovering over landed plane
+    useEffect(() => {
+        if (isLanded && hovered) {
+            document.body.style.cursor = 'pointer';
+        } else if (!hovered) {
+            document.body.style.cursor = 'auto';
+        }
+        return () => { document.body.style.cursor = 'auto'; };
+    }, [hovered, isLanded]);
+
+    const handleClick = () => {
+        if (hasLandedRef.current && !isTakingOff) {
+            setIsTakingOff(true);
+            takeoffStartRef.current = null;
+        }
+    };
+
     useFrame((state) => {
         if (!groupRef.current) return;
 
-        // Initialize start time
+        // Blinking star when landed
+        if (starLightRef.current && isLanded && !isTakingOff) {
+            const blink = (Math.sin(state.clock.elapsedTime * 4) + 1) * 0.5;
+            starLightRef.current.scale.setScalar(0.05 + blink * 0.03);
+        }
+
+        // Takeoff animation - Phase 1: horizontal, Phase 2: 30 degree climb
+        if (isTakingOff) {
+            if (takeoffStartRef.current === null) {
+                takeoffStartRef.current = state.clock.elapsedTime;
+            }
+            const takeoffElapsed = state.clock.elapsedTime - takeoffStartRef.current;
+
+            if (takeoffElapsed <= TAKEOFF_PHASE1) {
+                // Phase 1: Go horizontally forward for 3 seconds (along X axis - plane faces this way)
+                const phase1Progress = takeoffElapsed / TAKEOFF_PHASE1;
+                const eased = 1 - Math.pow(1 - phase1Progress, 2);
+                const newX = END_POS.x + eased * 10; // Move forward along X (positive direction)
+                groupRef.current.position.set(newX, END_POS.y, END_POS.z);
+                groupRef.current.rotation.set(0, Math.PI * 0.5, 0); // Keep facing forward
+            } else if (takeoffElapsed <= TAKEOFF_PHASE1 + TAKEOFF_PHASE2) {
+                // Phase 2: Climb at 30 degrees for 3 seconds
+                const phase2Elapsed = takeoffElapsed - TAKEOFF_PHASE1;
+                const phase2Progress = phase2Elapsed / TAKEOFF_PHASE2;
+                const eased = 1 - Math.pow(1 - phase2Progress, 2);
+
+                const phase1EndX = END_POS.x + 10;
+                const angle30 = Math.PI / 6; // 30 degrees
+
+                // Fly forward (X) and up at 30 degrees
+                const distance = eased * 25;
+                const newY = END_POS.y + Math.sin(angle30) * distance;
+                const newX = phase1EndX + Math.cos(angle30) * distance;
+
+                groupRef.current.position.set(newX, newY, END_POS.z);
+                groupRef.current.rotation.set(0, Math.PI * 0.5, angle30); // Bank/pitch for climb
+            } else {
+                // Done - navigate
+                if (onTakeoffComplete) {
+                    onTakeoffComplete();
+                }
+            }
+            return;
+        }
+
+        // Landing animation
         if (startTimeRef.current === null) {
             startTimeRef.current = state.clock.elapsedTime;
         }
@@ -323,33 +418,26 @@ function SeaplaneLanding() {
         const progress = Math.min(elapsed / FLIGHT_DURATION, 1);
 
         if (progress < 1) {
-            // Ultra-smooth easing function (ease in-out quintic)
             const easeProgress = progress < 0.5
                 ? 16 * Math.pow(progress, 5)
                 : 1 - Math.pow(-2 * progress + 2, 5) / 2;
 
-            // One big arc - starts from far side, sweeps around windmill toward camera
-            // Angle goes from 0 (front/far) sweeping around
-            const startAngle = 0; // Start from far side (negative z)
-            const endAngle = startAngle + Math.PI * 1.3; // ~1.3 rotations for smooth arc
+            const startAngle = 0;
+            const endAngle = startAngle + Math.PI * 1.3;
             const currentAngle = startAngle + (endAngle - startAngle) * easeProgress;
 
-            // Radius starts large and shrinks as it approaches landing
             const startRadius = 14;
             const endRadius = 4;
             const currentRadius = startRadius + (endRadius - startRadius) * easeProgress;
 
-            // Calculate position on the arc
             const arcX = Math.sin(currentAngle) * currentRadius;
             const arcZ = Math.cos(currentAngle) * currentRadius;
 
-            // Height - smooth descent from START to END
-            const heightProgress = Math.pow(easeProgress, 1.5); // Slower initial descent
+            const heightProgress = Math.pow(easeProgress, 1.5);
             const currentY = START_POS.y + (END_POS.y - START_POS.y) * heightProgress;
 
-            // Blend towards exact landing position in the last 20%
             const landingBlend = progress > 0.8 ? (progress - 0.8) / 0.2 : 0;
-            const smoothLandingBlend = landingBlend * landingBlend * (3 - 2 * landingBlend); // smoothstep
+            const smoothLandingBlend = landingBlend * landingBlend * (3 - 2 * landingBlend);
 
             const finalX = arcX * (1 - smoothLandingBlend) + END_POS.x * smoothLandingBlend;
             const finalZ = arcZ * (1 - smoothLandingBlend) + END_POS.z * smoothLandingBlend;
@@ -357,40 +445,50 @@ function SeaplaneLanding() {
 
             groupRef.current.position.set(finalX, finalY, finalZ);
 
-            // Calculate direction of movement for rotation
             const deltaAngle = 0.05;
             const nextAngle = currentAngle + deltaAngle;
             const nextRadius = currentRadius - deltaAngle * (startRadius - endRadius) / (endAngle - startAngle);
             const nextX = Math.sin(nextAngle) * nextRadius;
             const nextZ = Math.cos(nextAngle) * nextRadius;
 
-            // Face the direction of travel
             const dirX = nextX - arcX;
             const dirZ = nextZ - arcZ;
             const targetRotation = Math.atan2(dirX, dirZ);
 
-            // Smooth rotation - face movement direction
             groupRef.current.rotation.y = targetRotation;
-
-            // Gentle banking into turns (reduces as landing approaches)
             const bankAmount = 0.12 * (1 - easeProgress);
             groupRef.current.rotation.z = Math.sin(currentAngle * 2) * bankAmount;
-
-            // Slight pitch during descent (nose slightly down, levels out on landing)
             groupRef.current.rotation.x = -0.08 * (1 - easeProgress);
         } else {
-            // Landed - set final position perfectly
             if (!hasLandedRef.current) {
                 hasLandedRef.current = true;
+                setIsLanded(true);
                 groupRef.current.position.set(END_POS.x, END_POS.y, END_POS.z);
-                groupRef.current.rotation.set(0, Math.PI * 0.5, 0); // Face forward when parked
+                groupRef.current.rotation.set(0, Math.PI * 0.5, 0);
             }
         }
     });
 
     return (
-        <group ref={groupRef} position={[START_POS.x, START_POS.y, START_POS.z]} scale={0.78}>
+        <group
+            ref={groupRef}
+            position={[START_POS.x, START_POS.y, START_POS.z]}
+            scale={0.78}
+            onClick={handleClick}
+            onPointerOver={() => setHovered(true)}
+            onPointerOut={() => setHovered(false)}
+        >
             <primitive object={scene} />
+            {/* Blinking star indicator when landed */}
+            {isLanded && !isTakingOff && (
+                <>
+                    <mesh ref={starLightRef} position={[0, 0.8, 0]}>
+                        <sphereGeometry args={[0.06, 16, 16]} />
+                        <meshBasicMaterial color="#FFD700" />
+                    </mesh>
+                    <pointLight position={[0, 0.8, 0]} color="#FFD700" intensity={2} distance={3} />
+                </>
+            )}
         </group>
     );
 }
@@ -591,9 +689,9 @@ export default function WindmillScene() {
                 {/* Bright sun for shadows */}
                 <BrightSun />
 
-                {/* The 3D Model */}
+                {/* The 3D Model - Click to go to /landing */}
                 <Suspense fallback={<Loader />}>
-                    <WindmillModel />
+                    <WindmillModel onClick={() => navigate('/landing')} />
                 </Suspense>
 
                 {/* Green Grass Floor */}
@@ -614,8 +712,8 @@ export default function WindmillScene() {
                 {/* Welcome Sign */}
                 <WelcomeSign />
 
-                {/* Animated Seaplane - circles and lands */}
-                <SeaplaneLanding />
+                {/* Animated Seaplane - Click to takeoff and go back to home */}
+                <SeaplaneLanding onTakeoffComplete={() => navigate('/')} />
 
 
                 {/* Snow Mountain in background */}
@@ -634,26 +732,6 @@ export default function WindmillScene() {
                     <Vignette eskil={false} offset={0.1} darkness={0.4} />
                 </EffectComposer>
             </Canvas>
-
-            {/* UI Overlay */}
-            <div className="windmill-ui-overlay">
-                {/* Back Button */}
-                <button
-                    className="windmill-back-button"
-                    onClick={() => navigate('/')}
-                >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M19 12H5M12 19l-7-7 7-7" />
-                    </svg>
-                    Back
-                </button>
-
-                {/* Title */}
-                <div className="windmill-title">
-                    <h1>Windmill</h1>
-                    <p>3D Model Showcase</p>
-                </div>
-            </div>
         </div>
     );
 }
