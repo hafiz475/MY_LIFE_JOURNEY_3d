@@ -62,7 +62,7 @@ function GrassFloor() {
             position={[0, -3.75, 0]}
             receiveShadow
         >
-            <circleGeometry args={[12, 64]} />
+            <circleGeometry args={[50, 64]} />
             <meshStandardMaterial
                 color="#32CD32"
                 roughness={0.8}
@@ -195,10 +195,10 @@ function SeaplaneLanding() {
     const hasLandedRef = useRef(false);
 
     // Landing animation duration
-    const FLIGHT_DURATION = 21; // 21 seconds total
+    const FLIGHT_DURATION = 12; // 12 seconds total
 
-    // Starting position (near camera - behind viewer)
-    const START_POS = { x: 0, y: 5, z: 14 };
+    // Starting position (opposite quadrant - far side)
+    const START_POS = { x: -12, y: 5, z: -12 };
     // Landing position (next to the windmill)
     const END_POS = { x: -3, y: -3.5, z: 2 };
 
@@ -238,9 +238,9 @@ function SeaplaneLanding() {
                 ? 16 * Math.pow(progress, 5)
                 : 1 - Math.pow(-2 * progress + 2, 5) / 2;
 
-            // One big arc - starts from behind camera, sweeps around windmill
-            // Angle goes from PI (behind) to 2.5*PI (one full sweep + landing position)
-            const startAngle = Math.PI; // Start from behind (z positive)
+            // One big arc - starts from far side, sweeps around windmill toward camera
+            // Angle goes from 0 (front/far) sweeping around
+            const startAngle = 0; // Start from far side (negative z)
             const endAngle = startAngle + Math.PI * 1.3; // ~1.3 rotations for smooth arc
             const currentAngle = startAngle + (endAngle - startAngle) * easeProgress;
 
@@ -342,15 +342,15 @@ function BrightSun() {
             {/* Main sun directional light for shadows */}
             <directionalLight
                 ref={sunRef}
-                position={[3, 6, 2]}
+                position={[10, 15, 10]}
                 intensity={4}
                 castShadow
                 shadow-mapSize={[2048, 2048]}
-                shadow-camera-far={20}
-                shadow-camera-left={-5}
-                shadow-camera-right={5}
-                shadow-camera-top={5}
-                shadow-camera-bottom={-5}
+                shadow-camera-far={50}
+                shadow-camera-left={-20}
+                shadow-camera-right={20}
+                shadow-camera-top={20}
+                shadow-camera-bottom={-20}
                 shadow-bias={-0.0001}
                 color="#ffffff"
             />
@@ -465,18 +465,9 @@ export default function WindmillScene() {
                 {/* Animated Seaplane - circles and lands */}
                 <SeaplaneLanding />
 
+
                 {/* Snow Mountain in background */}
                 <SnowMountain />
-
-                {/* Contact Shadows for extra depth */}
-                <ContactShadows
-                    position={[0, -3.74, 0]}
-                    opacity={0.6}
-                    scale={8}
-                    blur={2.5}
-                    far={4}
-                    color="#004455"
-                />
 
                 {/* Environment for reflections */}
                 <Environment preset="sunset" />
