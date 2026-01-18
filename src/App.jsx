@@ -64,6 +64,29 @@ function MainExperience() {
     return () => window.removeEventListener('wheel', onWheel);
   }, [hasStarted, canScroll, section]);
 
+  // Handle scroll back from section 1 to section 0
+  useEffect(() => {
+    if (!hasStarted || section !== 1) return;
+
+    let locked = false;
+
+    const onWheel = (e) => {
+      if (locked) return;
+
+      // Scroll up (negative deltaY) goes back to section 0
+      if (e.deltaY < 0) {
+        setSection(0);
+        setCanScroll(true); // Re-enable scroll for section 0
+      }
+
+      locked = true;
+      setTimeout(() => (locked = false), 1200);
+    };
+
+    window.addEventListener('wheel', onWheel, { passive: true });
+    return () => window.removeEventListener('wheel', onWheel);
+  }, [hasStarted, section]);
+
   // Story timing for section 1
   useEffect(() => {
     if (section !== 1) return;
