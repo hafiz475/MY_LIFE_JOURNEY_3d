@@ -214,7 +214,7 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone, hasStarted
 
       return () => clearTimeout(transitionTimer);
     } else if (section === 0) {
-      // --- BACK TO SCENE 1 ---
+      // --- BACK TO SCENE 0 (Intro) ---
       // Reverse animation: Go back to the flight position
 
       const targetX = isMobile ? 0 : 2;
@@ -222,6 +222,18 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone, hasStarted
       // Kill previous animations to prevent conflicts
       gsap.killTweensOf(camera.position);
       gsap.killTweensOf(camTarget.current);
+
+      // Reset plane position when going back to section 0
+      if (planeRef.current && hasLeftIntro.current) {
+        gsap.killTweensOf(planeRef.current.position);
+        gsap.to(planeRef.current.position, {
+          x: 0,
+          y: 0,
+          z: -1.5, // Same position as after intro
+          duration: 3,
+          ease: "power2.inOut"
+        });
+      }
 
       // Reset Sun Position using proxy object (arrays can't be animated directly)
       const sunProxy = { x: skyState.sunPosition[0], y: skyState.sunPosition[1], z: skyState.sunPosition[2] };
