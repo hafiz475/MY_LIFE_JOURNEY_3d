@@ -45,6 +45,7 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone, hasStarted
     const moveBackTimer = setTimeout(() => {
       if (planeRef.current) {
         gsap.to(planeRef.current.position, {
+          x: 0, // Keep plane on the left side
           z: -1.5,
           duration: 2,
           ease: "power2.inOut"
@@ -227,7 +228,7 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone, hasStarted
       if (planeRef.current && hasLeftIntro.current) {
         gsap.killTweensOf(planeRef.current.position);
         gsap.to(planeRef.current.position, {
-          x: 0,
+          x: 0, // Keep plane on the left side
           y: 0,
           z: -1.5, // Same position as after intro
           duration: 3,
