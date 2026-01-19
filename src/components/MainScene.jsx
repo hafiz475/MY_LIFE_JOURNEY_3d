@@ -45,7 +45,7 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone, hasStarted
     const moveBackTimer = setTimeout(() => {
       if (planeRef.current) {
         gsap.to(planeRef.current.position, {
-          x: 0, // Keep plane on the left side
+          // x: 0, // Keep plane on the left side
           z: -1.5,
           duration: 2,
           ease: "power2.inOut"
