@@ -88,6 +88,48 @@ function WindmillModel({ onClick, isLanded }) {
     );
 }
 
+// Stepping Stone Path - small stones leading from windmill entrance
+function SteppingStonePath() {
+    // Stone positions - creating a winding path from windmill entrance
+    const stonePositions = useMemo(() => [
+        // Near windmill entrance
+        { x: 0.5, z: 2.5, scale: 0.25, rotation: 0.3 },
+        { x: 0.2, z: 3.2, scale: 0.3, rotation: 0.8 },
+        { x: 0.7, z: 3.8, scale: 0.22, rotation: 1.2 },
+        { x: 0.3, z: 4.5, scale: 0.28, rotation: 0.5 },
+        { x: 0.8, z: 5.1, scale: 0.24, rotation: 1.8 },
+        // Middle section
+        { x: 0.4, z: 5.8, scale: 0.26, rotation: 2.1 },
+        { x: 0.9, z: 6.4, scale: 0.23, rotation: 0.9 },
+        { x: 0.5, z: 7.0, scale: 0.27, rotation: 1.5 },
+        { x: 1.0, z: 7.6, scale: 0.25, rotation: 2.5 },
+        { x: 0.6, z: 8.2, scale: 0.22, rotation: 0.4 },
+        // Further out
+        { x: 1.1, z: 8.8, scale: 0.24, rotation: 1.1 },
+        { x: 0.7, z: 9.4, scale: 0.26, rotation: 2.3 },
+    ], []);
+
+    return (
+        <group position={[0, -3.72, -2]}>
+            {stonePositions.map((stone, index) => (
+                <mesh
+                    key={index}
+                    position={[stone.x, 0.02, stone.z]}
+                    rotation={[-Math.PI / 2, 0, stone.rotation]}
+                    receiveShadow
+                >
+                    <circleGeometry args={[stone.scale, 6]} />
+                    <meshStandardMaterial
+                        color="#d4c9b0"
+                        roughness={0.9}
+                        metalness={0}
+                    />
+                </mesh>
+            ))}
+        </group>
+    );
+}
+
 // Lime Green Floor
 function GrassFloor() {
     return (
@@ -728,6 +770,9 @@ export default function WindmillScene() {
 
                 {/* Green Grass Floor */}
                 <GrassFloor />
+
+                {/* Stepping Stone Path from windmill entrance */}
+                <SteppingStonePath />
 
                 {/* Animated Water around the island */}
                 <AnimatedWater />
