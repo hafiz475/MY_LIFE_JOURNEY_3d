@@ -130,6 +130,153 @@ function SteppingStonePath() {
     );
 }
 
+// Parked Boats - stationary boats near the shore
+function ParkedBoats() {
+    const lancha1 = useGLTF('/assets/models/landingscene/lancha_low_poly.glb');
+    const lancha2 = useGLTF('/assets/models/landingscene/lancha_2_low_poly.glb');
+
+    // Setup shadows
+    useEffect(() => {
+        [lancha1.scene, lancha2.scene].forEach(scene => {
+            scene.traverse((child) => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+        });
+    }, [lancha1.scene, lancha2.scene]);
+
+    return (
+        <>
+            {/* Lancha 1 - parked near shore left side */}
+            <primitive
+                object={lancha1.scene.clone()}
+                position={[-8, -3.6, 8]}
+                scale={0.008 / 1.5}
+                rotation={[0, Math.PI * 0.3, 0]}
+            />
+            {/* Lancha 2 - parked near shore right side */}
+            <primitive
+                object={lancha2.scene.clone()}
+                position={[10, -3.6, 1]}
+                scale={0.008 / 1.5}
+                rotation={[0, -Math.PI * 0.4, 0]}
+            />
+        </>
+    );
+}
+
+// Sailing Boats - animated boats moving in the sea
+function SailingBoats() {
+    const boat1Ref = useRef();
+    const boat2Ref = useRef();
+    const { scene: boatScene } = useGLTF('/assets/models/landingscene/boat_from_poly_by_google.glb');
+    const { scene: cruiseScene } = useGLTF('/assets/models/landingscene/cruise_ship_-_toofan.glb');
+
+    // Setup shadows
+    useEffect(() => {
+        [boatScene, cruiseScene].forEach(scene => {
+            scene.traverse((child) => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+        });
+    }, [boatScene, cruiseScene]);
+
+    // Animate boats sailing in circular patterns
+    useFrame((state) => {
+        const t = state.clock.elapsedTime;
+
+        // Boat 1 - larger circular path, slower
+        if (boat1Ref.current) {
+            const radius1 = 35;
+            const speed1 = 0.075;
+            boat1Ref.current.position.x = Math.sin(t * speed1) * radius1;
+            boat1Ref.current.position.z = Math.cos(t * speed1) * radius1;
+            // Face direction of travel
+            boat1Ref.current.rotation.y = -t * speed1 + Math.PI / 2;
+            // Gentle bobbing
+            boat1Ref.current.position.y = -3.5 + Math.sin(t * 2) * 0.1;
+        }
+
+        // Cruise ship - even larger path, slowest
+        if (boat2Ref.current) {
+            const radius2 = 50;
+            const speed2 = 0.04;
+            boat2Ref.current.position.x = Math.cos(t * speed2 + Math.PI) * radius2;
+            boat2Ref.current.position.z = Math.sin(t * speed2 + Math.PI) * radius2;
+            // Face direction of travel
+            boat2Ref.current.rotation.y = t * speed2;
+            // Gentle bobbing
+            boat2Ref.current.position.y = -3.4 + Math.sin(t * 1.5) * 0.15;
+        }
+    });
+
+    return (
+        <>
+            {/* Small sailing boat */}
+            <primitive
+                ref={boat1Ref}
+                object={boatScene.clone()}
+                position={[35, -3.5, 0]}
+                scale={0.016}
+            />
+            {/* Cruise ship */}
+            <primitive
+                ref={boat2Ref}
+                object={cruiseScene.clone()}
+                position={[30, -3.4, 0]}
+                scale={0.02}
+            />
+        </>
+    );
+}
+
+// Shark Fin - animated shark swimming in the sea
+function SharkFin() {
+    const sharkRef = useRef();
+    const { scene } = useGLTF('/assets/models/landingscene/shark_fin_from_poly_by_google.glb');
+
+    useEffect(() => {
+        scene.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+            }
+        });
+    }, [scene]);
+
+    // Animate shark swimming erratically
+    useFrame((state) => {
+        const t = state.clock.elapsedTime;
+
+        if (sharkRef.current) {
+            // Figure-8 pattern for more interesting movement
+            const speed = 0.3;
+            const radius = 25;
+            sharkRef.current.position.x = Math.sin(t * speed) * radius;
+            sharkRef.current.position.z = Math.sin(t * speed * 2) * (radius * 0.5) + 30;
+            // Face direction of travel
+            const nextX = Math.sin((t + 0.1) * speed) * radius;
+            const nextZ = Math.sin((t + 0.1) * speed * 2) * (radius * 0.5) + 30;
+            sharkRef.current.rotation.y = Math.atan2(nextX - sharkRef.current.position.x, nextZ - sharkRef.current.position.z);
+            // Slight up/down movement
+            sharkRef.current.position.y = -3.7 + Math.sin(t * 4) * 0.05;
+        }
+    });
+
+    return (
+        <primitive
+            ref={sharkRef}
+            object={scene}
+            position={[0, -3.7, 30]}
+            scale={0.04}
+        />
+    );
+}
+
 // Lime Green Floor
 function GrassFloor() {
     return (
@@ -777,6 +924,15 @@ export default function WindmillScene() {
                 {/* Animated Water around the island */}
                 <AnimatedWater />
 
+                {/* Parked boats near the shore */}
+                <ParkedBoats />
+
+                {/* Sailing boats in the sea */}
+                <SailingBoats />
+
+                {/* Shark fin swimming in the sea */}
+                <SharkFin />
+
                 {/* Shoreline foam waves at the edge */}
                 <ShorelineFoam />
 
@@ -820,3 +976,8 @@ useGLTF.preload('/assets/models/landingscene/cute_toon_tree.glb');
 useGLTF.preload('/assets/models/gottfried_freiherr_von_banfields_seaplane.glb');
 useGLTF.preload('/assets/models/landingscene/snow_mountain.glb');
 useGLTF.preload('/assets/models/landingscene/low_poly_sign_board__stylized_wooden_sign.glb');
+useGLTF.preload('/assets/models/landingscene/lancha_low_poly.glb');
+useGLTF.preload('/assets/models/landingscene/lancha_2_low_poly.glb');
+useGLTF.preload('/assets/models/landingscene/boat_from_poly_by_google.glb');
+useGLTF.preload('/assets/models/landingscene/cruise_ship_-_toofan.glb');
+useGLTF.preload('/assets/models/landingscene/shark_fin_from_poly_by_google.glb');
