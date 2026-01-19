@@ -33,16 +33,19 @@ function WindmillModel({ onClick }) {
         }
     }, [actions]);
 
-    // Gentle rotation + blinking star light
+    // Gentle rotation around base 45° position + pulsing notification light
     useFrame((state) => {
         if (groupRef.current) {
-            groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
+            // Base rotation: 45° clockwise (+Math.PI/4) + gentle sway
+            groupRef.current.rotation.y = Math.PI / 4 + Math.sin(state.clock.elapsedTime * 0.3) * 0.1;
         }
-        // Blinking star light effect
+        // Pulsing notification light effect - matching PhoneModel style
         if (starLightRef.current) {
-            const blink = (Math.sin(state.clock.elapsedTime * 4) + 1) * 0.5;
-            starLightRef.current.intensity = 2 + blink * 3;
-            starLightRef.current.scale.setScalar(0.08 + blink * 0.04);
+            const pulse = 0.5 + Math.sin(state.clock.elapsedTime * 3) * 0.3;
+            starLightRef.current.scale.setScalar(pulse);
+            if (starLightRef.current.material) {
+                starLightRef.current.material.opacity = 0.6 + Math.sin(state.clock.elapsedTime * 3) * 0.4;
+            }
         }
     });
 
@@ -63,19 +66,19 @@ function WindmillModel({ onClick }) {
     return (
         <group
             ref={groupRef}
-            position={[0, 0, 0]}
+            position={[2, 0, 0]}
             scale={0.5}
             onClick={onClick}
             onPointerOver={() => setHovered(true)}
             onPointerOut={() => setHovered(false)}
         >
             <primitive object={scene} />
-            {/* Blinking star indicator on windmill center */}
-            <mesh ref={starLightRef} position={[0, 4, 0.5]}>
-                <sphereGeometry args={[0.1, 16, 16]} />
-                <meshBasicMaterial color="#FFD700" />
+            {/* Pulsing notification light at windmill entrance (adjusted for model offset) */}
+            <mesh ref={starLightRef} position={[-2.7, -6.7, -1.5]}>
+                <sphereGeometry args={[0.4, 16, 16]} />
+                <meshBasicMaterial color="#00ffff" transparent opacity={0.9} />
             </mesh>
-            <pointLight position={[0, 4, 0.5]} color="#FFD700" intensity={3} distance={5} />
+
         </group>
     );
 }
@@ -325,12 +328,18 @@ function SeaplaneLanding({ onTakeoffComplete }) {
     // Landing position (next to the windmill)
     const END_POS = { x: -3, y: -3.5, z: 2 };
 
-    // Enable shadows on the model
+    // Enable shadows on the model and reset rotation
     useEffect(() => {
+        // Reset all rotation on the scene to fix orientation after navigation
+        scene.rotation.set(0, 0, 0);
         scene.traverse((child) => {
             if (child.isMesh) {
                 child.castShadow = true;
                 child.receiveShadow = true;
+            }
+            // Reset any child rotations that might have been affected
+            if (child.rotation) {
+                // Only reset if not the root scene (to preserve intended rotations)
             }
         });
 
@@ -479,14 +488,19 @@ function SeaplaneLanding({ onTakeoffComplete }) {
             onPointerOut={() => setHovered(false)}
         >
             <primitive object={scene} />
-            {/* Blinking star indicator when landed */}
+            {/* Pulsing cyan notification light when landed */}
             {isLanded && !isTakingOff && (
                 <>
-                    <mesh ref={starLightRef} position={[0, 0.8, 0]}>
-                        <sphereGeometry args={[0.06, 16, 16]} />
-                        <meshBasicMaterial color="#FFD700" />
+                    <mesh ref={starLightRef} position={[0, 0.7, 0]}>
+                        <sphereGeometry args={[2, 2, 2]} />
+                        <meshBasicMaterial color="#00ffff" transparent opacity={0.9} />
                     </mesh>
-                    <pointLight position={[0, 0.8, 0]} color="#FFD700" intensity={2} distance={3} />
+                    {/* Glow ring */}
+                    <mesh position={[0, 1.5, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                        <ringGeometry args={[0.18, 0.32, 32]} />
+                        <meshBasicMaterial color="#00ffff" transparent opacity={0.5} />
+                    </mesh>
+                    <pointLight position={[0, 1.5, 0]} color="#00ffff" intensity={3} distance={4} />
                 </>
             )}
         </group>
@@ -667,6 +681,12 @@ export default function WindmillScene() {
                     shadowMap: { enabled: true, type: THREE.PCFSoftShadowMap }
                 }}
                 dpr={[1, 2]}
+                onCreated={({ camera }) => {
+                    // Reset camera position and rotation when scene is created
+                    camera.position.set(0, 3, 12);
+                    camera.rotation.set(0, 0, 0);
+                    camera.updateProjectionMatrix();
+                }}
             >
                 {/* Camera Controls - delayed auto-rotate */}
                 <OrbitControls
@@ -678,6 +698,7 @@ export default function WindmillScene() {
                     maxPolarAngle={Math.PI / 2}
                     autoRotate={autoRotateEnabled}
                     autoRotateSpeed={0.5}
+                    target={[0, 0, 0]}
                 />
 
                 {/* Background color - cyan */}

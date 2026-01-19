@@ -43,9 +43,9 @@ export default function Plane() {
 
   // Idle Animation (Floating/Flying feel)
   useFrame((state) => {
-    if (idleRef.current) {
-      const t = state.clock.getElapsedTime();
+    const t = state.clock.getElapsedTime();
 
+    if (idleRef.current) {
       // "Wing flapping" (Roll - Rotation X)
       // 4s loop -> freq ~ 1.5
       idleRef.current.rotation.x = Math.sin(t * 1.5) * 0.05; // +/- ~3 deg

@@ -101,7 +101,7 @@ function MainExperience() {
       setIsDark(true);
 
       setTimeout(() => {
-        navigate('/room');
+        navigate('/windmill');
       }, 2000);
     }, 3000);
   };
