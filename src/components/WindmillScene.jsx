@@ -15,7 +15,7 @@ import './WindmillScene.scss';
 import { useMemo } from 'react';
 
 // The Windmill 3D Model with Animation - Clickable to go to /landing
-function WindmillModel({ onClick }) {
+function WindmillModel({ onClick, isLanded }) {
     const groupRef = useRef();
     const starLightRef = useRef();
     const { scene, animations } = useGLTF('/assets/models/landingscene/working2.glb');
@@ -68,16 +68,21 @@ function WindmillModel({ onClick }) {
             ref={groupRef}
             position={[2, 0, 0]}
             scale={0.5}
-            onClick={onClick}
-            onPointerOver={() => setHovered(true)}
-            onPointerOut={() => setHovered(false)}
         >
             <primitive object={scene} />
-            {/* Pulsing notification light at windmill entrance (adjusted for model offset) */}
-            <mesh ref={starLightRef} position={[-2.7, -6.7, -1.5]}>
-                <sphereGeometry args={[0.4, 16, 16]} />
-                <meshBasicMaterial color="#00ffff" transparent opacity={0.9} />
-            </mesh>
+            {/* Pulsing notification light at windmill entrance - only shows after plane lands */}
+            {isLanded && (
+                <mesh
+                    ref={starLightRef}
+                    position={[-2.7, -6.7, -1.5]}
+                    onClick={onClick}
+                    onPointerOver={() => setHovered(true)}
+                    onPointerOut={() => setHovered(false)}
+                >
+                    <sphereGeometry args={[0.4, 16, 16]} />
+                    <meshBasicMaterial color="#00ffff" transparent opacity={0.9} />
+                </mesh>
+            )}
 
         </group>
     );
@@ -273,7 +278,7 @@ function ToonTrees() {
     const treePositions = useMemo(() => [
         { x: -5, y: -3.75, z: 3, scale: 0.6, rotation: 0.3 },
         { x: 4, y: -3.75, z: -4, scale: 0.5, rotation: -0.5 },
-        { x: 6, y: -3.75, z: 2, scale: 0.55, rotation: 0.8 },
+        { x: 6, y: -3.75, z: 5, scale: 0.55, rotation: 0.8 },
     ], []);
 
     useEffect(() => {
@@ -305,8 +310,8 @@ function ToonTrees() {
     return <group ref={groupRef} />;
 }
 
-// Animated Seaplane - Lands, then can takeoff when clicked
-function SeaplaneLanding({ onTakeoffComplete }) {
+// Animated Seaplane - Lands, then can takeoff when sphere is clicked
+function SeaplaneLanding({ onTakeoffComplete, onLanded }) {
     const groupRef = useRef();
     const starLightRef = useRef();
     const { scene, animations } = useGLTF('/assets/models/gottfried_freiherr_von_banfields_seaplane.glb');
@@ -474,6 +479,8 @@ function SeaplaneLanding({ onTakeoffComplete }) {
                 setIsLanded(true);
                 groupRef.current.position.set(END_POS.x, END_POS.y, END_POS.z);
                 groupRef.current.rotation.set(0, Math.PI * 0.5, 0);
+                // Notify parent that plane has landed
+                if (onLanded) onLanded();
             }
         }
     });
@@ -483,15 +490,18 @@ function SeaplaneLanding({ onTakeoffComplete }) {
             ref={groupRef}
             position={[START_POS.x, START_POS.y, START_POS.z]}
             scale={0.78}
-            onClick={handleClick}
-            onPointerOver={() => setHovered(true)}
-            onPointerOut={() => setHovered(false)}
         >
             <primitive object={scene} />
-            {/* Pulsing cyan notification light when landed */}
+            {/* Pulsing cyan notification light when landed - only sphere is clickable */}
             {isLanded && !isTakingOff && (
                 <>
-                    <mesh ref={starLightRef} position={[0, 0.7, 0]}>
+                    <mesh
+                        ref={starLightRef}
+                        position={[0, 0.7, 0]}
+                        onClick={handleClick}
+                        onPointerOver={() => setHovered(true)}
+                        onPointerOut={() => setHovered(false)}
+                    >
                         <sphereGeometry args={[2, 2, 2]} />
                         <meshBasicMaterial color="#00ffff" transparent opacity={0.9} />
                     </mesh>
@@ -661,6 +671,7 @@ function Loader() {
 export default function WindmillScene() {
     const navigate = useNavigate();
     const [autoRotateEnabled, setAutoRotateEnabled] = useState(false);
+    const [isSeaplaneLanded, setIsSeaplaneLanded] = useState(false);
 
     // Delay auto-rotate for 6 seconds so user can watch plane takeoff
     useEffect(() => {
@@ -712,7 +723,7 @@ export default function WindmillScene() {
 
                 {/* The 3D Model - Click to go to /landing */}
                 <Suspense fallback={<Loader />}>
-                    <WindmillModel onClick={() => navigate('/landing')} />
+                    <WindmillModel onClick={() => navigate('/landing')} isLanded={isSeaplaneLanded} />
                 </Suspense>
 
                 {/* Green Grass Floor */}
@@ -734,7 +745,7 @@ export default function WindmillScene() {
                 <WelcomeSign />
 
                 {/* Animated Seaplane - Click to takeoff and go back to home */}
-                <SeaplaneLanding onTakeoffComplete={() => navigate('/')} />
+                <SeaplaneLanding onTakeoffComplete={() => navigate('/')} onLanded={() => setIsSeaplaneLanded(true)} />
 
 
                 {/* Snow Mountain in background */}
