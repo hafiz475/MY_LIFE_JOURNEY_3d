@@ -167,33 +167,30 @@ function ParkedBoats() {
     );
 }
 
-// Sailing Boats - animated boats moving in the sea
+// Sailing Boats - 2 small animated boats moving in the sea
 function SailingBoats() {
     const boat1Ref = useRef();
     const boat2Ref = useRef();
     const { scene: boatScene } = useGLTF('/assets/models/landingscene/boat_from_poly_by_google.glb');
-    const { scene: cruiseScene } = useGLTF('/assets/models/landingscene/cruise_ship_-_toofan.glb');
 
     // Setup shadows
     useEffect(() => {
-        [boatScene, cruiseScene].forEach(scene => {
-            scene.traverse((child) => {
-                if (child.isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            });
+        boatScene.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
         });
-    }, [boatScene, cruiseScene]);
+    }, [boatScene]);
 
     // Animate boats sailing in circular patterns
     useFrame((state) => {
         const t = state.clock.elapsedTime;
 
-        // Boat 1 - larger circular path, slower
+        // Boat 1 - circular path clockwise
         if (boat1Ref.current) {
-            const radius1 = 35;
-            const speed1 = 0.075;
+            const radius1 = 28;
+            const speed1 = 0.08;
             boat1Ref.current.position.x = Math.sin(t * speed1) * radius1;
             boat1Ref.current.position.z = Math.cos(t * speed1) * radius1;
             // Face direction of travel
@@ -202,40 +199,105 @@ function SailingBoats() {
             boat1Ref.current.position.y = -3.5 + Math.sin(t * 2) * 0.1;
         }
 
-        // Cruise ship - even larger path, slowest
+        // Boat 2 - circular path counter-clockwise, offset position
         if (boat2Ref.current) {
-            const radius2 = 50;
-            const speed2 = 0.04;
+            const radius2 = 32;
+            const speed2 = 0.06;
             boat2Ref.current.position.x = Math.cos(t * speed2 + Math.PI) * radius2;
-            boat2Ref.current.position.z = Math.sin(t * speed2 + Math.PI) * radius2;
-            // Face direction of travel
-            boat2Ref.current.rotation.y = t * speed2;
+            boat2Ref.current.position.z = -Math.sin(t * speed2 + Math.PI) * radius2;
+            // Face direction of travel (opposite direction)
+            boat2Ref.current.rotation.y = t * speed2 + Math.PI / 2;
             // Gentle bobbing
-            boat2Ref.current.position.y = -3.4 + Math.sin(t * 1.5) * 0.15;
+            boat2Ref.current.position.y = -3.5 + Math.sin(t * 1.8 + 1) * 0.1;
         }
     });
 
     return (
         <>
-            {/* Small sailing boat */}
+            {/* Small sailing boat 1 */}
             <primitive
                 ref={boat1Ref}
                 object={boatScene.clone()}
-                position={[35, -3.5, 0]}
+                position={[28, -3.5, 0]}
                 scale={0.016}
             />
-            {/* Cruise ship */}
+            {/* Small sailing boat 2 */}
             <primitive
                 ref={boat2Ref}
-                object={cruiseScene.clone()}
-                position={[30, -3.4, 0]}
-                scale={0.02}
+                object={boatScene.clone()}
+                position={[-32, -3.5, 0]}
+                scale={0.014}
             />
         </>
     );
 }
 
-// Shark Fin - animated shark swimming in the sea
+// Cruise Ships - 2 large cruise ships sailing in the sea
+function CruiseShips() {
+    const cruise1Ref = useRef();
+    const cruise2Ref = useRef();
+    const { scene: cruiseScene } = useGLTF('/assets/models/landingscene/cruise_ship_-_toofan.glb');
+
+    // Setup shadows
+    useEffect(() => {
+        cruiseScene.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+    }, [cruiseScene]);
+
+    // Animate cruise ships sailing in circular patterns
+    useFrame((state) => {
+        const t = state.clock.elapsedTime;
+
+        // Cruise 1 - large circular path, slow
+        if (cruise1Ref.current) {
+            const radius1 = 45;
+            const speed1 = 0.04;
+            cruise1Ref.current.position.x = Math.sin(t * speed1 + Math.PI / 4) * radius1;
+            cruise1Ref.current.position.z = Math.cos(t * speed1 + Math.PI / 4) * radius1;
+            // Face direction of travel
+            cruise1Ref.current.rotation.y = -t * speed1 + Math.PI / 2;
+            // Gentle bobbing
+            cruise1Ref.current.position.y = -3.4 + Math.sin(t * 1.5) * 0.15;
+        }
+
+        // Cruise 2 - opposite direction, offset position
+        if (cruise2Ref.current) {
+            const radius2 = 55;
+            const speed2 = 0.03;
+            cruise2Ref.current.position.x = Math.cos(t * speed2) * radius2;
+            cruise2Ref.current.position.z = -Math.sin(t * speed2) * radius2;
+            // Face direction of travel
+            cruise2Ref.current.rotation.y = t * speed2;
+            // Gentle bobbing
+            cruise2Ref.current.position.y = -3.4 + Math.sin(t * 1.2 + 2) * 0.12;
+        }
+    });
+
+    return (
+        <>
+            {/* Cruise ship 1 */}
+            <primitive
+                ref={cruise1Ref}
+                object={cruiseScene.clone()}
+                position={[45, -3.4, 0]}
+                scale={0.02}
+            />
+            {/* Cruise ship 2 */}
+            <primitive
+                ref={cruise2Ref}
+                object={cruiseScene.clone()}
+                position={[-55, -3.4, 0]}
+                scale={0.018}
+            />
+        </>
+    );
+}
+
+// Shark Fin - animated shark swimming in the sea (visible in front of island)
 function SharkFin() {
     const sharkRef = useRef();
     const { scene } = useGLTF('/assets/models/landingscene/shark_fin_from_poly_by_google.glb');
@@ -248,22 +310,23 @@ function SharkFin() {
         });
     }, [scene]);
 
-    // Animate shark swimming erratically
+    // Animate shark swimming in the water visible from camera
     useFrame((state) => {
         const t = state.clock.elapsedTime;
 
         if (sharkRef.current) {
-            // Figure-8 pattern for more interesting movement
-            const speed = 0.3;
-            const radius = 25;
-            sharkRef.current.position.x = Math.sin(t * speed) * radius;
-            sharkRef.current.position.z = Math.sin(t * speed * 2) * (radius * 0.5) + 30;
+            // Swimming pattern in front of the island (visible from camera)
+            const speed = 0.2;
+            const radius = 12;
+            // Swim in front of the island (positive Z - towards camera)
+            sharkRef.current.position.x = Math.sin(t * speed) * radius - 8;
+            sharkRef.current.position.z = Math.cos(t * speed) * 6 + 22;
             // Face direction of travel
-            const nextX = Math.sin((t + 0.1) * speed) * radius;
-            const nextZ = Math.sin((t + 0.1) * speed * 2) * (radius * 0.5) + 30;
+            const nextX = Math.sin((t + 0.1) * speed) * radius - 8;
+            const nextZ = Math.cos((t + 0.1) * speed) * 6 + 22;
             sharkRef.current.rotation.y = Math.atan2(nextX - sharkRef.current.position.x, nextZ - sharkRef.current.position.z);
-            // Slight up/down movement
-            sharkRef.current.position.y = -3.7 + Math.sin(t * 4) * 0.05;
+            // Slight up/down movement to simulate swimming
+            sharkRef.current.position.y = -3.75 + Math.sin(t * 3) * 0.1;
         }
     });
 
@@ -271,9 +334,151 @@ function SharkFin() {
         <primitive
             ref={sharkRef}
             object={scene}
-            position={[0, -3.7, 30]}
-            scale={0.04}
+            position={[-8, -3.75, 22]}
+            scale={0.15}
         />
+    );
+}
+
+// Eagle - flies forever with spiral descent and takeoff pattern
+function Eagle() {
+    const eagleRef = useRef();
+    const { scene, animations } = useGLTF('/assets/models/low_poly_eagle.glb');
+    const { actions } = useAnimations(animations, scene);
+
+    // Play flying animation
+    useEffect(() => {
+        if (actions) {
+            Object.values(actions).forEach(action => {
+                if (action) {
+                    action.play();
+                }
+            });
+        }
+
+        scene.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+            }
+        });
+    }, [actions, scene]);
+
+    // Spiral flight pattern - descends while tightening spiral, then ascends while expanding
+    useFrame((state) => {
+        const t = state.clock.elapsedTime;
+
+        if (!eagleRef.current) return;
+
+        // Spiral cycle: 20 seconds total (10s descent, 10s ascent)
+        const CYCLE_DURATION = 20;
+        const cycleTime = t % CYCLE_DURATION;
+        const cycleProgress = cycleTime / CYCLE_DURATION; // 0 to 1
+
+        // Spiral parameters
+        const MIN_RADIUS = 8;   // Tightest spiral (close to center but not inside mountain)
+        const MAX_RADIUS = 25;  // Widest spiral
+        const MIN_HEIGHT = 3;   // Lowest altitude
+        const MAX_HEIGHT = 12;  // Highest altitude
+
+        // Create smooth sine wave for radius and height (0->1->0 pattern)
+        // First half (0-0.5): descending spiral (radius shrinks, height drops)
+        // Second half (0.5-1): ascending spiral (radius expands, height rises)
+        const spiralProgress = Math.sin(cycleProgress * Math.PI); // 0->1->0
+
+        // Radius: starts large, shrinks to minimum at middle, expands back
+        const currentRadius = MIN_RADIUS + (MAX_RADIUS - MIN_RADIUS) * (1 - spiralProgress);
+
+        // Height: starts high, drops to minimum at middle, rises back
+        const currentHeight = MIN_HEIGHT + (MAX_HEIGHT - MIN_HEIGHT) * (1 - spiralProgress);
+
+        // Circular motion with varying radius
+        const rotationSpeed = 0.4;
+        const angle = t * rotationSpeed;
+
+        // Offset the center slightly to avoid mountain (mountain is at z: -20)
+        const centerOffsetZ = 5; // Shift center forward to avoid mountain
+
+        eagleRef.current.position.x = Math.sin(angle) * currentRadius;
+        eagleRef.current.position.z = Math.cos(angle) * currentRadius + centerOffsetZ;
+        eagleRef.current.position.y = currentHeight + Math.sin(t * 2) * 0.3; // Gentle bobbing
+
+        // Face direction of travel
+        eagleRef.current.rotation.y = -angle + Math.PI;
+
+        // Banking: more banking during tight spiral, less during wide
+        const bankAmount = 0.1 + (spiralProgress * 0.15);
+        eagleRef.current.rotation.z = Math.sin(angle) * bankAmount;
+
+        // Pitch: nose down during descent, nose up during ascent
+        const pitchAmount = cycleProgress < 0.5 ? -0.1 : 0.1;
+        eagleRef.current.rotation.x = pitchAmount * spiralProgress;
+    });
+
+    return (
+        <primitive
+            ref={eagleRef}
+            object={scene}
+            position={[20, 8, 0]}
+            scale={0.15}
+        />
+    );
+}
+
+// Flying Birds - animated flock of 5 birds flying across the scene
+function FlyingBirds() {
+    const groupRef = useRef();
+    const { scene, animations } = useGLTF('/assets/models/birds.glb');
+    const { actions } = useAnimations(animations, scene);
+
+    // Play bird flying animations
+    useEffect(() => {
+        if (actions) {
+            Object.values(actions).forEach(action => {
+                if (action) {
+                    action.play();
+                }
+            });
+        }
+
+        scene.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+            }
+        });
+    }, [actions, scene]);
+
+    // Constants for flight pattern
+    const FLIGHT_DURATION = 12; // 12 seconds to cross
+    const START_X = -50;
+    const END_X = 50;
+    const TOTAL_DISTANCE = END_X - START_X; // 100 units
+
+    // Animate birds flying from left to right in 12 seconds, then reset
+    useFrame((state) => {
+        if (!groupRef.current) return;
+
+        const t = state.clock.elapsedTime;
+
+        // Calculate position based on 12-second cycle
+        const cycleTime = t % FLIGHT_DURATION;
+        const progress = cycleTime / FLIGHT_DURATION;
+
+        // Linear movement from left to right
+        const currentX = START_X + progress * TOTAL_DISTANCE;
+
+        groupRef.current.position.x = currentX;
+
+        // Gentle up/down wave motion
+        groupRef.current.position.y = 6 + Math.sin(t * 0.5) * 0.5;
+
+        // Keep facing right (direction of flight)
+        groupRef.current.rotation.y = Math.PI / 2;
+    });
+
+    return (
+        <group ref={groupRef} position={[-50, 6, 0]} scale={0.5}>
+            <primitive object={scene} />
+        </group>
     );
 }
 
@@ -930,6 +1135,9 @@ export default function WindmillScene() {
                 {/* Sailing boats in the sea */}
                 <SailingBoats />
 
+                {/* Cruise ships in the sea */}
+                <CruiseShips />
+
                 {/* Shark fin swimming in the sea */}
                 <SharkFin />
 
@@ -938,6 +1146,12 @@ export default function WindmillScene() {
 
                 {/* Animated Clouds drifting across the sky */}
                 <AnimatedClouds />
+
+                {/* Eagle flying around island, perching on mountain */}
+                <Eagle />
+
+                {/* Flying birds across the scene */}
+                <FlyingBirds />
 
                 {/* Cute Toon Trees around the windmill */}
                 <ToonTrees />
@@ -981,3 +1195,5 @@ useGLTF.preload('/assets/models/landingscene/lancha_2_low_poly.glb');
 useGLTF.preload('/assets/models/landingscene/boat_from_poly_by_google.glb');
 useGLTF.preload('/assets/models/landingscene/cruise_ship_-_toofan.glb');
 useGLTF.preload('/assets/models/landingscene/shark_fin_from_poly_by_google.glb');
+useGLTF.preload('/assets/models/low_poly_eagle.glb');
+useGLTF.preload('/assets/models/birds.glb');
