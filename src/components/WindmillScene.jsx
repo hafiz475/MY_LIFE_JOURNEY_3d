@@ -1,5 +1,5 @@
-import { useRef, Suspense, useEffect, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { useRef, Suspense, useEffect, useState, createContext, useContext } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {
     Html,
     useGLTF,
@@ -12,7 +12,21 @@ import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 import './WindmillScene.scss';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
+
+// Day/Night Context for sharing state across components
+const DayNightContext = createContext({
+    isNight: false,
+    nightProgress: 0, // 0 = full day, 1 = full night
+    isTransitioning: false,
+});
+
+// Cycle constants
+const DAY_DURATION = 24; // seconds of full daytime
+const NIGHT_DURATION = 24; // seconds of full nighttime
+const TRANSITION_DURATION = 12; // seconds for day-to-night or night-to-day transition
+const TOTAL_CYCLE = DAY_DURATION + TRANSITION_DURATION + NIGHT_DURATION + TRANSITION_DURATION; // 72 seconds total
+const AUTO_LIGHTNING_INTERVAL = 3; // seconds between automatic lightning during night
 
 // The Windmill 3D Model with Animation - Clickable to go to /landing
 function WindmillModel({ onClick, isLanded }) {
@@ -500,9 +514,170 @@ function GrassFloor() {
     );
 }
 
-// Animated Water - stylized low-poly water around the island
+// Scene Background - transitions sky color between day and night
+function SceneBackground() {
+    const { scene } = useThree();
+    const { nightProgress } = useContext(DayNightContext);
+
+    useFrame(() => {
+        // Interpolate between day cyan and night dark blue
+        const dayColor = new THREE.Color('#00f9ff');
+        const nightColor = new THREE.Color('#0a0a2e');
+        const currentColor = dayColor.clone().lerp(nightColor, nightProgress);
+        scene.background = currentColor;
+    });
+
+    return null;
+}
+
+// Rain Particles - appears during night
+function Rain() {
+    const { nightProgress } = useContext(DayNightContext);
+    const rainRef = useRef();
+    const rainCount = 1000;
+
+    // Create rain drop positions
+    const rainPositions = useMemo(() => {
+        const positions = new Float32Array(rainCount * 3);
+        for (let i = 0; i < rainCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 100;     // x
+            positions[i * 3 + 1] = Math.random() * 30;          // y
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 100; // z
+        }
+        return positions;
+    }, []);
+
+    useFrame(() => {
+        if (!rainRef.current || nightProgress < 0.3) return;
+
+        const positions = rainRef.current.geometry.attributes.position.array;
+        for (let i = 0; i < rainCount; i++) {
+            positions[i * 3 + 1] -= 0.5; // Fall speed
+            if (positions[i * 3 + 1] < -5) {
+                positions[i * 3 + 1] = 30;
+            }
+        }
+        rainRef.current.geometry.attributes.position.needsUpdate = true;
+    });
+
+    if (nightProgress < 0.3) return null;
+
+    return (
+        <points ref={rainRef}>
+            <bufferGeometry>
+                <bufferAttribute
+                    attach="attributes-position"
+                    count={rainCount}
+                    array={rainPositions}
+                    itemSize={3}
+                />
+            </bufferGeometry>
+            <pointsMaterial
+                color="#aaddff"
+                size={0.15}
+                transparent
+                opacity={nightProgress * 0.6}
+                sizeAttenuation
+            />
+        </points>
+    );
+}
+
+// Thunder Effect - lightning flash when clouds are clicked + automatic every 3 seconds at night
+function Thunder({ onFlash }) {
+    const { nightProgress } = useContext(DayNightContext);
+    const [isFlashing, setIsFlashing] = useState(false);
+    const lightRef = useRef();
+    const lastAutoFlashRef = useRef(0);
+
+    const triggerThunder = useCallback(() => {
+        if (nightProgress < 0.5 || isFlashing) return;
+
+        setIsFlashing(true);
+        if (onFlash) onFlash();
+
+        // Flash sequence
+        setTimeout(() => setIsFlashing(false), 100);
+        setTimeout(() => setIsFlashing(true), 150);
+        setTimeout(() => setIsFlashing(false), 250);
+        setTimeout(() => setIsFlashing(true), 300);
+        setTimeout(() => setIsFlashing(false), 400);
+    }, [nightProgress, isFlashing, onFlash]);
+
+    // Expose trigger function
+    useEffect(() => {
+        window.triggerThunder = triggerThunder;
+        return () => { delete window.triggerThunder; };
+    }, [triggerThunder]);
+
+    // Automatic lightning every 3 seconds during night
+    useFrame((state) => {
+        if (nightProgress >= 0.8 && !isFlashing) {
+            const now = state.clock.elapsedTime;
+            if (now - lastAutoFlashRef.current >= AUTO_LIGHTNING_INTERVAL) {
+                lastAutoFlashRef.current = now;
+                triggerThunder();
+            }
+        }
+    });
+
+    if (nightProgress < 0.5) return null;
+
+    return (
+        <>
+            {isFlashing && (
+                <>
+                    <ambientLight intensity={5} color="#ffffff" />
+                    <pointLight
+                        ref={lightRef}
+                        position={[0, 20, 0]}
+                        intensity={100}
+                        color="#ffffff"
+                        distance={200}
+                    />
+                </>
+            )}
+        </>
+    );
+}
+
+// Moon - appears during night
+function Moon() {
+    const { nightProgress } = useContext(DayNightContext);
+    const moonRef = useRef();
+
+    useFrame((state) => {
+        if (moonRef.current) {
+            // Gentle glow pulsing
+            const pulse = 1 + Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
+            moonRef.current.scale.setScalar(0.8 * pulse);
+        }
+    });
+
+    if (nightProgress < 0.3) return null;
+
+    return (
+        <group position={[8, 12, -10]}>
+            {/* Moon sphere */}
+            <mesh ref={moonRef}>
+                <sphereGeometry args={[0.8, 32, 32]} />
+                <meshBasicMaterial color="#ffffd0" />
+            </mesh>
+            {/* Moon glow */}
+            <pointLight
+                intensity={2 * nightProgress}
+                distance={30}
+                color="#ffffd0"
+            />
+        </group>
+    );
+}
+
+// Animated Water - stylized low-poly water around the island (higher waves at night)
 function AnimatedWater() {
     const waterRef = useRef();
+    const materialRef = useRef();
+    const { nightProgress } = useContext(DayNightContext);
 
     // Create water geometry - a ring around the island (hole in middle)
     const waterGeometry = useMemo(() => {
@@ -511,23 +686,33 @@ function AnimatedWater() {
         return geo;
     }, []);
 
-    // Animate water waves
+    // Animate water waves - higher during night
     useFrame((state) => {
         if (waterRef.current) {
             const positions = waterRef.current.geometry.attributes.position;
             const time = state.clock.elapsedTime;
 
+            // Wave intensity increases during night (0.15 to 0.6)
+            const waveMultiplier = 1 + nightProgress * 3;
+
             for (let i = 0; i < positions.count; i++) {
                 const x = positions.getX(i);
                 const y = positions.getY(i);
 
-                // Create gentle wave pattern
-                const wave1 = Math.sin(x * 0.05 + time * 0.5) * 0.15;
-                const wave2 = Math.cos(y * 0.05 + time * 0.3) * 0.1;
+                // Create wave pattern - stronger during night
+                const wave1 = Math.sin(x * 0.05 + time * (0.5 + nightProgress * 0.5)) * 0.15 * waveMultiplier;
+                const wave2 = Math.cos(y * 0.05 + time * (0.3 + nightProgress * 0.4)) * 0.1 * waveMultiplier;
 
                 positions.setZ(i, wave1 + wave2);
             }
             positions.needsUpdate = true;
+        }
+
+        // Darken water color at night
+        if (materialRef.current) {
+            const dayColor = new THREE.Color('#1E90FF');
+            const nightColor = new THREE.Color('#0a3060');
+            materialRef.current.color.copy(dayColor).lerp(nightColor, nightProgress);
         }
     });
 
@@ -540,6 +725,7 @@ function AnimatedWater() {
         >
             <primitive object={waterGeometry} attach="geometry" />
             <meshStandardMaterial
+                ref={materialRef}
                 color="#1E90FF"
                 transparent
                 opacity={0.85}
@@ -551,22 +737,25 @@ function AnimatedWater() {
     );
 }
 
-// Shoreline Foam - animated waves at the edge where water meets land
+// Shoreline Foam - animated waves at the edge where water meets land (higher at night)
 function ShorelineFoam() {
     const foamRef = useRef();
     const materialRef = useRef();
+    const { nightProgress } = useContext(DayNightContext);
 
     // Animate foam opacity for wave effect
     useFrame((state) => {
         if (materialRef.current) {
             const time = state.clock.elapsedTime;
-            // Pulsing opacity to simulate waves washing up
-            const wave = (Math.sin(time * 2) + 1) * 0.5; // 0 to 1
-            materialRef.current.opacity = 0.4 + wave * 0.4; // 0.4 to 0.8
+            // Pulsing opacity - more intense at night
+            const waveSpeed = 2 + nightProgress * 2;
+            const wave = (Math.sin(time * waveSpeed) + 1) * 0.5; // 0 to 1
+            materialRef.current.opacity = 0.4 + wave * (0.4 + nightProgress * 0.3);
         }
         if (foamRef.current) {
-            // Subtle scale pulsing
-            const scale = 1 + Math.sin(state.clock.elapsedTime * 1.5) * 0.02;
+            // Scale pulsing - larger waves at night
+            const scaleAmount = 0.02 + nightProgress * 0.04;
+            const scale = 1 + Math.sin(state.clock.elapsedTime * (1.5 + nightProgress)) * scaleAmount;
             foamRef.current.scale.set(scale, scale, 1);
         }
     });
@@ -590,11 +779,12 @@ function ShorelineFoam() {
     );
 }
 
-// Animated Clouds - More clouds for a fuller sky
+// Animated Clouds - More clouds for a fuller sky (stormy at night, clickable for thunder)
 function AnimatedClouds() {
     const { scene } = useGLTF('/assets/models/cloud.glb');
     const groupRef = useRef();
     const cloudsRef = useRef([]);
+    const { nightProgress } = useContext(DayNightContext);
 
     // Cloud positions and animation data - 12 clouds for a fuller sky
     const cloudData = useMemo(() => [
@@ -612,6 +802,13 @@ function AnimatedClouds() {
         { startX: -8, y: 8.5, z: -10, speed: 0.24, scale: 0.65 },
         { startX: -32, y: 5.8, z: 12, speed: 0.31, scale: 0.95 },
     ], []);
+
+    // Handle cloud click for thunder
+    const handleCloudClick = useCallback(() => {
+        if (nightProgress > 0.5 && window.triggerThunder) {
+            window.triggerThunder();
+        }
+    }, [nightProgress]);
 
     useEffect(() => {
         if (!groupRef.current) return;
@@ -645,8 +842,11 @@ function AnimatedClouds() {
         });
     }, [scene, cloudData]);
 
-    // Animate clouds drifting across the sky
+    // Animate clouds drifting across the sky + change color at night
     useFrame((state, delta) => {
+        const dayColor = new THREE.Color(1.1, 1.1, 1.1); // White-ish
+        const nightColor = new THREE.Color(0.3, 0.3, 0.35); // Dark stormy gray
+
         cloudsRef.current.forEach((cloud) => {
             cloud.mesh.position.x += cloud.speed * delta * 3;
 
@@ -657,10 +857,25 @@ function AnimatedClouds() {
             if (cloud.mesh.position.x > 25) {
                 cloud.mesh.position.x = -25 - Math.random() * 10;
             }
+
+            // Darken clouds at night
+            cloud.mesh.traverse((child) => {
+                if (child.isMesh && child.material) {
+                    const currentColor = dayColor.clone().lerp(nightColor, nightProgress);
+                    child.material.color.copy(currentColor);
+                }
+            });
         });
     });
 
-    return <group ref={groupRef} />;
+    return (
+        <group
+            ref={groupRef}
+            onClick={handleCloudClick}
+            onPointerOver={() => { if (nightProgress > 0.5) document.body.style.cursor = 'pointer'; }}
+            onPointerOut={() => { document.body.style.cursor = 'auto'; }}
+        />
+    );
 }
 
 // Cute Toon Trees - 3 trees positioned around the windmill
@@ -984,15 +1199,23 @@ function SnowMountain() {
     );
 }
 
-// Very bright sun light source for shadows
+// Very bright sun light source for shadows (fades at night)
 function BrightSun() {
     const sunRef = useRef();
+    const sunMeshRef = useRef();
+    const { nightProgress } = useContext(DayNightContext);
 
     useFrame((state) => {
         if (sunRef.current) {
-            // Subtle pulsing effect
+            // Subtle pulsing effect + fade at night
             const pulse = 1 + Math.sin(state.clock.elapsedTime * 2) * 0.1;
-            sunRef.current.intensity = 4 * pulse;
+            const dayIntensity = 4 * pulse;
+            const nightIntensity = 0.5;
+            sunRef.current.intensity = dayIntensity * (1 - nightProgress) + nightIntensity * nightProgress;
+        }
+        // Fade sun sphere at night
+        if (sunMeshRef.current) {
+            sunMeshRef.current.material.opacity = 1 - nightProgress;
         }
     });
 
@@ -1014,30 +1237,32 @@ function BrightSun() {
                 color="#ffffff"
             />
 
-            {/* Visual sun sphere */}
-            <mesh position={[3, 6, 2]}>
-                <sphereGeometry args={[0.3, 32, 32]} />
-                <meshBasicMaterial color="#ffffaa" />
-            </mesh>
+            {/* Visual sun sphere - fades at night */}
+            {nightProgress < 0.8 && (
+                <mesh ref={sunMeshRef} position={[3, 6, 2]}>
+                    <sphereGeometry args={[0.3, 32, 32]} />
+                    <meshBasicMaterial color="#ffffaa" transparent opacity={1 - nightProgress} />
+                </mesh>
+            )}
 
-            {/* Sun glow point light */}
+            {/* Sun glow point light - fades at night */}
             <pointLight
                 position={[3, 6, 2]}
-                intensity={3}
+                intensity={3 * (1 - nightProgress)}
                 distance={15}
                 color="#fff5e0"
             />
 
-            {/* Additional fill lights */}
+            {/* Additional fill lights - dim at night */}
             <pointLight
                 position={[-2, 3, -2]}
-                intensity={1}
+                intensity={(1 - nightProgress * 0.8)}
                 distance={10}
                 color="#00f9ff"
             />
             <pointLight
                 position={[2, 1, 3]}
-                intensity={0.8}
+                intensity={0.8 * (1 - nightProgress * 0.7)}
                 distance={8}
                 color="#ffffff"
             />
@@ -1067,6 +1292,11 @@ export default function WindmillScene() {
     const [autoRotateEnabled, setAutoRotateEnabled] = useState(false);
     const [isSeaplaneLanded, setIsSeaplaneLanded] = useState(false);
 
+    // Day/Night cycle state
+    const [nightProgress, setNightProgress] = useState(0);
+    const [isNight, setIsNight] = useState(false);
+    const startTimeRef = useRef(null);
+
     // Delay auto-rotate for 6 seconds so user can watch plane takeoff
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -1074,6 +1304,62 @@ export default function WindmillScene() {
         }, 6000);
         return () => clearTimeout(timer);
     }, []);
+
+    // Day/Night cycle effect
+    useEffect(() => {
+        let animationId;
+
+        const updateCycle = () => {
+            if (startTimeRef.current === null) {
+                startTimeRef.current = Date.now();
+            }
+
+            const elapsed = (Date.now() - startTimeRef.current) / 1000;
+            const cycleTime = elapsed % TOTAL_CYCLE;
+
+            // Calculate night progress
+            // Phase 1: 0-24s = Full Day (nightProgress: 0)
+            // Phase 2: 24-36s = Transition Day->Night (nightProgress: 0->1)
+            // Phase 3: 36-60s = Full Night (nightProgress: 1)
+            // Phase 4: 60-72s = Transition Night->Day (nightProgress: 1->0)
+
+            const phase1End = DAY_DURATION; // 24s
+            const phase2End = DAY_DURATION + TRANSITION_DURATION; // 36s
+            const phase3End = DAY_DURATION + TRANSITION_DURATION + NIGHT_DURATION; // 60s
+            // phase4End = TOTAL_CYCLE = 72s
+
+            if (cycleTime < phase1End) {
+                // Phase 1: Full day
+                setNightProgress(0);
+                setIsNight(false);
+            } else if (cycleTime < phase2End) {
+                // Phase 2: Transitioning day -> night (12 seconds)
+                const transitionProgress = (cycleTime - phase1End) / TRANSITION_DURATION;
+                setNightProgress(transitionProgress);
+                setIsNight(false);
+            } else if (cycleTime < phase3End) {
+                // Phase 3: Full night
+                setNightProgress(1);
+                setIsNight(true);
+            } else {
+                // Phase 4: Transitioning night -> day (12 seconds)
+                const transitionProgress = (cycleTime - phase3End) / TRANSITION_DURATION;
+                setNightProgress(1 - transitionProgress);
+                setIsNight(transitionProgress < 0.5);
+            }
+
+            animationId = requestAnimationFrame(updateCycle);
+        };
+
+        updateCycle();
+        return () => cancelAnimationFrame(animationId);
+    }, []);
+
+    const dayNightValue = useMemo(() => ({
+        isNight,
+        nightProgress,
+        isTransitioning: nightProgress > 0 && nightProgress < 1,
+    }), [isNight, nightProgress]);
 
     return (
         <div className="windmill-scene-container">
@@ -1087,97 +1373,109 @@ export default function WindmillScene() {
                 }}
                 dpr={[1, 2]}
                 onCreated={({ camera }) => {
-                    // Reset camera position and rotation when scene is created
                     camera.position.set(0, 3, 12);
                     camera.rotation.set(0, 0, 0);
                     camera.updateProjectionMatrix();
                 }}
             >
-                {/* Camera Controls - delayed auto-rotate */}
-                <OrbitControls
-                    enableZoom={true}
-                    enablePan={false}
-                    minDistance={5}
-                    maxDistance={15}
-                    minPolarAngle={Math.PI / 6}
-                    maxPolarAngle={Math.PI / 2}
-                    autoRotate={autoRotateEnabled}
-                    autoRotateSpeed={0.5}
-                    target={[0, 0, 0]}
-                />
-
-                {/* Background color - cyan */}
-                <color attach="background" args={['#00f9ff']} />
-
-                {/* Ambient lighting */}
-                <ambientLight intensity={0.5} />
-
-                {/* Bright sun for shadows */}
-                <BrightSun />
-
-                {/* The 3D Model - Click to go to /landing */}
-                <Suspense fallback={<Loader />}>
-                    <WindmillModel onClick={() => navigate('/landing')} isLanded={isSeaplaneLanded} />
-                </Suspense>
-
-                {/* Green Grass Floor */}
-                <GrassFloor />
-
-                {/* Stepping Stone Path from windmill entrance */}
-                <SteppingStonePath />
-
-                {/* Animated Water around the island */}
-                <AnimatedWater />
-
-                {/* Parked boats near the shore */}
-                <ParkedBoats />
-
-                {/* Sailing boats in the sea */}
-                <SailingBoats />
-
-                {/* Cruise ships in the sea */}
-                <CruiseShips />
-
-                {/* Shark fin swimming in the sea */}
-                <SharkFin />
-
-                {/* Shoreline foam waves at the edge */}
-                <ShorelineFoam />
-
-                {/* Animated Clouds drifting across the sky */}
-                <AnimatedClouds />
-
-                {/* Eagle flying around island, perching on mountain */}
-                <Eagle />
-
-                {/* Flying birds across the scene */}
-                <FlyingBirds />
-
-                {/* Cute Toon Trees around the windmill */}
-                <ToonTrees />
-
-                {/* Welcome Sign */}
-                <WelcomeSign />
-
-                {/* Animated Seaplane - Click to takeoff and go back to home */}
-                <SeaplaneLanding onTakeoffComplete={() => navigate('/')} onLanded={() => setIsSeaplaneLanded(true)} />
-
-
-                {/* Snow Mountain in background */}
-                <SnowMountain />
-
-                {/* Environment for reflections */}
-                <Environment preset="sunset" />
-
-                {/* Post-processing */}
-                <EffectComposer>
-                    <Bloom
-                        intensity={0.5}
-                        luminanceThreshold={0.3}
-                        luminanceSmoothing={0.9}
+                <DayNightContext.Provider value={dayNightValue}>
+                    {/* Camera Controls - always enabled for orbit */}
+                    <OrbitControls
+                        makeDefault
+                        enabled={true}
+                        enableZoom={true}
+                        enableRotate={true}
+                        enablePan={false}
+                        minDistance={5}
+                        maxDistance={15}
+                        minPolarAngle={Math.PI / 6}
+                        maxPolarAngle={Math.PI / 2}
+                        autoRotate={autoRotateEnabled}
+                        autoRotateSpeed={0.5}
+                        target={[0, 0, 0]}
                     />
-                    <Vignette eskil={false} offset={0.1} darkness={0.4} />
-                </EffectComposer>
+
+                    {/* Dynamic background color */}
+                    <SceneBackground />
+
+                    {/* Ambient lighting - dimmer at night */}
+                    <ambientLight intensity={0.5 - nightProgress * 0.3} />
+
+                    {/* Bright sun for shadows */}
+                    <BrightSun />
+
+                    {/* Moon at night */}
+                    <Moon />
+
+                    {/* Rain at night */}
+                    <Rain />
+
+                    {/* Thunder effect */}
+                    <Thunder />
+
+                    {/* The 3D Model - Click to go to /landing */}
+                    <Suspense fallback={<Loader />}>
+                        <WindmillModel onClick={() => navigate('/landing')} isLanded={isSeaplaneLanded} />
+                    </Suspense>
+
+                    {/* Green Grass Floor */}
+                    <GrassFloor />
+
+                    {/* Stepping Stone Path from windmill entrance */}
+                    <SteppingStonePath />
+
+                    {/* Animated Water around the island */}
+                    <AnimatedWater />
+
+                    {/* Parked boats near the shore - always visible */}
+                    <ParkedBoats />
+
+                    {/* Sailing boats in the sea - only during day */}
+                    {nightProgress < 0.5 && <SailingBoats />}
+
+                    {/* Cruise ships in the sea - only during day */}
+                    {nightProgress < 0.5 && <CruiseShips />}
+
+                    {/* Shark fin swimming in the sea - only during day */}
+                    {nightProgress < 0.5 && <SharkFin />}
+
+                    {/* Shoreline foam waves at the edge */}
+                    <ShorelineFoam />
+
+                    {/* Animated Clouds drifting across the sky */}
+                    <AnimatedClouds />
+
+                    {/* Eagle flying around island - only during day */}
+                    {nightProgress < 0.5 && <Eagle />}
+
+                    {/* Flying birds across the scene - only during day */}
+                    {nightProgress < 0.5 && <FlyingBirds />}
+
+                    {/* Cute Toon Trees around the windmill */}
+                    <ToonTrees />
+
+                    {/* Welcome Sign */}
+                    <WelcomeSign />
+
+                    {/* Animated Seaplane - Click to takeoff and go back to home */}
+                    <SeaplaneLanding onTakeoffComplete={() => navigate('/')} onLanded={() => setIsSeaplaneLanded(true)} />
+
+                    {/* Snow Mountain in background */}
+                    <SnowMountain />
+
+                    {/* Environment for reflections */}
+                    <Environment preset={nightProgress > 0.5 ? "night" : "sunset"} />
+
+                    {/* Post-processing */}
+                    <EffectComposer>
+                        <Bloom
+                            intensity={0.5 + nightProgress * 0.3}
+                            luminanceThreshold={0.3 - nightProgress * 0.1}
+                            luminanceSmoothing={0.9}
+                        />
+                        <Vignette eskil={false} offset={0.1} darkness={0.4 + nightProgress * 0.3} />
+                    </EffectComposer>
+                </DayNightContext.Provider>
             </Canvas>
         </div>
     );
