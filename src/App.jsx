@@ -15,6 +15,7 @@ import LandingScene from './components/LandingScene';
 import IslandScene from './components/IslandScene';
 import PolyThemeScene from './components/PolyThemeScene';
 import WindmillScene from './components/WindmillScene';
+import RoomBikeScene from './components/RoomBikeScene';
 
 // Main Experience Component - combines intro, flight, and sunset on single page
 function MainExperience() {
@@ -230,6 +231,11 @@ function WindmillSceneWrapper() {
   return <WindmillScene />;
 }
 
+// Room Bike Scene Wrapper
+function RoomBikeSceneWrapper() {
+  return <RoomBikeScene />;
+}
+
 // Main App with Routes
 function App() {
   return (
@@ -246,6 +252,7 @@ function App() {
       <Route path="/island" element={<IslandSceneWrapper />} />
       <Route path="/polyTheme" element={<PolyThemeSceneWrapper />} />
       <Route path="/windmill" element={<WindmillSceneWrapper />} />
+      <Route path="/roomBike" element={<RoomBikeSceneWrapper />} />
     </Routes>
   );
 }
