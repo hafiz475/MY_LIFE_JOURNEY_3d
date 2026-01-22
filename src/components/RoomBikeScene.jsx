@@ -44,6 +44,31 @@ function RoomBikeModel() {
             ) {
                 child.visible = false;
             }
+
+            // Enhance trophy appearance - make it golden and shiny
+            if (
+                name.includes('trophy') ||
+                name.includes('award') ||
+                name.includes('cup') ||
+                name.includes('medal') ||
+                name.includes('prize') ||
+                name.includes('oscar') ||
+                name.includes('figurine') ||
+                name.includes('statue')
+            ) {
+                if (child.isMesh && child.material) {
+                    // Create a new golden metallic material for the trophy
+                    child.material = new THREE.MeshStandardMaterial({
+                        color: new THREE.Color('#ffd700'), // Gold color
+                        metalness: 0.9,
+                        roughness: 0.2,
+                        emissive: new THREE.Color('#ff8c00'),
+                        emissiveIntensity: 0.15,
+                    });
+                    child.scale.multiplyScalar(1.5); // Make trophy slightly bigger
+                    console.log('Enhanced trophy:', child.name);
+                }
+            }
         });
 
         // Play all available animations
@@ -183,6 +208,15 @@ export default function RoomBikeScene() {
                 {/* Hemisphere light for natural sky/ground lighting */}
                 <hemisphereLight
                     args={['#ffd0e0', '#8b6070', 0.4]}
+                />
+
+                {/* Desk/Trophy spotlight for better illumination */}
+                <pointLight
+                    position={[2, 4, 1]}
+                    intensity={15}
+                    distance={8}
+                    color="#fff8e0"
+                    castShadow
                 />
 
                 {/* Gradient Background */}
