@@ -298,16 +298,16 @@ export default function RoomBikeScene() {
                 {isNightMode && (
                     <>
                         <pointLight
-                            position={[0, 2.2, -1.5]}
-                            intensity={25}
+                            position={[0.1, 1.62, -1]}
+                            intensity={30}
                             distance={10}
                             color="#ffddaa"
                             castShadow
                         />
                         {/* Secondary warm glow from lamp */}
                         <pointLight
-                            position={[0, 2.0, -1.5]}
-                            intensity={15}
+                            position={[1.6, 0.9, -2.3]}
+                            intensity={3}
                             distance={6}
                             color="#ffcc88"
                         />
