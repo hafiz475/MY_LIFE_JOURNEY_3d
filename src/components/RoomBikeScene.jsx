@@ -1,5 +1,5 @@
-import { useRef, Suspense, useEffect } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { useRef, Suspense, useEffect, useState, useMemo } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import {
     Html,
     useGLTF,
@@ -12,11 +12,31 @@ import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 import './LandingScene.scss'; // Reuse the same styles
 
-// Room and Bike Model with Animations
+// Room and Bike Model with Animations and Blinking Notification Lights
 function RoomBikeModel() {
     const groupRef = useRef();
     const { scene, animations } = useGLTF('/assets/models/landingscene/room_and_bike.glb');
     const { actions, names } = useAnimations(animations, scene);
+
+    // Refs for blinking lights
+    const blinkingLightsRef = useRef([]);
+
+    // Object positions for blinking lights with unique colors
+    // These positions are approximated and may need fine-tuning based on model
+    const blinkingObjects = useMemo(() => [
+        { name: 'Bike', position: [-0.22, 0.7, 2.3], offset: 0, color: '#00FFFF' },           // Cyan
+        { name: 'Football', position: [-0.22, 0.5, -0.3], offset: 0.5, color: '#FF6B00' },    // Orange
+        { name: 'Laptop', position: [0.64, 0.42, -1.4], offset: 1.0, color: '#00BFFF' },      // Deep Sky Blue
+        { name: 'Trophy', position: [-1.18, 0.8, -2.2], offset: 1.5, color: '#FFD700' },     // Gold
+        { name: 'Blender_Icon', position: [0.15, 0.9, -2.7], offset: 2.0, color: '#FF6600' }, // Blender Orange
+        // Photo frames on wall
+        { name: 'PhotoFrame1', position: [-0.9, 1.2, -2.7], offset: 2.5, color: '#FF69B4' }, // Hot Pink
+        { name: 'PhotoFrame2', position: [0.1, 1.5, -2.7], offset: 3.0, color: '#9370DB' }, // Medium Purple
+        { name: 'PhotoFrame3', position: [1, 1.3, -2.7], offset: 3.5, color: '#00FF7F' }, // Spring Green
+        // Switches
+        { name: 'Room_Switch', position: [-1.95, 1.48, 0.96], offset: 4.0, color: '#FF4444' }, // Red
+        { name: 'Lamp_Switch', position: [1.77, 0.9, -2.7], offset: 4.5, color: '#FFFF00' },  // Yellow
+    ], []);
 
     useEffect(() => {
         // Center the model
@@ -65,8 +85,8 @@ function RoomBikeModel() {
                         emissive: new THREE.Color('#ff8c00'),
                         emissiveIntensity: 0.15,
                     });
-                    child.scale.multiplyScalar(1.5); // Make trophy slightly bigger
-                    console.log('Enhanced trophy:', child.name);
+                    // child.scale.multiplyScalar(1.1); // Make trophy slightly bigger
+                    // console.log('Enhanced trophy:', child.name);
                 }
             }
         });
@@ -80,9 +100,51 @@ function RoomBikeModel() {
         });
     }, [scene, actions, names]);
 
+    // Blinking animation for all notification lights
+    useFrame((state) => {
+        blinkingLightsRef.current.forEach((lightMesh, index) => {
+            if (lightMesh) {
+                const offset = blinkingObjects[index]?.offset || 0;
+                const pulse = 0.5 + Math.sin(state.clock.elapsedTime * 3 + offset) * 0.4;
+                lightMesh.scale.setScalar(0.08 + pulse * 0.05);
+                if (lightMesh.material) {
+                    lightMesh.material.opacity = 0.5 + Math.sin(state.clock.elapsedTime * 3 + offset) * 0.5;
+                }
+            }
+        });
+    });
+
     return (
         <group ref={groupRef} position={[0, 0, 0]} scale={1}>
             <primitive object={scene} />
+
+            {/* Silver Blinking Notification Lights */}
+            {blinkingObjects.map((obj, index) => (
+                <mesh
+                    key={obj.name}
+                    ref={(el) => (blinkingLightsRef.current[index] = el)}
+                    position={obj.position}
+                >
+                    <sphereGeometry args={[1, 16, 16]} />
+                    <meshBasicMaterial
+                        color={obj.color}
+                        transparent
+                        opacity={0.9}
+                        toneMapped={false}
+                    />
+                </mesh>
+            ))}
+
+            {/* Point lights for glow effect on each blinking light */}
+            {blinkingObjects.map((obj) => (
+                <pointLight
+                    key={`light-${obj.name}`}
+                    position={obj.position}
+                    color={obj.color}
+                    intensity={0.5}
+                    distance={1.5}
+                />
+            ))}
         </group>
     );
 }
@@ -256,12 +318,6 @@ export default function RoomBikeScene() {
                     </svg>
                     Back
                 </button>
-
-                {/* Title */}
-                <div className="landing-title">
-                    <h1>Room & Bike Scene</h1>
-                    <p>Low Poly Interior</p>
-                </div>
             </div>
         </div>
     );
