@@ -13,29 +13,29 @@ import * as THREE from 'three';
 import './LandingScene.scss'; // Reuse the same styles
 
 // Room and Bike Model with Animations and Blinking Notification Lights
-function RoomBikeModel() {
+function RoomBikeModel({ isNightMode, onToggleNight }) {
     const groupRef = useRef();
     const { scene, animations } = useGLTF('/assets/models/landingscene/room_and_bike.glb');
     const { actions, names } = useAnimations(animations, scene);
+    const [hovered, setHovered] = useState(false);
 
     // Refs for blinking lights
     const blinkingLightsRef = useRef([]);
 
-    // Object positions for blinking lights with unique colors
-    // These positions are approximated and may need fine-tuning based on model
+    // Object positions for blinking lights - silver color, smaller size
+    // Removed PhotoFrame3 as requested
     const blinkingObjects = useMemo(() => [
-        { name: 'Bike', position: [-0.22, 0.7, 2.3], offset: 0, color: '#00FFFF' },           // Cyan
-        { name: 'Football', position: [-0.22, 0.5, -0.3], offset: 0.5, color: '#FF6B00' },    // Orange
-        { name: 'Laptop', position: [0.64, 0.42, -1.4], offset: 1.0, color: '#00BFFF' },      // Deep Sky Blue
-        { name: 'Trophy', position: [-1.18, 0.8, -2.2], offset: 1.5, color: '#FFD700' },     // Gold
-        { name: 'Blender_Icon', position: [0.15, 0.9, -2.7], offset: 2.0, color: '#FF6600' }, // Blender Orange
-        // Photo frames on wall
-        { name: 'PhotoFrame1', position: [-0.9, 1.2, -2.7], offset: 2.5, color: '#FF69B4' }, // Hot Pink
-        { name: 'PhotoFrame2', position: [0.1, 1.5, -2.7], offset: 3.0, color: '#9370DB' }, // Medium Purple
-        { name: 'PhotoFrame3', position: [1, 1.3, -2.7], offset: 3.5, color: '#00FF7F' }, // Spring Green
-        // Switches
-        { name: 'Room_Switch', position: [-1.95, 1.48, 0.96], offset: 4.0, color: '#FF4444' }, // Red
-        { name: 'Lamp_Switch', position: [1.77, 0.9, -2.7], offset: 4.5, color: '#FFFF00' },  // Yellow
+        { name: 'Bike', position: [-0.22, 0.7, 2.3], offset: 0, isSwitch: false },
+        { name: 'Football', position: [-0.22, 0.5, -0.3], offset: 0.5, isSwitch: false },
+        { name: 'Laptop', position: [0.64, 0.42, -1.4], offset: 1.0, isSwitch: false },
+        { name: 'Trophy', position: [-1.18, 0.8, -2.2], offset: 1.5, isSwitch: false },
+        { name: 'Blender_Icon', position: [0.15, 0.9, -2.7], offset: 2.0, isSwitch: false },
+        // Photo frames on wall (removed PhotoFrame3)
+        { name: 'PhotoFrame1', position: [-0.9, 1.2, -2.7], offset: 2.5, isSwitch: false },
+        { name: 'PhotoFrame2', position: [0.1, 1.5, -2.7], offset: 3.0, isSwitch: false },
+        // Switches - clickable to toggle day/night
+        { name: 'Room_Switch', position: [-1.95, 1.48, 0.96], offset: 4.0, isSwitch: true },
+        { name: 'Lamp_Switch', position: [1.77, 0.9, -2.7], offset: 4.5, isSwitch: true },
     ], []);
 
     useEffect(() => {
@@ -85,14 +85,11 @@ function RoomBikeModel() {
                         emissive: new THREE.Color('#ff8c00'),
                         emissiveIntensity: 0.15,
                     });
-                    // child.scale.multiplyScalar(1.1); // Make trophy slightly bigger
-                    // console.log('Enhanced trophy:', child.name);
                 }
             }
         });
 
         // Play all available animations
-        console.log('Available room_and_bike animations:', names);
         names.forEach((name) => {
             if (actions[name]) {
                 actions[name].play();
@@ -100,50 +97,52 @@ function RoomBikeModel() {
         });
     }, [scene, actions, names]);
 
-    // Blinking animation for all notification lights
+    // Change cursor on hover over switches
+    useEffect(() => {
+        document.body.style.cursor = hovered ? 'pointer' : 'auto';
+        return () => { document.body.style.cursor = 'auto'; };
+    }, [hovered]);
+
+    // Blinking animation for all notification lights - subtle silver pulse
     useFrame((state) => {
         blinkingLightsRef.current.forEach((lightMesh, index) => {
             if (lightMesh) {
                 const offset = blinkingObjects[index]?.offset || 0;
-                const pulse = 0.5 + Math.sin(state.clock.elapsedTime * 3 + offset) * 0.4;
-                lightMesh.scale.setScalar(0.08 + pulse * 0.05);
+                // Subtle opacity pulsing only
                 if (lightMesh.material) {
-                    lightMesh.material.opacity = 0.5 + Math.sin(state.clock.elapsedTime * 3 + offset) * 0.5;
+                    lightMesh.material.opacity = 0.4 + Math.sin(state.clock.elapsedTime * 2.5 + offset) * 0.3;
                 }
             }
         });
     });
 
+    const handleSwitchClick = () => {
+        if (onToggleNight) {
+            onToggleNight();
+        }
+    };
+
     return (
         <group ref={groupRef} position={[0, 0, 0]} scale={1}>
             <primitive object={scene} />
 
-            {/* Silver Blinking Notification Lights */}
+            {/* Silver Blinking Notification Lights - smaller size, no emissive */}
             {blinkingObjects.map((obj, index) => (
                 <mesh
                     key={obj.name}
                     ref={(el) => (blinkingLightsRef.current[index] = el)}
                     position={obj.position}
+                    onClick={obj.isSwitch ? handleSwitchClick : undefined}
+                    onPointerOver={obj.isSwitch ? () => setHovered(true) : undefined}
+                    onPointerOut={obj.isSwitch ? () => setHovered(false) : undefined}
                 >
-                    <sphereGeometry args={[1, 16, 16]} />
+                    <sphereGeometry args={[0.06, 12, 12]} />
                     <meshBasicMaterial
-                        color={obj.color}
+                        color="#C0C0C0"
                         transparent
-                        opacity={0.9}
-                        toneMapped={false}
+                        opacity={0.7}
                     />
                 </mesh>
-            ))}
-
-            {/* Point lights for glow effect on each blinking light */}
-            {blinkingObjects.map((obj) => (
-                <pointLight
-                    key={`light-${obj.name}`}
-                    position={obj.position}
-                    color={obj.color}
-                    intensity={0.5}
-                    distance={1.5}
-                />
             ))}
         </group>
     );
@@ -218,6 +217,11 @@ function Loader() {
 // Main Scene Component
 export default function RoomBikeScene() {
     const navigate = useNavigate();
+    const [isNightMode, setIsNightMode] = useState(false);
+
+    const toggleNightMode = () => {
+        setIsNightMode(!isNightMode);
+    };
 
     return (
         <div className="landing-scene-container">
@@ -238,71 +242,112 @@ export default function RoomBikeScene() {
                     target={[0, 1.5, 0]}
                 />
 
-                {/* Background color */}
-                <color attach="background" args={['#c9a0af']} />
+                {/* Background color - changes based on day/night */}
+                <color attach="background" args={[isNightMode ? '#1a1525' : '#c9a0af']} />
 
-                {/* Ambient lighting for base illumination */}
-                <ambientLight intensity={0.6} color="#fff5f8" />
-
-                {/* Main Directional Sun Light - pointing down for shadows */}
-                <directionalLight
-                    position={[8, 15, 5]}
-                    intensity={2}
-                    castShadow
-                    shadow-mapSize={[2048, 2048]}
-                    shadow-camera-left={-15}
-                    shadow-camera-right={15}
-                    shadow-camera-top={15}
-                    shadow-camera-bottom={-15}
-                    shadow-camera-near={0.5}
-                    shadow-camera-far={50}
-                    shadow-bias={-0.0001}
-                    color="#fff8f0"
+                {/* Ambient lighting - dimmer at night */}
+                <ambientLight
+                    intensity={isNightMode ? 0.15 : 0.6}
+                    color={isNightMode ? '#404060' : '#fff5f8'}
                 />
 
-                {/* Secondary fill light */}
+                {/* Main Directional Sun Light - only visible during day */}
+                {!isNightMode && (
+                    <directionalLight
+                        position={[8, 15, 5]}
+                        intensity={2}
+                        castShadow
+                        shadow-mapSize={[2048, 2048]}
+                        shadow-camera-left={-15}
+                        shadow-camera-right={15}
+                        shadow-camera-top={15}
+                        shadow-camera-bottom={-15}
+                        shadow-camera-near={0.5}
+                        shadow-camera-far={50}
+                        shadow-bias={-0.0001}
+                        color="#fff8f0"
+                    />
+                )}
+
+                {/* Moon light - subtle blue light at night */}
+                {isNightMode && (
+                    <directionalLight
+                        position={[-5, 12, 8]}
+                        intensity={0.3}
+                        color="#8090ff"
+                    />
+                )}
+
+                {/* Secondary fill light - dimmer at night */}
                 <directionalLight
                     position={[-5, 8, -5]}
-                    intensity={0.5}
-                    color="#ffeef5"
+                    intensity={isNightMode ? 0.1 : 0.5}
+                    color={isNightMode ? '#303050' : '#ffeef5'}
                 />
 
-                {/* Hemisphere light for natural sky/ground lighting */}
+                {/* Hemisphere light - adjusted for day/night */}
                 <hemisphereLight
-                    args={['#ffd0e0', '#8b6070', 0.4]}
+                    args={[
+                        isNightMode ? '#303050' : '#ffd0e0',
+                        isNightMode ? '#101020' : '#8b6070',
+                        isNightMode ? 0.15 : 0.4
+                    ]}
                 />
 
-                {/* Desk/Trophy spotlight for better illumination */}
+                {/* Ceiling Lamp Light - only on at night, positioned at ceiling lamp */}
+                {isNightMode && (
+                    <>
+                        <pointLight
+                            position={[0, 2.2, -1.5]}
+                            intensity={25}
+                            distance={10}
+                            color="#ffddaa"
+                            castShadow
+                        />
+                        {/* Secondary warm glow from lamp */}
+                        <pointLight
+                            position={[0, 2.0, -1.5]}
+                            intensity={15}
+                            distance={6}
+                            color="#ffcc88"
+                        />
+                    </>
+                )}
+
+                {/* Desk/Trophy spotlight - dimmer at night */}
                 <pointLight
                     position={[2, 4, 1]}
-                    intensity={15}
+                    intensity={isNightMode ? 3 : 15}
                     distance={8}
-                    color="#fff8e0"
+                    color={isNightMode ? '#404060' : '#fff8e0'}
                     castShadow
                 />
 
                 {/* Gradient Background */}
-                <GradientBackground />
+                {!isNightMode && <GradientBackground />}
 
                 {/* Models */}
                 <Suspense fallback={<Loader />}>
-                    <RoomBikeModel />
+                    <RoomBikeModel
+                        isNightMode={isNightMode}
+                        onToggleNight={toggleNightMode}
+                    />
                 </Suspense>
 
                 {/* Transparent Shadow Floor */}
                 <ShadowFloor />
 
                 {/* Environment for subtle reflections */}
-                <Environment preset="sunset" />
+                <Environment preset={isNightMode ? "night" : "sunset"} />
 
                 {/* Post-processing */}
                 <EffectComposer>
                     <Bloom
-                        intensity={0.15}
-                        luminanceThreshold={0.8}
+                        intensity={isNightMode ? 0.4 : 0.15}
+                        luminanceThreshold={isNightMode ? 0.5 : 0.8}
                         luminanceSmoothing={0.9}
                     />
-                    <Vignette eskil={false} offset={0.1} darkness={0.3} />
+                    <Vignette eskil={false} offset={0.1} darkness={isNightMode ? 0.6 : 0.3} />
                 </EffectComposer>
             </Canvas>
 
