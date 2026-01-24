@@ -119,6 +119,30 @@ const blenderContent = {
     // Starter kit downloads
     starterKits: [
         {
+            name: "HD Chess Kit",
+            description: "High-detail chess pieces and board",
+            files: [
+                "/assets/blender/Chess/HD chess/Chess board.blend",
+                "/assets/blender/Chess/HD chess/Chess base piece.blend"
+            ],
+            icon: "♔"
+        },
+        {
+            name: "Low Poly Chess",
+            description: "Full set of low-poly optimized chess pieces",
+            files: [
+                "/assets/blender/Chess/Low poly chess/Chess board full set 2( color )- Copy.blend",
+                "/assets/blender/Chess/Low poly chess/Chess board full set 2- Copy.blend",
+                "/assets/blender/Chess/Low poly chess/LP King.blend",
+                "/assets/blender/Chess/Low poly chess/LP Queen.blend",
+                "/assets/blender/Chess/Low poly chess/LP Knight.blend",
+                "/assets/blender/Chess/Low poly chess/Chess Bishop.blend",
+                "/assets/blender/Chess/Low poly chess/LP rook.blend",
+                "/assets/blender/Chess/Low poly chess/Chess Pawn.blend"
+            ],
+            icon: "♙"
+        },
+        {
             name: "Donut Tutorial",
             description: "Classic Blender donut - 3 variations",
             files: [
@@ -141,16 +165,16 @@ const blenderContent = {
         {
             name: "Lamp Animation",
             description: "Rigged lamp with animation",
-            files: [],
+            files: ["/assets/blender/Lamp/Lamp.blend1"],
             video: "/assets/blender/Lamp/Animations/0000-0130.mkv",
             icon: "💡"
         }
     ],
-    // Showcase gallery
+    // Showcase gallery - now will be displayed as carousel
     gallery: [
-        { src: "/assets/blender/Chess Eevee 1.png", title: "Chess Set - Eevee Render" },
-        { src: "/assets/blender/Chess Eevee 2.png", title: "Chess Set - Alternate View" },
         { src: "/assets/blender/Chess cycle 2.png", title: "Chess Set - Cycles Render" },
+        { src: "/assets/blender/Chess Eevee 1.png", title: "Chess Set - Eevee Render" },
+        { src: "/assets/blender/Chess/Low poly chess/Full chess 1.png", title: "Low Poly Chess Set" },
         { src: "/assets/blender/finished well part 1.png", title: "Stone Well - Part 1" },
         { src: "/assets/blender/finished well part 2(cycle rendered).png", title: "Stone Well - Cycles" },
         { src: "/assets/blender/oil barell render.png", title: "Oil Barrel" },
@@ -201,13 +225,17 @@ export default function RoomScene({ onBack }) {
     const [isContentVisible, setIsContentVisible] = useState(false);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [activeCardIndex, setActiveCardIndex] = useState(0);
+    const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
+    const [activeBlenderProjectIndex, setActiveBlenderProjectIndex] = useState(0);
 
     // Check if we're on the /software route
     const showSoftware = location.pathname === '/software';
 
-    // Reset card index when shirt changes
+    // Reset indices when shirt changes
     useEffect(() => {
         setActiveCardIndex(0);
+        setActiveGalleryIndex(0);
+        setActiveBlenderProjectIndex(0);
     }, [selectedShirt]);
 
     // Fade in content after mount
@@ -318,20 +346,55 @@ export default function RoomScene({ onBack }) {
                             <div className="blender-section projects-section">
                                 <h4 className="section-title">🎬 3D Projects</h4>
                                 <p className="section-desc">Interactive scenes built with Blender & Three.js</p>
-                                <div className="projects-grid">
-                                    {blenderContent.projects.map((project, index) => (
-                                        <div
-                                            key={index}
-                                            className="project-card"
-                                            onClick={() => navigate(project.route)}
-                                        >
-                                            <span className="project-icon">{project.icon}</span>
-                                            <h5 className="project-title">{project.title}</h5>
-                                            <p className="project-desc">{project.description}</p>
-                                            <span className="project-tag">{project.tag}</span>
-                                            <span className="preview-label">Preview →</span>
-                                        </div>
-                                    ))}
+                                <div className="carousel-container project-carousel">
+                                    <div className="carousel-stack">
+                                        {blenderContent.projects.map((project, index) => {
+                                            const position = index - activeBlenderProjectIndex;
+                                            let positionClass = '';
+
+                                            if (position === 0) positionClass = 'active';
+                                            else if (position === -1 || (activeBlenderProjectIndex === 0 && index === blenderContent.projects.length - 1)) positionClass = 'prev';
+                                            else if (position === 1 || (activeBlenderProjectIndex === blenderContent.projects.length - 1 && index === 0)) positionClass = 'next';
+                                            else if (position < -1) positionClass = 'prev-hidden';
+                                            else positionClass = 'next-hidden';
+
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    className={`carousel-card project-card ${positionClass}`}
+                                                    onClick={() => {
+                                                        if (position === 0) navigate(project.route);
+                                                        else setActiveBlenderProjectIndex(index);
+                                                    }}
+                                                >
+                                                    <span className="border-line border-line-top"></span>
+                                                    <span className="border-line border-line-right"></span>
+                                                    <span className="border-line border-line-bottom"></span>
+                                                    <span className="border-line border-line-left"></span>
+
+                                                    <span className="project-icon">{project.icon}</span>
+                                                    <h5 className="project-title">{project.title}</h5>
+                                                    <p className="project-desc">{project.description}</p>
+                                                    <div className="project-footer">
+                                                        <span className="project-tag">{project.tag}</span>
+                                                        <span className="preview-label">Preview →</span>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {/* Project Dots */}
+                                    <div className="carousel-dots project-dots">
+                                        {blenderContent.projects.map((_, index) => (
+                                            <button
+                                                key={index}
+                                                className={`project-dot ${index === activeBlenderProjectIndex ? 'active' : ''}`}
+                                                onClick={() => setActiveBlenderProjectIndex(index)}
+                                                aria-label={`Go to project ${index + 1}`}
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
 
@@ -346,18 +409,19 @@ export default function RoomScene({ onBack }) {
                                             <h5 className="kit-name">{kit.name}</h5>
                                             <p className="kit-desc">{kit.description}</p>
                                             {kit.files.length > 0 && (
-                                                <div className="kit-downloads">
-                                                    {kit.files.map((file, fileIndex) => (
-                                                        <a
-                                                            key={fileIndex}
-                                                            href={file}
-                                                            download
-                                                            className="download-btn"
-                                                        >
-                                                            📥 {file.split('/').pop()}
-                                                        </a>
-                                                    ))}
-                                                </div>
+                                                <button
+                                                    className="download-btn global-download"
+                                                    onClick={() => {
+                                                        kit.files.forEach((file) => {
+                                                            const link = document.createElement('a');
+                                                            link.href = file;
+                                                            link.download = file.split('/').pop();
+                                                            link.click();
+                                                        });
+                                                    }}
+                                                >
+                                                    📥 Download Full Kit
+                                                </button>
                                             )}
                                             {kit.previewImages && (
                                                 <div className="kit-previews">
@@ -366,22 +430,80 @@ export default function RoomScene({ onBack }) {
                                                     ))}
                                                 </div>
                                             )}
+                                            {kit.video && (
+                                                <div className="kit-video-container">
+                                                    <video
+                                                        className="kit-video"
+                                                        controls
+                                                        muted
+                                                        loop
+                                                        poster="/assets/blender/Chess cycle 2.png" // Fallback poster
+                                                    >
+                                                        <source src={kit.video} type="video/x-matroska" />
+                                                        <source src={kit.video} type="video/webm" />
+                                                        Your browser does not support the video tag.
+                                                    </video>
+                                                    <button
+                                                        className="download-btn video-link"
+                                                        onClick={() => {
+                                                            const link = document.createElement('a');
+                                                            link.href = kit.video;
+                                                            link.download = kit.video.split('/').pop();
+                                                            link.click();
+                                                        }}
+                                                    >
+                                                        🎬 Download Animation
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
                             </div>
 
-                            {/* Gallery Section */}
+                            {/* Gallery Section - Carousel Style */}
                             <div className="blender-section gallery-section">
                                 <h4 className="section-title">🖼️ Blender Workspace</h4>
                                 <p className="section-desc">Renders and artwork from my 3D journey</p>
-                                <div className="gallery-grid">
-                                    {blenderContent.gallery.map((item, index) => (
-                                        <div key={index} className="gallery-item">
-                                            <img src={item.src} alt={item.title} className="gallery-img" />
-                                            <span className="gallery-title">{item.title}</span>
-                                        </div>
-                                    ))}
+
+                                <div className="carousel-container gallery-carousel">
+                                    <div className="carousel-stack">
+                                        {blenderContent.gallery.map((item, index) => {
+                                            const position = index - activeGalleryIndex;
+                                            let positionClass = '';
+
+                                            if (position === 0) positionClass = 'active';
+                                            else if (position === -1 || (activeGalleryIndex === 0 && index === blenderContent.gallery.length - 1)) positionClass = 'prev';
+                                            else if (position === 1 || (activeGalleryIndex === blenderContent.gallery.length - 1 && index === 0)) positionClass = 'next';
+                                            else if (position < -1) positionClass = 'prev-hidden';
+                                            else positionClass = 'next-hidden';
+
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    className={`carousel-card gallery-card ${positionClass}`}
+                                                    onClick={() => setActiveGalleryIndex(index)}
+                                                >
+                                                    <img src={item.src} alt={item.title} className="gallery-img-full" />
+                                                    <div className="gallery-caption">
+                                                        <h5 className="gallery-item-title">{item.title}</h5>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {/* Gallery Dots */}
+                                    <div className="carousel-dots gallery-dots">
+                                        {blenderContent.gallery.map((_, index) => (
+                                            <button
+                                                key={index}
+                                                className={`gallery-dot ${index === activeGalleryIndex ? 'active' : ''}`}
+                                                onClick={() => setActiveGalleryIndex(index)}
+                                                aria-label={`Go to image ${index + 1}`}
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </>
