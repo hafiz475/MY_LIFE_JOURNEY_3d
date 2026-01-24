@@ -72,6 +72,92 @@ const royalEnfieldContent = {
     ]
 };
 
+// Blender Creative Artist content
+const blenderContent = {
+    title: "Creative Artist",
+    subtitle: "3D Artistry with Blender",
+    level: "Intermediate",
+    storyPoints: [
+        "Bone rigging & character animation",
+        "Sculpting organic forms",
+        "UV unwrapping & texture mapping",
+        "Scene lighting & composition",
+        "Camera animation & cinematics",
+        "Eevee & Cycles rendering"
+    ],
+    // Project cards linking to existing routes
+    projects: [
+        {
+            title: "Software Craft",
+            route: "/software",
+            description: "3D Laptop Scene with interactive animations and lighting effects",
+            tag: "Animation & Interactivity",
+            icon: "💻"
+        },
+        {
+            title: "Career Journey",
+            route: "/softwareCareer",
+            description: "Immersive room environment with dynamic day/night lighting",
+            tag: "Lighting & Environment",
+            icon: "🏠"
+        },
+        {
+            title: "ASUS ROG",
+            route: "/asus",
+            description: "Laptop lid animation with bone rigging and smooth motion",
+            tag: "Rigging & Motion",
+            icon: "🎮"
+        },
+        {
+            title: "Poly Theme Island",
+            route: "/polyTheme",
+            description: "Complete windmill scene with water, clouds, and wildlife",
+            tag: "Complete Scene",
+            icon: "🏝️"
+        }
+    ],
+    // Starter kit downloads
+    starterKits: [
+        {
+            name: "Donut Tutorial",
+            description: "Classic Blender donut - 3 variations",
+            files: [
+                "/assets/blender/Donut/donut.blend",
+                "/assets/blender/Donut/donut 1.blend",
+                "/assets/blender/Donut/Donut 2.blend"
+            ],
+            icon: "🍩"
+        },
+        {
+            name: "Fluffy Bunny",
+            description: "Sculpted character with fur shader",
+            files: ["/assets/blender/Fluffy bunny/untitled.blend"],
+            previewImages: [
+                "/assets/blender/Fluffy bunny/Iris Workbench No background.png",
+                "/assets/blender/Fluffy bunny/Iris cycles No background.png"
+            ],
+            icon: "🐰"
+        },
+        {
+            name: "Lamp Animation",
+            description: "Rigged lamp with animation",
+            files: [],
+            video: "/assets/blender/Lamp/Animations/0000-0130.mkv",
+            icon: "💡"
+        }
+    ],
+    // Showcase gallery
+    gallery: [
+        { src: "/assets/blender/Chess Eevee 1.png", title: "Chess Set - Eevee Render" },
+        { src: "/assets/blender/Chess Eevee 2.png", title: "Chess Set - Alternate View" },
+        { src: "/assets/blender/Chess cycle 2.png", title: "Chess Set - Cycles Render" },
+        { src: "/assets/blender/finished well part 1.png", title: "Stone Well - Part 1" },
+        { src: "/assets/blender/finished well part 2(cycle rendered).png", title: "Stone Well - Cycles" },
+        { src: "/assets/blender/oil barell render.png", title: "Oil Barrel" },
+        { src: "/assets/blender/rocket cycle render.png", title: "Rocket - Cycles Render" }
+    ]
+};
+
 // Software content
 const softwareContent = {
     title: "Software Engineering",
@@ -144,7 +230,11 @@ export default function RoomScene({ onBack }) {
         navigate('/room');
     };
 
-    const currentContent = selectedShirt === 'football' ? footballContent : royalEnfieldContent;
+    const currentContent = selectedShirt === 'football'
+        ? footballContent
+        : selectedShirt === 'enfield'
+            ? royalEnfieldContent
+            : blenderContent;
 
     // Show software scene if on /software route
     if (showSoftware) {
@@ -188,14 +278,30 @@ export default function RoomScene({ onBack }) {
                         />
                         <span className="tshirt-label">Royal Enfield</span>
                     </div>
+
+                    <div
+                        className={`tshirt-item ${selectedShirt === 'blender' ? 'active' : ''}`}
+                        onClick={() => setSelectedShirt('blender')}
+                    >
+                        <div className="hanger"></div>
+                        <img
+                            src="/assets/2dModels/blender_tshirt.png"
+                            alt="Blender 3D"
+                            className="tshirt-image"
+                        />
+                        <span className="tshirt-label">Blender</span>
+                    </div>
                 </div>
 
-                {/* Content Display - No Card Design */}
+                {/* Content Display */}
                 <div className={`passion-display ${selectedShirt}`}>
                     <h2 className="passion-title">{currentContent.title}</h2>
                     <h3 className="passion-subtitle">{currentContent.subtitle}</h3>
+                    {selectedShirt === 'blender' && currentContent.level && (
+                        <span className="skill-level">{currentContent.level}</span>
+                    )}
 
-                    {/* Story Points - Timeline Style */}
+                    {/* Story Points / Skills - Timeline Style */}
                     <div className="story-points">
                         {currentContent.storyPoints.map((point, index) => (
                             <div key={index} className="story-point" style={{ animationDelay: `${0.5 + index * 0.15}s` }}>
@@ -205,57 +311,129 @@ export default function RoomScene({ onBack }) {
                         ))}
                     </div>
 
-                    {/* Stacked Carousel */}
-                    <div className="carousel-container">
-                        <div className="carousel-stack">
-                            {currentContent.cards.map((card, index) => {
-                                // Calculate position relative to active card
-                                const position = index - activeCardIndex;
-                                let positionClass = '';
+                    {/* Blender-specific content */}
+                    {selectedShirt === 'blender' ? (
+                        <>
+                            {/* Projects Section */}
+                            <div className="blender-section projects-section">
+                                <h4 className="section-title">🎬 3D Projects</h4>
+                                <p className="section-desc">Interactive scenes built with Blender & Three.js</p>
+                                <div className="projects-grid">
+                                    {blenderContent.projects.map((project, index) => (
+                                        <div
+                                            key={index}
+                                            className="project-card"
+                                            onClick={() => navigate(project.route)}
+                                        >
+                                            <span className="project-icon">{project.icon}</span>
+                                            <h5 className="project-title">{project.title}</h5>
+                                            <p className="project-desc">{project.description}</p>
+                                            <span className="project-tag">{project.tag}</span>
+                                            <span className="preview-label">Preview →</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
 
-                                if (position === 0) positionClass = 'active';
-                                else if (position === -1 || (activeCardIndex === 0 && index === currentContent.cards.length - 1)) positionClass = 'prev';
-                                else if (position === 1 || (activeCardIndex === currentContent.cards.length - 1 && index === 0)) positionClass = 'next';
-                                else if (position < -1) positionClass = 'prev-hidden';
-                                else positionClass = 'next-hidden';
+                            {/* Starter Kits Section */}
+                            <div className="blender-section starter-kits-section">
+                                <h4 className="section-title">📦 Starter Kits</h4>
+                                <p className="section-desc">Download my Blender project files</p>
+                                <div className="kits-grid">
+                                    {blenderContent.starterKits.map((kit, index) => (
+                                        <div key={index} className="kit-card">
+                                            <span className="kit-icon">{kit.icon}</span>
+                                            <h5 className="kit-name">{kit.name}</h5>
+                                            <p className="kit-desc">{kit.description}</p>
+                                            {kit.files.length > 0 && (
+                                                <div className="kit-downloads">
+                                                    {kit.files.map((file, fileIndex) => (
+                                                        <a
+                                                            key={fileIndex}
+                                                            href={file}
+                                                            download
+                                                            className="download-btn"
+                                                        >
+                                                            📥 {file.split('/').pop()}
+                                                        </a>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            {kit.previewImages && (
+                                                <div className="kit-previews">
+                                                    {kit.previewImages.map((img, imgIndex) => (
+                                                        <img key={imgIndex} src={img} alt={kit.name} className="kit-preview-img" />
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
 
-                                return (
-                                    <div
+                            {/* Gallery Section */}
+                            <div className="blender-section gallery-section">
+                                <h4 className="section-title">🖼️ Blender Workspace</h4>
+                                <p className="section-desc">Renders and artwork from my 3D journey</p>
+                                <div className="gallery-grid">
+                                    {blenderContent.gallery.map((item, index) => (
+                                        <div key={index} className="gallery-item">
+                                            <img src={item.src} alt={item.title} className="gallery-img" />
+                                            <span className="gallery-title">{item.title}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        /* Stacked Carousel for Football/Enfield */
+                        <div className="carousel-container">
+                            <div className="carousel-stack">
+                                {currentContent.cards.map((card, index) => {
+                                    const position = index - activeCardIndex;
+                                    let positionClass = '';
+
+                                    if (position === 0) positionClass = 'active';
+                                    else if (position === -1 || (activeCardIndex === 0 && index === currentContent.cards.length - 1)) positionClass = 'prev';
+                                    else if (position === 1 || (activeCardIndex === currentContent.cards.length - 1 && index === 0)) positionClass = 'next';
+                                    else if (position < -1) positionClass = 'prev-hidden';
+                                    else positionClass = 'next-hidden';
+
+                                    return (
+                                        <div
+                                            key={index}
+                                            className={`carousel-card ${positionClass}`}
+                                            onClick={() => setActiveCardIndex(index)}
+                                        >
+                                            <span className="border-line border-line-top"></span>
+                                            <span className="border-line border-line-right"></span>
+                                            <span className="border-line border-line-bottom"></span>
+                                            <span className="border-line border-line-left"></span>
+
+                                            {card.icon.startsWith('/') ? (
+                                                <img src={card.icon} alt={card.title} className="card-icon-img" />
+                                            ) : (
+                                                <span className="card-icon">{card.icon}</span>
+                                            )}
+                                            <h4 className="card-title">{card.title}</h4>
+                                            <p className="card-description">{card.description}</p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="carousel-dots">
+                                {currentContent.cards.map((_, index) => (
+                                    <button
                                         key={index}
-                                        className={`carousel-card ${positionClass}`}
+                                        className={`carousel-dot ${index === activeCardIndex ? 'active' : ''}`}
                                         onClick={() => setActiveCardIndex(index)}
-                                    >
-                                        {/* Animated neon border lines */}
-                                        <span className="border-line border-line-top"></span>
-                                        <span className="border-line border-line-right"></span>
-                                        <span className="border-line border-line-bottom"></span>
-                                        <span className="border-line border-line-left"></span>
-
-                                        {/* Card icon - supports both images and emojis */}
-                                        {card.icon.startsWith('/') ? (
-                                            <img src={card.icon} alt={card.title} className="card-icon-img" />
-                                        ) : (
-                                            <span className="card-icon">{card.icon}</span>
-                                        )}
-                                        <h4 className="card-title">{card.title}</h4>
-                                        <p className="card-description">{card.description}</p>
-                                    </div>
-                                );
-                            })}
+                                        aria-label={`Go to card ${index + 1}`}
+                                    />
+                                ))}
+                            </div>
                         </div>
-
-                        {/* Dot Navigation */}
-                        <div className="carousel-dots">
-                            {currentContent.cards.map((_, index) => (
-                                <button
-                                    key={index}
-                                    className={`carousel-dot ${index === activeCardIndex ? 'active' : ''}`}
-                                    onClick={() => setActiveCardIndex(index)}
-                                    aria-label={`Go to card ${index + 1}`}
-                                />
-                            ))}
-                        </div>
-                    </div>
+                    )}
                 </div>
 
                 {/* Software Journey Button - Bottom Center */}
