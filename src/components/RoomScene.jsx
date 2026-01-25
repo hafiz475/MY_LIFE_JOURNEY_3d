@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Lottie from 'lottie-react';
 import ParticleEffect from './ParticleEffect';
 import LaptopScene from './LaptopScene';
 import '../styles/room-scene.scss';
@@ -199,6 +200,112 @@ const softwareContent = {
     ]
 };
 
+// Full Stack Developer content
+const fullStackContent = {
+    title: "Full Stack Developer",
+    subtitle: "MERN Stack & Cloud Architecture",
+    headerIcon: "/assets/lotties/space boy developer (1).json",
+    storyPoints: [
+        "Specialized in MERN stack development with 2+ years of experience",
+        "Cloud orchestration using AWS, DigitalOcean & Cloudflare",
+        "Security expert: Firebase 2FA, OTP verification & Secure Auth",
+        "Building scalable microservices with Node.js & Express"
+    ],
+    skills: [
+        { name: "React", lottie: "/assets/lotties/react.json", color: "#61DAFB" },
+        { name: "Node.js", lottie: "/assets/lotties/node.json", color: "#339933" },
+        { name: "MongoDB", lottie: "/assets/lotties/mongodb.json", color: "#47A248" },
+        { name: "Express", lottie: "/assets/lotties/express.json", color: "#000000" },
+        { name: "TypeScript", lottie: "/assets/lotties/typescript.json", color: "#3178C6" },
+        { name: "JavaScript", lottie: "/assets/lotties/javascript.json", color: "#F7DF1E" },
+        { name: "Next.js", lottie: "/assets/lotties/nextjs.json", color: "#ffffff" },
+        { name: "AWS", lottie: "/assets/lotties/aws.json", color: "#FF9900" },
+        { name: "DigitalOcean", lottie: "/assets/lotties/digitalocean.json", color: "#0080FF" },
+        { name: "Cloudflare", lottie: "/assets/lotties/cloudflare.json", color: "#F38020" },
+        { name: "Firebase", lottie: "/assets/lotties/firebase.json", color: "#FFCA28" }
+    ],
+    projects: [
+        {
+            title: "Parallax Seaview",
+            link: "https://hafiz475.github.io/Parallax_Seaview/",
+            description: "A stunning 2D parallax experience of the sea",
+            tag: "2D Parallax",
+            icon: "🌊"
+        },
+        {
+            title: "My 2D Resume",
+            link: "https://hafiz475.github.io/my_2d_resume/",
+            description: "Interactive 2D resume with smooth transitions",
+            tag: "Interactive UI",
+            icon: "📄"
+        },
+        {
+            title: "Project Mark 47",
+            link: "https://hafiz475.github.io/project_mark47/",
+            description: "Advanced web project with complex logic",
+            tag: "Full Stack",
+            icon: "🦾"
+        },
+        {
+            title: "3D WebGL Learning",
+            link: "https://hafiz475.github.io/3d_learning_webGl/",
+            description: "Exploring the world of 3D graphics on the web",
+            tag: "WebGL & 3D",
+            icon: "🎮"
+        }
+    ],
+    projects3D: [
+        {
+            title: "Software Craft",
+            route: "/software",
+            description: "3D Laptop Scene with interactive animations and lighting effects",
+            tag: "Animation & Interactivity",
+            icon: "💻"
+        },
+        {
+            title: "Career Journey",
+            route: "/softwareCareer",
+            description: "Immersive room environment with dynamic day/night lighting",
+            tag: "Lighting & Environment",
+            icon: "🏠"
+        },
+        {
+            title: "ASUS ROG",
+            route: "/asus",
+            description: "Laptop lid animation with bone rigging and smooth motion",
+            tag: "Rigging & Motion",
+            icon: "🎮"
+        },
+        {
+            title: "Poly Theme Island",
+            route: "/polyTheme",
+            description: "Complete windmill scene with water, clouds, and wildlife",
+            tag: "Complete Scene",
+            icon: "🏝️"
+        }
+    ],
+    games: [
+        {
+            title: "Pinball",
+            route: "/pinball",
+            description: "Retro pinball game experience",
+            icon: "🥎"
+        },
+        {
+            title: "Flappy Bird",
+            route: "/flappy-bird",
+            description: "Classic flappy bird with a twist",
+            icon: "🐦"
+        },
+        {
+            title: "Rubik's Cube",
+            route: "/rubiks-cube",
+            description: "Interactive 3D Rubik's cube solver",
+            icon: "🧊"
+        }
+    ]
+};
+
 // Software scene component - now uses 3D Laptop
 function SoftwareScene({ onBack }) {
     return (
@@ -214,6 +321,80 @@ function SoftwareScene({ onBack }) {
     );
 }
 
+// Skill Card for Full Stack Section - Optimized with memo and canvas renderer
+const SkillCard = React.memo(({ skill, onLoaded }) => {
+    const [animationData, setAnimationData] = useState(null);
+
+    useEffect(() => {
+        if (!skill.lottie) return;
+        let isMounted = true;
+        fetch(skill.lottie)
+            .then(res => res.json())
+            .then(data => {
+                if (isMounted) {
+                    setAnimationData(data);
+                    if (onLoaded) onLoaded();
+                }
+            })
+            .catch(err => {
+                console.error(`Error loading lottie ${skill.name}:`, err);
+                if (onLoaded) onLoaded();
+            });
+        return () => { isMounted = false; };
+    }, [skill.lottie]);
+
+    return (
+        <div className="skill-card-mern" style={{ '--accent-color': skill.color }}>
+            <div className="lottie-container">
+                {animationData && (
+                    <Lottie
+                        animationData={animationData}
+                        loop={true}
+                        renderer="canvas"
+                        style={{ width: '100%', height: '100%' }}
+                    />
+                )}
+            </div>
+            <span className="skill-name">{skill.name}</span>
+        </div>
+    );
+});
+
+// Header Icon for Full Stack Section
+const FullStackHeaderIcon = React.memo(({ src, onLoaded }) => {
+    const [animationData, setAnimationData] = useState(null);
+
+    useEffect(() => {
+        if (!src) return;
+        let isMounted = true;
+        fetch(src)
+            .then(res => res.json())
+            .then(data => {
+                if (isMounted) {
+                    setAnimationData(data);
+                    if (onLoaded) onLoaded();
+                }
+            })
+            .catch(err => {
+                console.error("Error loading header lottie:", err);
+                if (onLoaded) onLoaded();
+            });
+        return () => { isMounted = false; };
+    }, [src]);
+
+    return (
+        <div className="fullstack-header-icon">
+            {animationData && (
+                <Lottie
+                    animationData={animationData}
+                    loop={true}
+                    renderer="canvas"
+                />
+            )}
+        </div>
+    );
+});
+
 export default function RoomScene({ onBack }) {
     const navigate = useNavigate();
     const location = useLocation();
@@ -223,7 +404,11 @@ export default function RoomScene({ onBack }) {
     const [activeCardIndex, setActiveCardIndex] = useState(0);
     const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
     const [activeBlenderProjectIndex, setActiveBlenderProjectIndex] = useState(0);
+    const [activeFullStackProjectIndex, setActiveFullStackProjectIndex] = useState(0);
+    const [activeFullStack3DProjectIndex, setActiveFullStack3DProjectIndex] = useState(0);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [fullStackLoadedCount, setFullStackLoadedCount] = useState(0);
+    const [isFullStackReady, setIsFullStackReady] = useState(false);
 
     // Check if we're on the /software route
     const showSoftware = location.pathname === '/software';
@@ -233,7 +418,25 @@ export default function RoomScene({ onBack }) {
         setActiveCardIndex(0);
         setActiveGalleryIndex(0);
         setActiveBlenderProjectIndex(0);
+        setActiveFullStackProjectIndex(0);
+        setActiveFullStack3DProjectIndex(0);
+        setFullStackLoadedCount(0);
+        setIsFullStackReady(false);
     }, [selectedShirt]);
+
+    // Handle Full Stack loading progress
+    useEffect(() => {
+        if (selectedShirt === 'fullstack') {
+            const totalToLoad = fullStackContent.skills.length + 1; // skills + header icon
+            if (fullStackLoadedCount >= totalToLoad) {
+                setTimeout(() => setIsFullStackReady(true), 500);
+            }
+        }
+    }, [fullStackLoadedCount, selectedShirt]);
+
+    const handleLottieLoaded = () => {
+        setFullStackLoadedCount(prev => prev + 1);
+    };
 
     // Fade in content after mount
     useEffect(() => {
@@ -271,7 +474,9 @@ export default function RoomScene({ onBack }) {
         ? footballContent
         : selectedShirt === 'enfield'
             ? royalEnfieldContent
-            : blenderContent;
+            : selectedShirt === 'blender'
+                ? blenderContent
+                : fullStackContent;
 
     // Show software scene if on /software route
     if (showSoftware) {
@@ -328,6 +533,19 @@ export default function RoomScene({ onBack }) {
                                 className="tshirt-image"
                             />
                             <span className="tshirt-label">Blender</span>
+                        </div>
+
+                        <div
+                            className={`tshirt-item ${selectedShirt === 'fullstack' ? 'active' : ''}`}
+                            onClick={() => setSelectedShirt('fullstack')}
+                        >
+                            <div className="hanger"></div>
+                            <img
+                                src="/assets/2dModels/software_tshirt.png"
+                                alt="Full Stack Developer"
+                                className="tshirt-image"
+                            />
+                            <span className="tshirt-label">Full Stack</span>
                         </div>
                     </div>
 
@@ -487,6 +705,155 @@ export default function RoomScene({ onBack }) {
                                     </div>
                                 </div>
                             </>
+                        ) : selectedShirt === 'fullstack' ? (
+                            <div className={`fullstack-content-wrapper ${isFullStackReady ? 'ready' : 'loading'}`}>
+                                {!isFullStackReady && (
+                                    <div className="fullstack-loader">
+                                        <div className="loader-orbit">
+                                            <div className="loader-planet"></div>
+                                        </div>
+                                        <p className="loader-text">Initializing Full Stack Environment...</p>
+                                    </div>
+                                )}
+
+                                {/* Header Icon */}
+                                <FullStackHeaderIcon src={fullStackContent.headerIcon} onLoaded={handleLottieLoaded} />
+
+                                {/* Skills Section */}
+                                <div className="fullstack-section skills-section">
+                                    <h4 className="section-title">⚡ Tech Stack</h4>
+                                    <div className="skills-grid-mern">
+                                        {fullStackContent.skills.map((skill, index) => (
+                                            <SkillCard key={index} skill={skill} onLoaded={handleLottieLoaded} />
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Projects Section */}
+                                <div className="fullstack-section projects-section">
+                                    <h4 className="section-title">📂 Featured Projects</h4>
+                                    <div className="carousel-container project-carousel">
+                                        <div className="carousel-stack">
+                                            {fullStackContent.projects.map((project, index) => {
+                                                const position = index - activeFullStackProjectIndex;
+                                                let positionClass = '';
+
+                                                if (position === 0) positionClass = 'active';
+                                                else if (position === -1 || (activeFullStackProjectIndex === 0 && index === fullStackContent.projects.length - 1)) positionClass = 'prev';
+                                                else if (position === 1 || (activeFullStackProjectIndex === fullStackContent.projects.length - 1 && index === 0)) positionClass = 'next';
+                                                else if (position < -1) positionClass = 'prev-hidden';
+                                                else positionClass = 'next-hidden';
+
+                                                return (
+                                                    <div
+                                                        key={index}
+                                                        className={`carousel-card project-card-fs ${positionClass}`}
+                                                        onClick={() => {
+                                                            if (position === 0) window.open(project.link, '_blank');
+                                                            else setActiveFullStackProjectIndex(index);
+                                                        }}
+                                                    >
+                                                        <span className="border-line border-line-top"></span>
+                                                        <span className="border-line border-line-right"></span>
+                                                        <span className="border-line border-line-bottom"></span>
+                                                        <span className="border-line border-line-left"></span>
+
+                                                        <span className="project-icon">{project.icon}</span>
+                                                        <h5 className="project-title">{project.title}</h5>
+                                                        <p className="project-desc">{project.description}</p>
+                                                        <div className="project-footer">
+                                                            <span className="project-tag">{project.tag}</span>
+                                                            <span className="preview-label">Live Demo →</span>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+
+                                        <div className="carousel-dots project-dots">
+                                            {fullStackContent.projects.map((_, index) => (
+                                                <button
+                                                    key={index}
+                                                    className={`project-dot ${index === activeFullStackProjectIndex ? 'active' : ''}`}
+                                                    onClick={() => setActiveFullStackProjectIndex(index)}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 3D Projects Section */}
+                                <div className="fullstack-section projects-section">
+                                    <h4 className="section-title">🎬 3D Craft</h4>
+                                    <div className="carousel-container project-carousel">
+                                        <div className="carousel-stack">
+                                            {fullStackContent.projects3D.map((project, index) => {
+                                                const position = index - activeFullStack3DProjectIndex;
+                                                let positionClass = '';
+
+                                                if (position === 0) positionClass = 'active';
+                                                else if (position === -1 || (activeFullStack3DProjectIndex === 0 && index === fullStackContent.projects3D.length - 1)) positionClass = 'prev';
+                                                else if (position === 1 || (activeFullStack3DProjectIndex === fullStackContent.projects3D.length - 1 && index === 0)) positionClass = 'next';
+                                                else if (position < -1) positionClass = 'prev-hidden';
+                                                else positionClass = 'next-hidden';
+
+                                                return (
+                                                    <div
+                                                        key={index}
+                                                        className={`carousel-card project-card-fs ${positionClass}`}
+                                                        onClick={() => {
+                                                            if (position === 0) navigate(project.route);
+                                                            else setActiveFullStack3DProjectIndex(index);
+                                                        }}
+                                                    >
+                                                        <span className="border-line border-line-top"></span>
+                                                        <span className="border-line border-line-right"></span>
+                                                        <span className="border-line border-line-bottom"></span>
+                                                        <span className="border-line border-line-left"></span>
+
+                                                        <span className="project-icon">{project.icon}</span>
+                                                        <h5 className="project-title">{project.title}</h5>
+                                                        <p className="project-desc">{project.description}</p>
+                                                        <div className="project-footer">
+                                                            <span className="project-tag">{project.tag}</span>
+                                                            <span className="preview-label">Explore →</span>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+
+                                        <div className="carousel-dots project-dots">
+                                            {fullStackContent.projects3D.map((_, index) => (
+                                                <button
+                                                    key={index}
+                                                    className={`project-dot ${index === activeFullStack3DProjectIndex ? 'active' : ''}`}
+                                                    onClick={() => setActiveFullStack3DProjectIndex(index)}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Games Section */}
+                                <div className="fullstack-section games-section">
+                                    <h4 className="section-title">🎮 Play Zone</h4>
+                                    <div className="games-grid-mern">
+                                        {fullStackContent.games.map((game, index) => (
+                                            <div
+                                                key={index}
+                                                className="game-card-mern"
+                                                onClick={() => navigate(game.route)}
+                                            >
+                                                <span className="game-icon">{game.icon}</span>
+                                                <h5 className="game-title">{game.title}</h5>
+                                                <p className="game-desc">{game.description}</p>
+                                                <span className="play-label">PLAY NOW</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         ) : (
                             /* Stacked Carousel for Football/Enfield */
                             <div className="carousel-container">
@@ -537,25 +904,6 @@ export default function RoomScene({ onBack }) {
                             </div>
                         )}
                     </div>
-
-                    {/* Software Journey Button - Bottom Center */}
-                    <div className="software-journey-section">
-                        <p className="journey-tagline">
-                            Ready to explore my professional side?
-                            <span className="css-laptop">
-                                <span className="laptop-screen"></span>
-                                <span className="laptop-base"></span>
-                            </span>
-                        </p>
-                        <button className="journey-btn" onClick={handleEnterSoftware}>
-                            <span className="btn-line btn-line-top"></span>
-                            <span className="btn-line btn-line-right"></span>
-                            <span className="btn-line btn-line-bottom"></span>
-                            <span className="btn-line btn-line-left"></span>
-                            <span className="journey-text">EXPLORE SOFTWARE CRAFT</span>
-                        </button>
-                    </div>
-
                 </div>
             </div>
 

@@ -55,12 +55,12 @@
         scrollbar-color: #ff0000 #0a0a0a;
     }
 
-    &.blender {
+    &.fullstack {
         &::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #ff6600 0%, #ffcc00 100%);
+            background: linear-gradient(180deg, #ffcc00 0%, #ff6600 100%);
         }
 
-        scrollbar-color: #ff6600 #0a0a0a;
+        scrollbar-color: #ffcc00 #0a0a0a;
     }
 
     &::-webkit-scrollbar-thumb:hover {
@@ -211,6 +211,31 @@
                 opacity: 1;
                 text-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
             }
+        }
+    }
+
+    // Full Stack shirt - yellow theme
+    &:nth-child(4) {
+        .tshirt-label {
+            color: #ffcc00;
+            opacity: 0.6;
+        }
+
+        &.active {
+            border-color: rgba(255, 204, 0, 0.6);
+            background: rgba(255, 204, 0, 0.1);
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.2);
+
+            .tshirt-label {
+                opacity: 1;
+                text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+            }
+        }
+
+        .tshirt-image {
+            width: 112px; // Reduced another 10% from 125px for perfect match
+            height: auto;
+            margin-top: 5px;
         }
     }
 
@@ -518,6 +543,7 @@
                     .project-title {
                         background: linear-gradient(90deg, #3498db, #ff0000);
                         -webkit-background-clip: text;
+                        background-clip: text;
                         -webkit-text-fill-color: transparent;
                         text-shadow: none;
                     }
@@ -1746,5 +1772,384 @@
         .carousel-stack {
             height: 320px !important;
         }
+    }
+}
+
+// ========================================
+// FULLSTACK THEME & COMPONENTS
+// ========================================
+
+.room-scene-wrapper {
+
+    // Full Stack theme - Cyber Yellow
+    &.fullstack {
+        .passion-title {
+            background: linear-gradient(135deg, #ffcc00 0%, #ff6600 50%, #ffd700 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 204, 0, 0.3);
+        }
+
+        .passion-subtitle {
+            background: linear-gradient(90deg, #ffcc00 0%, #ffffff 50%, #ff6600 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .story-point .point-marker {
+            color: #ffcc00;
+            text-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
+        }
+
+        .fullstack-section {
+            margin-top: 4.5rem;
+            text-align: left;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 1rem;
+
+            .section-title {
+                font-family: 'Caveat', cursive;
+                font-size: 2.2rem;
+                font-weight: 700;
+                color: #ffcc00;
+                margin-bottom: 2rem;
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+                text-shadow: 0 0 15px rgba(255, 204, 0, 0.3);
+            }
+        }
+    }
+}
+
+.fullstack-header-icon {
+    width: 320px; // Larger as requested
+    height: 320px;
+    margin: -40px auto 20px;
+    filter: drop-shadow(0 0 30px rgba(255, 204, 0, 0.4));
+    transition: transform 0.3s ease;
+
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+.fullstack-content-wrapper {
+    position: relative;
+    min-height: 400px;
+    width: 100%;
+
+    &.loading {
+        &>*:not(.fullstack-loader) {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+
+    &.ready {
+        &>*:not(.fullstack-loader) {
+            opacity: 1;
+            transition: opacity 0.8s ease-out;
+        }
+    }
+}
+
+.fullstack-loader {
+    position: absolute;
+    top: 50px; // Aligned exactly with space developer header icon
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    z-index: 100;
+
+    .loader-orbit {
+        width: 100px;
+        height: 100px;
+        border: 2px dashed rgba(255, 204, 0, 0.3);
+        border-radius: 50%;
+        position: relative;
+        animation: rotateLoader 4s linear infinite;
+
+        .loader-planet {
+            width: 15px;
+            height: 15px;
+            background: #ffcc00;
+            border-radius: 50%;
+            position: absolute;
+            top: -7.5px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 15px #ffcc00;
+        }
+    }
+
+    .loader-text {
+        font-family: 'Caveat', cursive;
+        font-size: 1.5rem;
+        color: #ffcc00;
+        text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        letter-spacing: 1px;
+    }
+}
+
+@keyframes rotateLoader {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.skills-grid-mern {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.skill-card-mern {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, var(--accent-color) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 0;
+    }
+
+    &:hover {
+        transform: translateY(-8px) scale(1.05);
+        border-color: var(--accent-color);
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 15px var(--accent-color);
+
+        &::before {
+            opacity: 0.1;
+        }
+
+        .skill-name {
+            color: var(--accent-color);
+            text-shadow: 0 0 10px var(--accent-color);
+        }
+    }
+
+    .lottie-container {
+        width: 80px;
+        height: 80px;
+        z-index: 1;
+        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+    }
+
+    .skill-name {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.8);
+        text-align: center;
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+}
+
+.project-card-fs {
+    width: 260px;
+    height: 100%;
+    padding: 1.5rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+
+    &:nth-child(n) {
+        .project-title {
+            background: linear-gradient(90deg, #ffcc00, #ff6600);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .border-line-top,
+        .border-line-right {
+            background: linear-gradient(90deg, transparent, #ffcc00);
+        }
+
+        .border-line-bottom,
+        .border-line-left {
+            background: linear-gradient(90deg, transparent, #ff6600);
+        }
+
+        &:hover {
+            box-shadow: 0 0 25px rgba(255, 204, 0, 0.2);
+            border-color: rgba(255, 204, 0, 0.4);
+        }
+
+        .preview-label {
+            color: #ffcc00;
+        }
+    }
+
+    .project-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .project-title {
+        font-family: 'Caveat', cursive;
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+    }
+
+    .project-desc {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 1rem;
+        line-height: 1.4;
+        font-weight: 400;
+    }
+
+    .project-footer {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding-top: 0.5rem;
+
+        .project-tag {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .preview-label {
+            font-family: 'Caveat', cursive;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+    }
+}
+
+.games-grid-mern {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    width: 100%;
+    max-width: 1000px;
+    margin: 3rem auto 0;
+}
+
+.game-card-mern {
+    background: rgba(15, 15, 20, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 2rem 1.5rem;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(10px);
+
+    &:hover {
+        transform: translateY(-10px) scale(1.03);
+        border-color: #ffcc00;
+        background: rgba(20, 20, 30, 0.9);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 204, 0, 0.2);
+
+        .game-icon {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .play-label {
+            background: #ffcc00;
+            color: #000;
+            box-shadow: 0 0 15px #ffcc00;
+        }
+    }
+
+    .game-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1.2rem;
+        transition: transform 0.4s ease;
+    }
+
+    .game-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0.8rem;
+        letter-spacing: 1px;
+    }
+
+    .game-desc {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+
+    .play-label {
+        font-family: 'Inter', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 800;
+        padding: 0.6rem 1.5rem;
+        border: 1px solid #ffcc00;
+        border-radius: 30px;
+        color: #ffcc00;
+        letter-spacing: 2px;
+        transition: all 0.3s ease;
+    }
+}
+
+// Media queries for fullstack
+@media (max-width: 1024px) {
+    .games-grid-mern {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .skills-grid-mern {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .games-grid-mern {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .skills-grid-mern {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
