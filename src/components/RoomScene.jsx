@@ -408,7 +408,7 @@ export default function RoomScene({ onBack }) {
     const [activeFullStack3DProjectIndex, setActiveFullStack3DProjectIndex] = useState(0);
     const [selectedImage, setSelectedImage] = useState(null);
     const [fullStackLoadedCount, setFullStackLoadedCount] = useState(0);
-    const [isFullStackReady, setIsFullStackReady] = useState(false);
+    const [isSectionReady, setIsSectionReady] = useState(false);
 
     // Check if we're on the /software route
     const showSoftware = location.pathname === '/software';
@@ -421,7 +421,13 @@ export default function RoomScene({ onBack }) {
         setActiveFullStackProjectIndex(0);
         setActiveFullStack3DProjectIndex(0);
         setFullStackLoadedCount(0);
-        setIsFullStackReady(false);
+        setIsSectionReady(false);
+
+        // For non-fullstack sections, show loader briefly for a uniform experience
+        if (selectedShirt !== 'fullstack') {
+            const timer = setTimeout(() => setIsSectionReady(true), 800);
+            return () => clearTimeout(timer);
+        }
     }, [selectedShirt]);
 
     // Handle Full Stack loading progress
@@ -429,7 +435,7 @@ export default function RoomScene({ onBack }) {
         if (selectedShirt === 'fullstack') {
             const totalToLoad = fullStackContent.skills.length + 1; // skills + header icon
             if (fullStackLoadedCount >= totalToLoad) {
-                setTimeout(() => setIsFullStackReady(true), 500);
+                setTimeout(() => setIsSectionReady(true), 500);
             }
         }
     }, [fullStackLoadedCount, selectedShirt]);
@@ -550,7 +556,21 @@ export default function RoomScene({ onBack }) {
                     </div>
 
                     {/* Content Display */}
-                    <div className={`passion-display ${selectedShirt}`}>
+                    <div className={`passion-display ${selectedShirt} ${isSectionReady ? 'ready' : 'loading'}`}>
+                        {!isSectionReady && (
+                            <div className="section-loader">
+                                <div className="loader-orbit">
+                                    <div className="loader-planet"></div>
+                                </div>
+                                <p className="loader-text">
+                                    {selectedShirt === 'fullstack' ? 'Initializing Full Stack Environment...' :
+                                        selectedShirt === 'blender' ? 'Launching Blender Workspace...' :
+                                            selectedShirt === 'enfield' ? 'Starting Engines...' :
+                                                'Preparing Pitch...'}
+                                </p>
+                            </div>
+                        )}
+
                         <h2 className="passion-title">{currentContent.title}</h2>
                         <h3 className="passion-subtitle">{currentContent.subtitle}</h3>
                         {selectedShirt === 'blender' && currentContent.level && (
@@ -569,7 +589,7 @@ export default function RoomScene({ onBack }) {
 
                         {/* Blender-specific content */}
                         {selectedShirt === 'blender' ? (
-                            <>
+                            <div className="blender-content-reveal">
                                 {/* Projects Section */}
                                 <div className="blender-section projects-section">
                                     <h4 className="section-title">🎬 3D Projects</h4>
@@ -704,18 +724,9 @@ export default function RoomScene({ onBack }) {
                                         </div>
                                     </div>
                                 </div>
-                            </>
+                            </div>
                         ) : selectedShirt === 'fullstack' ? (
-                            <div className={`fullstack-content-wrapper ${isFullStackReady ? 'ready' : 'loading'}`}>
-                                {!isFullStackReady && (
-                                    <div className="fullstack-loader">
-                                        <div className="loader-orbit">
-                                            <div className="loader-planet"></div>
-                                        </div>
-                                        <p className="loader-text">Initializing Full Stack Environment...</p>
-                                    </div>
-                                )}
-
+                            <div className="fullstack-content-reveal">
                                 {/* Header Icon */}
                                 <FullStackHeaderIcon src={fullStackContent.headerIcon} onLoaded={handleLottieLoaded} />
 
@@ -856,50 +867,52 @@ export default function RoomScene({ onBack }) {
                             </div>
                         ) : (
                             /* Stacked Carousel for Football/Enfield */
-                            <div className="carousel-container">
-                                <div className="carousel-stack">
-                                    {currentContent.cards.map((card, index) => {
-                                        const position = index - activeCardIndex;
-                                        let positionClass = '';
+                            <div className="carousel-reveal">
+                                <div className="carousel-container">
+                                    <div className="carousel-stack">
+                                        {currentContent.cards.map((card, index) => {
+                                            const position = index - activeCardIndex;
+                                            let positionClass = '';
 
-                                        if (position === 0) positionClass = 'active';
-                                        else if (position === -1 || (activeCardIndex === 0 && index === currentContent.cards.length - 1)) positionClass = 'prev';
-                                        else if (position === 1 || (activeCardIndex === currentContent.cards.length - 1 && index === 0)) positionClass = 'next';
-                                        else if (position < -1) positionClass = 'prev-hidden';
-                                        else positionClass = 'next-hidden';
+                                            if (position === 0) positionClass = 'active';
+                                            else if (position === -1 || (activeCardIndex === 0 && index === currentContent.cards.length - 1)) positionClass = 'prev';
+                                            else if (position === 1 || (activeCardIndex === currentContent.cards.length - 1 && index === 0)) positionClass = 'next';
+                                            else if (position < -1) positionClass = 'prev-hidden';
+                                            else positionClass = 'next-hidden';
 
-                                        return (
-                                            <div
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    className={`carousel-card ${positionClass}`}
+                                                    onClick={() => setActiveCardIndex(index)}
+                                                >
+                                                    <span className="border-line border-line-top"></span>
+                                                    <span className="border-line border-line-right"></span>
+                                                    <span className="border-line border-line-bottom"></span>
+                                                    <span className="border-line border-line-left"></span>
+
+                                                    {card.icon.startsWith('/') ? (
+                                                        <img src={card.icon} alt={card.title} className="card-icon-img" />
+                                                    ) : (
+                                                        <span className="card-icon">{card.icon}</span>
+                                                    )}
+                                                    <h4 className="card-title">{card.title}</h4>
+                                                    <p className="card-description">{card.description}</p>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    <div className="carousel-dots">
+                                        {currentContent.cards.map((_, index) => (
+                                            <button
                                                 key={index}
-                                                className={`carousel-card ${positionClass}`}
+                                                className={`carousel-dot ${index === activeCardIndex ? 'active' : ''}`}
                                                 onClick={() => setActiveCardIndex(index)}
-                                            >
-                                                <span className="border-line border-line-top"></span>
-                                                <span className="border-line border-line-right"></span>
-                                                <span className="border-line border-line-bottom"></span>
-                                                <span className="border-line border-line-left"></span>
-
-                                                {card.icon.startsWith('/') ? (
-                                                    <img src={card.icon} alt={card.title} className="card-icon-img" />
-                                                ) : (
-                                                    <span className="card-icon">{card.icon}</span>
-                                                )}
-                                                <h4 className="card-title">{card.title}</h4>
-                                                <p className="card-description">{card.description}</p>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-
-                                <div className="carousel-dots">
-                                    {currentContent.cards.map((_, index) => (
-                                        <button
-                                            key={index}
-                                            className={`carousel-dot ${index === activeCardIndex ? 'active' : ''}`}
-                                            onClick={() => setActiveCardIndex(index)}
-                                            aria-label={`Go to card ${index + 1}`}
-                                        />
-                                    ))}
+                                                aria-label={`Go to card ${index + 1}`}
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         )}
