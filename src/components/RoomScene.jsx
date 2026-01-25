@@ -409,6 +409,7 @@ export default function RoomScene({ onBack }) {
     const [selectedImage, setSelectedImage] = useState(null);
     const [fullStackLoadedCount, setFullStackLoadedCount] = useState(0);
     const [isSectionReady, setIsSectionReady] = useState(false);
+    const [isContactOpen, setIsContactOpen] = useState(false);
 
     // Check if we're on the /software route
     const showSoftware = location.pathname === '/software';
@@ -485,424 +486,458 @@ export default function RoomScene({ onBack }) {
                 : fullStackContent;
 
     // Show software scene if on /software route
-    if (showSoftware) {
-        return <SoftwareScene onBack={handleBackFromSoftware} />;
-    }
-
     return (
         <>
-            <div className={`room-scene-wrapper ${selectedShirt} ${isTransitioning ? 'fade-out' : ''} ${selectedImage ? 'modal-open' : ''}`}>
-                {/* Back Button */}
-                <button className="back-button" onClick={onBack}>
-                    <span className="back-icon">🚀</span>
-                    <span>Back to Sky</span>
-                </button>
+            {showSoftware ? (
+                <SoftwareScene onBack={handleBackFromSoftware} />
+            ) : (
+                <div className={`room-scene-wrapper ${selectedShirt} ${isTransitioning ? 'fade-out' : ''} ${selectedImage ? 'modal-open' : ''}`}>
+                    {/* Back Button */}
+                    <button className="back-button" onClick={onBack}>
+                        <span className="back-icon">🚀</span>
+                        <span>Back to Sky</span>
+                    </button>
 
-                {/* Main Content Area */}
-                <div className={`room-content ${isContentVisible ? 'visible' : ''}`}>
-                    {/* T-Shirts Display */}
-                    <div className="tshirts-wall">
-                        {[
-                            { id: 'football', label: 'Football', img: '/assets/2dModels/football_tshirt.png', alt: 'Football Jersey' },
-                            { id: 'enfield', label: 'Mechanical Engineer', img: '/assets/2dModels/RE_tshirt.png', alt: 'Royal Enfield' },
-                            { id: 'blender', label: 'Creative Artist', img: '/assets/2dModels/blender_tshirt.png', alt: 'Blender 3D' },
-                            { id: 'fullstack', label: 'Computer Science Engineer', img: '/assets/2dModels/software_tshirt.png', alt: 'Full Stack Developer' }
-                        ].map((shirt, index) => {
-                            const shirtIds = ['football', 'enfield', 'blender', 'fullstack'];
-                            const activeIndex = shirtIds.indexOf(selectedShirt);
-                            const position = index - activeIndex;
-                            let positionClass = '';
+                    {/* Main Content Area */}
+                    <div className={`room-content ${isContentVisible ? 'visible' : ''}`}>
+                        {/* T-Shirts Display */}
+                        <div className="tshirts-wall">
+                            {[
+                                { id: 'football', label: 'Football', img: '/assets/2dModels/football_tshirt.png', alt: 'Football Jersey' },
+                                { id: 'enfield', label: 'Mechanical Engineer', img: '/assets/2dModels/RE_tshirt.png', alt: 'Royal Enfield' },
+                                { id: 'blender', label: 'Creative Artist', img: '/assets/2dModels/blender_tshirt.png', alt: 'Blender 3D' },
+                                { id: 'fullstack', label: 'Computer Science Engineer', img: '/assets/2dModels/software_tshirt.png', alt: 'Full Stack Developer' }
+                            ].map((shirt, index) => {
+                                const shirtIds = ['football', 'enfield', 'blender', 'fullstack'];
+                                const activeIndex = shirtIds.indexOf(selectedShirt);
+                                const position = index - activeIndex;
+                                let positionClass = '';
 
-                            if (position === 0) positionClass = 'active';
-                            else if (position === -1) positionClass = 'prev';
-                            else if (position === 1) positionClass = 'next';
-                            else if (position < -1) positionClass = 'prev-hidden';
-                            else positionClass = 'next-hidden';
+                                if (position === 0) positionClass = 'active';
+                                else if (position === -1) positionClass = 'prev';
+                                else if (position === 1) positionClass = 'next';
+                                else if (position < -1) positionClass = 'prev-hidden';
+                                else positionClass = 'next-hidden';
 
-                            return (
-                                <div
-                                    key={shirt.id}
-                                    className={`tshirt-item ${positionClass}`}
-                                    onClick={() => setSelectedShirt(shirt.id)}
-                                >
-                                    <div className="hanger"></div>
-                                    <div className="tshirt-image-wrapper">
-                                        <img
-                                            src={shirt.img}
-                                            alt={shirt.alt}
-                                            className="tshirt-image"
-                                        />
+                                return (
+                                    <div
+                                        key={shirt.id}
+                                        className={`tshirt-item ${positionClass}`}
+                                        onClick={() => setSelectedShirt(shirt.id)}
+                                    >
+                                        <div className="hanger"></div>
+                                        <div className="tshirt-image-wrapper">
+                                            <img
+                                                src={shirt.img}
+                                                alt={shirt.alt}
+                                                className="tshirt-image"
+                                            />
+                                        </div>
+                                        <span className="tshirt-label">{shirt.label}</span>
                                     </div>
-                                    <span className="tshirt-label">{shirt.label}</span>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    {/* Content Display */}
-                    <div className={`passion-display ${selectedShirt} ${isSectionReady ? 'ready' : 'loading'}`}>
-                        {!isSectionReady && (
-                            <div className="section-loader">
-                                <div className="loader-orbit">
-                                    <div className="loader-planet"></div>
-                                </div>
-                                <p className="loader-text">
-                                    {selectedShirt === 'fullstack' ? 'Initializing Full Stack Environment...' :
-                                        selectedShirt === 'blender' ? 'Launching Blender Workspace...' :
-                                            selectedShirt === 'enfield' ? 'Starting Engines...' :
-                                                'Preparing Pitch...'}
-                                </p>
-                            </div>
-                        )}
-
-                        <h2 className="passion-title">{currentContent.title}</h2>
-                        <h3 className="passion-subtitle">{currentContent.subtitle}</h3>
-                        {selectedShirt === 'blender' && currentContent.level && (
-                            <span className="skill-level">{currentContent.level}</span>
-                        )}
-
-                        {/* Story Points / Skills - Timeline Style */}
-                        <div className="story-points">
-                            {currentContent.storyPoints.map((point, index) => (
-                                <div key={index} className="story-point" style={{ animationDelay: `${0.5 + index * 0.15}s` }}>
-                                    <span className="point-marker">▹</span>
-                                    <span className="point-text">{point}</span>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
 
-                        {/* Blender-specific content */}
-                        {selectedShirt === 'blender' ? (
-                            <div className="blender-content-reveal">
-                                {/* Projects Section */}
-                                <div className="blender-section projects-section">
-                                    <h4 className="section-title">🎬 3D Projects</h4>
-                                    <p className="section-desc">Interactive scenes built with Blender & Three.js</p>
-                                    <div className="carousel-container project-carousel">
-                                        <div className="carousel-stack">
-                                            {blenderContent.projects.map((project, index) => {
-                                                const position = index - activeBlenderProjectIndex;
-                                                let positionClass = '';
-
-                                                if (position === 0) positionClass = 'active';
-                                                else if (position === -1 || (activeBlenderProjectIndex === 0 && index === blenderContent.projects.length - 1)) positionClass = 'prev';
-                                                else if (position === 1 || (activeBlenderProjectIndex === blenderContent.projects.length - 1 && index === 0)) positionClass = 'next';
-                                                else if (position < -1) positionClass = 'prev-hidden';
-                                                else positionClass = 'next-hidden';
-
-                                                return (
-                                                    <div
-                                                        key={index}
-                                                        className={`carousel-card project-card ${positionClass}`}
-                                                        onClick={() => {
-                                                            if (position === 0) navigate(project.route);
-                                                            else setActiveBlenderProjectIndex(index);
-                                                        }}
-                                                    >
-                                                        <span className="border-line border-line-top"></span>
-                                                        <span className="border-line border-line-right"></span>
-                                                        <span className="border-line border-line-bottom"></span>
-                                                        <span className="border-line border-line-left"></span>
-
-                                                        <span className="project-icon">{project.icon}</span>
-                                                        <h5 className="project-title">{project.title}</h5>
-                                                        <p className="project-desc">{project.description}</p>
-                                                        <div className="project-footer">
-                                                            <span className="project-tag">{project.tag}</span>
-                                                            <span className="preview-label">Preview →</span>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-
-                                        {/* Project Dots */}
-                                        <div className="carousel-dots project-dots">
-                                            {blenderContent.projects.map((_, index) => (
-                                                <button
-                                                    key={index}
-                                                    className={`project-dot ${index === activeBlenderProjectIndex ? 'active' : ''}`}
-                                                    onClick={() => setActiveBlenderProjectIndex(index)}
-                                                    aria-label={`Go to project ${index + 1}`}
-                                                />
-                                            ))}
-                                        </div>
+                        {/* Content Display */}
+                        <div className={`passion-display ${selectedShirt} ${isSectionReady ? 'ready' : 'loading'}`}>
+                            {!isSectionReady && (
+                                <div className="section-loader">
+                                    <div className="loader-orbit">
+                                        <div className="loader-planet"></div>
                                     </div>
+                                    <p className="loader-text">
+                                        {selectedShirt === 'fullstack' ? 'Initializing Full Stack Environment...' :
+                                            selectedShirt === 'blender' ? 'Launching Blender Workspace...' :
+                                                selectedShirt === 'enfield' ? 'Starting Engines...' :
+                                                    'Preparing Pitch...'}
+                                    </p>
                                 </div>
+                            )}
 
-                                {/* Starter Kits Section */}
-                                <div className="blender-section starter-kits-section">
-                                    <h4 className="section-title">📦 Starter Kits</h4>
-                                    <p className="section-desc">Download my Blender project files</p>
-                                    <div className="kits-grid">
-                                        {blenderContent.starterKits.map((kit, index) => (
-                                            <div key={index} className="kit-card">
-                                                <span className="kit-icon">{kit.icon}</span>
-                                                <h5 className="kit-name">{kit.name}</h5>
-                                                <p className="kit-desc">{kit.description}</p>
-                                                {kit.files.length > 0 && (
+                            <h2 className="passion-title">{currentContent.title}</h2>
+                            <h3 className="passion-subtitle">{currentContent.subtitle}</h3>
+                            {selectedShirt === 'blender' && currentContent.level && (
+                                <span className="skill-level">{currentContent.level}</span>
+                            )}
+
+                            {/* Story Points / Skills - Timeline Style */}
+                            <div className="story-points">
+                                {currentContent.storyPoints.map((point, index) => (
+                                    <div key={index} className="story-point" style={{ animationDelay: `${0.5 + index * 0.15}s` }}>
+                                        <span className="point-marker">▹</span>
+                                        <span className="point-text">{point}</span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Blender-specific content */}
+                            {selectedShirt === 'blender' ? (
+                                <div className="blender-content-reveal">
+                                    {/* Projects Section */}
+                                    <div className="blender-section projects-section">
+                                        <h4 className="section-title">🎬 3D Projects</h4>
+                                        <p className="section-desc">Interactive scenes built with Blender & Three.js</p>
+                                        <div className="carousel-container project-carousel">
+                                            <div className="carousel-stack">
+                                                {blenderContent.projects.map((project, index) => {
+                                                    const position = index - activeBlenderProjectIndex;
+                                                    let positionClass = '';
+
+                                                    if (position === 0) positionClass = 'active';
+                                                    else if (position === -1 || (activeBlenderProjectIndex === 0 && index === blenderContent.projects.length - 1)) positionClass = 'prev';
+                                                    else if (position === 1 || (activeBlenderProjectIndex === blenderContent.projects.length - 1 && index === 0)) positionClass = 'next';
+                                                    else if (position < -1) positionClass = 'prev-hidden';
+                                                    else positionClass = 'next-hidden';
+
+                                                    return (
+                                                        <div
+                                                            key={index}
+                                                            className={`carousel-card project-card ${positionClass}`}
+                                                            onClick={() => {
+                                                                if (position === 0) navigate(project.route);
+                                                                else setActiveBlenderProjectIndex(index);
+                                                            }}
+                                                        >
+                                                            <span className="border-line border-line-top"></span>
+                                                            <span className="border-line border-line-right"></span>
+                                                            <span className="border-line border-line-bottom"></span>
+                                                            <span className="border-line border-line-left"></span>
+
+                                                            <span className="project-icon">{project.icon}</span>
+                                                            <h5 className="project-title">{project.title}</h5>
+                                                            <p className="project-desc">{project.description}</p>
+                                                            <div className="project-footer">
+                                                                <span className="project-tag">{project.tag}</span>
+                                                                <span className="preview-label">Preview →</span>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+
+                                            {/* Project Dots */}
+                                            <div className="carousel-dots project-dots">
+                                                {blenderContent.projects.map((_, index) => (
                                                     <button
-                                                        className="download-btn global-download"
-                                                        onClick={() => {
-                                                            kit.files.forEach((file) => {
-                                                                const link = document.createElement('a');
-                                                                link.href = file;
-                                                                link.download = file.split('/').pop();
-                                                                link.click();
-                                                            });
-                                                        }}
-                                                    >
-                                                        📥 Download Full Kit
-                                                    </button>
-                                                )}
+                                                        key={index}
+                                                        className={`project-dot ${index === activeBlenderProjectIndex ? 'active' : ''}`}
+                                                        onClick={() => setActiveBlenderProjectIndex(index)}
+                                                        aria-label={`Go to project ${index + 1}`}
+                                                    />
+                                                ))}
                                             </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Gallery Section - Carousel Style */}
-                                <div className="blender-section gallery-section">
-                                    <h4 className="section-title">🖼️ Blender Workspace</h4>
-                                    <p className="section-desc">Renders and artwork from my 3D journey</p>
-
-                                    <div className="carousel-container gallery-carousel">
-                                        <div className="carousel-stack">
-                                            {blenderContent.gallery.map((item, index) => {
-                                                const position = index - activeGalleryIndex;
-                                                let positionClass = '';
-
-                                                if (position === 0) positionClass = 'active';
-                                                else if (position === -1 || (activeGalleryIndex === 0 && index === blenderContent.gallery.length - 1)) positionClass = 'prev';
-                                                else if (position === 1 || (activeGalleryIndex === blenderContent.gallery.length - 1 && index === 0)) positionClass = 'next';
-                                                else if (position < -1) positionClass = 'prev-hidden';
-                                                else positionClass = 'next-hidden';
-
-                                                return (
-                                                    <div
-                                                        key={index}
-                                                        className={`carousel-card gallery-card ${positionClass}`}
-                                                        onClick={() => {
-                                                            if (position === 0) setSelectedImage(item);
-                                                            else setActiveGalleryIndex(index);
-                                                        }}
-                                                    >
-                                                        <img src={item.src} alt={item.title} className="gallery-img-full" />
-                                                        <div className="gallery-caption">
-                                                            <h5 className="gallery-item-title">{item.title}</h5>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
                                         </div>
+                                    </div>
 
-                                        {/* Gallery Dots */}
-                                        <div className="carousel-dots gallery-dots">
-                                            {blenderContent.gallery.map((_, index) => (
-                                                <button
-                                                    key={index}
-                                                    className={`gallery-dot ${index === activeGalleryIndex ? 'active' : ''}`}
-                                                    onClick={() => setActiveGalleryIndex(index)}
-                                                    aria-label={`Go to image ${index + 1}`}
-                                                />
+                                    {/* Starter Kits Section */}
+                                    <div className="blender-section starter-kits-section">
+                                        <h4 className="section-title">📦 Starter Kits</h4>
+                                        <p className="section-desc">Download my Blender project files</p>
+                                        <div className="kits-grid">
+                                            {blenderContent.starterKits.map((kit, index) => (
+                                                <div key={index} className="kit-card">
+                                                    <span className="kit-icon">{kit.icon}</span>
+                                                    <h5 className="kit-name">{kit.name}</h5>
+                                                    <p className="kit-desc">{kit.description}</p>
+                                                    {kit.files.length > 0 && (
+                                                        <button
+                                                            className="download-btn global-download"
+                                                            onClick={() => {
+                                                                kit.files.forEach((file) => {
+                                                                    const link = document.createElement('a');
+                                                                    link.href = file;
+                                                                    link.download = file.split('/').pop();
+                                                                    link.click();
+                                                                });
+                                                            }}
+                                                        >
+                                                            📥 Download Full Kit
+                                                        </button>
+                                                    )}
+                                                </div>
                                             ))}
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        ) : selectedShirt === 'fullstack' ? (
-                            <div className="fullstack-content-reveal">
-                                {/* Header Icon */}
-                                <FullStackHeaderIcon src={fullStackContent.headerIcon} onLoaded={handleLottieLoaded} />
 
-                                {/* Skills Section */}
-                                <div className="fullstack-section skills-section">
-                                    <h4 className="section-title">⚡ Tech Stack</h4>
-                                    <div className="skills-grid-mern">
-                                        {fullStackContent.skills.map((skill, index) => (
-                                            <SkillCard key={index} skill={skill} onLoaded={handleLottieLoaded} />
-                                        ))}
-                                    </div>
-                                </div>
+                                    {/* Gallery Section - Carousel Style */}
+                                    <div className="blender-section gallery-section">
+                                        <h4 className="section-title">🖼️ Blender Workspace</h4>
+                                        <p className="section-desc">Renders and artwork from my 3D journey</p>
 
-                                {/* Projects Section */}
-                                <div className="fullstack-section projects-section">
-                                    <h4 className="section-title">📂 Featured Projects</h4>
-                                    <div className="carousel-container project-carousel">
-                                        <div className="carousel-stack">
-                                            {fullStackContent.projects.map((project, index) => {
-                                                const position = index - activeFullStackProjectIndex;
-                                                let positionClass = '';
+                                        <div className="carousel-container gallery-carousel">
+                                            <div className="carousel-stack">
+                                                {blenderContent.gallery.map((item, index) => {
+                                                    const position = index - activeGalleryIndex;
+                                                    let positionClass = '';
 
-                                                if (position === 0) positionClass = 'active';
-                                                else if (position === -1 || (activeFullStackProjectIndex === 0 && index === fullStackContent.projects.length - 1)) positionClass = 'prev';
-                                                else if (position === 1 || (activeFullStackProjectIndex === fullStackContent.projects.length - 1 && index === 0)) positionClass = 'next';
-                                                else if (position < -1) positionClass = 'prev-hidden';
-                                                else positionClass = 'next-hidden';
+                                                    if (position === 0) positionClass = 'active';
+                                                    else if (position === -1 || (activeGalleryIndex === 0 && index === blenderContent.gallery.length - 1)) positionClass = 'prev';
+                                                    else if (position === 1 || (activeGalleryIndex === blenderContent.gallery.length - 1 && index === 0)) positionClass = 'next';
+                                                    else if (position < -1) positionClass = 'prev-hidden';
+                                                    else positionClass = 'next-hidden';
 
-                                                return (
-                                                    <div
-                                                        key={index}
-                                                        className={`carousel-card project-card-fs ${positionClass}`}
-                                                        onClick={() => {
-                                                            if (position === 0) window.open(project.link, '_blank');
-                                                            else setActiveFullStackProjectIndex(index);
-                                                        }}
-                                                    >
-                                                        <span className="border-line border-line-top"></span>
-                                                        <span className="border-line border-line-right"></span>
-                                                        <span className="border-line border-line-bottom"></span>
-                                                        <span className="border-line border-line-left"></span>
-
-                                                        <span className="project-icon">{project.icon}</span>
-                                                        <h5 className="project-title">{project.title}</h5>
-                                                        <p className="project-desc">{project.description}</p>
-                                                        <div className="project-footer">
-                                                            <span className="project-tag">{project.tag}</span>
-                                                            <span className="preview-label">Live Demo →</span>
+                                                    return (
+                                                        <div
+                                                            key={index}
+                                                            className={`carousel-card gallery-card ${positionClass}`}
+                                                            onClick={() => {
+                                                                if (position === 0) setSelectedImage(item);
+                                                                else setActiveGalleryIndex(index);
+                                                            }}
+                                                        >
+                                                            <img src={item.src} alt={item.title} className="gallery-img-full" />
+                                                            <div className="gallery-caption">
+                                                                <h5 className="gallery-item-title">{item.title}</h5>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-
-                                        <div className="carousel-dots project-dots">
-                                            {fullStackContent.projects.map((_, index) => (
-                                                <button
-                                                    key={index}
-                                                    className={`project-dot ${index === activeFullStackProjectIndex ? 'active' : ''}`}
-                                                    onClick={() => setActiveFullStackProjectIndex(index)}
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* 3D Projects Section */}
-                                <div className="fullstack-section projects-section">
-                                    <h4 className="section-title">🎬 3D Craft</h4>
-                                    <div className="carousel-container project-carousel">
-                                        <div className="carousel-stack">
-                                            {fullStackContent.projects3D.map((project, index) => {
-                                                const position = index - activeFullStack3DProjectIndex;
-                                                let positionClass = '';
-
-                                                if (position === 0) positionClass = 'active';
-                                                else if (position === -1 || (activeFullStack3DProjectIndex === 0 && index === fullStackContent.projects3D.length - 1)) positionClass = 'prev';
-                                                else if (position === 1 || (activeFullStack3DProjectIndex === fullStackContent.projects3D.length - 1 && index === 0)) positionClass = 'next';
-                                                else if (position < -1) positionClass = 'prev-hidden';
-                                                else positionClass = 'next-hidden';
-
-                                                return (
-                                                    <div
-                                                        key={index}
-                                                        className={`carousel-card project-card-fs ${positionClass}`}
-                                                        onClick={() => {
-                                                            if (position === 0) navigate(project.route);
-                                                            else setActiveFullStack3DProjectIndex(index);
-                                                        }}
-                                                    >
-                                                        <span className="border-line border-line-top"></span>
-                                                        <span className="border-line border-line-right"></span>
-                                                        <span className="border-line border-line-bottom"></span>
-                                                        <span className="border-line border-line-left"></span>
-
-                                                        <span className="project-icon">{project.icon}</span>
-                                                        <h5 className="project-title">{project.title}</h5>
-                                                        <p className="project-desc">{project.description}</p>
-                                                        <div className="project-footer">
-                                                            <span className="project-tag">{project.tag}</span>
-                                                            <span className="preview-label">Explore →</span>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-
-                                        <div className="carousel-dots project-dots">
-                                            {fullStackContent.projects3D.map((_, index) => (
-                                                <button
-                                                    key={index}
-                                                    className={`project-dot ${index === activeFullStack3DProjectIndex ? 'active' : ''}`}
-                                                    onClick={() => setActiveFullStack3DProjectIndex(index)}
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Games Section */}
-                                <div className="fullstack-section games-section">
-                                    <h4 className="section-title">🎮 Play Zone</h4>
-                                    <div className="games-grid-mern">
-                                        {fullStackContent.games.map((game, index) => (
-                                            <div
-                                                key={index}
-                                                className="game-card-mern"
-                                                onClick={() => navigate(game.route)}
-                                            >
-                                                <span className="game-icon">{game.icon}</span>
-                                                <h5 className="game-title">{game.title}</h5>
-                                                <p className="game-desc">{game.description}</p>
-                                                <span className="play-label">PLAY NOW</span>
+                                                    );
+                                                })}
                                             </div>
-                                        ))}
+
+                                            {/* Gallery Dots */}
+                                            <div className="carousel-dots gallery-dots">
+                                                {blenderContent.gallery.map((_, index) => (
+                                                    <button
+                                                        key={index}
+                                                        className={`gallery-dot ${index === activeGalleryIndex ? 'active' : ''}`}
+                                                        onClick={() => setActiveGalleryIndex(index)}
+                                                        aria-label={`Go to image ${index + 1}`}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ) : (
-                            /* Stacked Carousel for Football/Enfield */
-                            <div className="carousel-reveal">
-                                <div className="carousel-container">
-                                    <div className="carousel-stack">
-                                        {currentContent.cards.map((card, index) => {
-                                            const position = index - activeCardIndex;
-                                            let positionClass = '';
+                            ) : selectedShirt === 'fullstack' ? (
+                                <div className="fullstack-content-reveal">
+                                    {/* Header Icon */}
+                                    <FullStackHeaderIcon src={fullStackContent.headerIcon} onLoaded={handleLottieLoaded} />
 
-                                            if (position === 0) positionClass = 'active';
-                                            else if (position === -1 || (activeCardIndex === 0 && index === currentContent.cards.length - 1)) positionClass = 'prev';
-                                            else if (position === 1 || (activeCardIndex === currentContent.cards.length - 1 && index === 0)) positionClass = 'next';
-                                            else if (position < -1) positionClass = 'prev-hidden';
-                                            else positionClass = 'next-hidden';
+                                    {/* Skills Section */}
+                                    <div className="fullstack-section skills-section">
+                                        <h4 className="section-title">⚡ Tech Stack</h4>
+                                        <div className="skills-grid-mern">
+                                            {fullStackContent.skills.map((skill, index) => (
+                                                <SkillCard key={index} skill={skill} onLoaded={handleLottieLoaded} />
+                                            ))}
+                                        </div>
+                                    </div>
 
-                                            return (
+                                    {/* Projects Section */}
+                                    <div className="fullstack-section projects-section">
+                                        <h4 className="section-title">📂 Featured Projects</h4>
+                                        <div className="carousel-container project-carousel">
+                                            <div className="carousel-stack">
+                                                {fullStackContent.projects.map((project, index) => {
+                                                    const position = index - activeFullStackProjectIndex;
+                                                    let positionClass = '';
+
+                                                    if (position === 0) positionClass = 'active';
+                                                    else if (position === -1 || (activeFullStackProjectIndex === 0 && index === fullStackContent.projects.length - 1)) positionClass = 'prev';
+                                                    else if (position === 1 || (activeFullStackProjectIndex === fullStackContent.projects.length - 1 && index === 0)) positionClass = 'next';
+                                                    else if (position < -1) positionClass = 'prev-hidden';
+                                                    else positionClass = 'next-hidden';
+
+                                                    return (
+                                                        <div
+                                                            key={index}
+                                                            className={`carousel-card project-card-fs ${positionClass}`}
+                                                            onClick={() => {
+                                                                if (position === 0) window.open(project.link, '_blank');
+                                                                else setActiveFullStackProjectIndex(index);
+                                                            }}
+                                                        >
+                                                            <span className="border-line border-line-top"></span>
+                                                            <span className="border-line border-line-right"></span>
+                                                            <span className="border-line border-line-bottom"></span>
+                                                            <span className="border-line border-line-left"></span>
+
+                                                            <span className="project-icon">{project.icon}</span>
+                                                            <h5 className="project-title">{project.title}</h5>
+                                                            <p className="project-desc">{project.description}</p>
+                                                            <div className="project-footer">
+                                                                <span className="project-tag">{project.tag}</span>
+                                                                <span className="preview-label">Live Demo →</span>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+
+                                            <div className="carousel-dots project-dots">
+                                                {fullStackContent.projects.map((_, index) => (
+                                                    <button
+                                                        key={index}
+                                                        className={`project-dot ${index === activeFullStackProjectIndex ? 'active' : ''}`}
+                                                        onClick={() => setActiveFullStackProjectIndex(index)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* 3D Projects Section */}
+                                    <div className="fullstack-section projects-section">
+                                        <h4 className="section-title">🎬 3D Craft</h4>
+                                        <div className="carousel-container project-carousel">
+                                            <div className="carousel-stack">
+                                                {fullStackContent.projects3D.map((project, index) => {
+                                                    const position = index - activeFullStack3DProjectIndex;
+                                                    let positionClass = '';
+
+                                                    if (position === 0) positionClass = 'active';
+                                                    else if (position === -1 || (activeFullStack3DProjectIndex === 0 && index === fullStackContent.projects3D.length - 1)) positionClass = 'prev';
+                                                    else if (position === 1 || (activeFullStack3DProjectIndex === fullStackContent.projects3D.length - 1 && index === 0)) positionClass = 'next';
+                                                    else if (position < -1) positionClass = 'prev-hidden';
+                                                    else positionClass = 'next-hidden';
+
+                                                    return (
+                                                        <div
+                                                            key={index}
+                                                            className={`carousel-card project-card-fs ${positionClass}`}
+                                                            onClick={() => {
+                                                                if (position === 0) navigate(project.route);
+                                                                else setActiveFullStack3DProjectIndex(index);
+                                                            }}
+                                                        >
+                                                            <span className="border-line border-line-top"></span>
+                                                            <span className="border-line border-line-right"></span>
+                                                            <span className="border-line border-line-bottom"></span>
+                                                            <span className="border-line border-line-left"></span>
+
+                                                            <span className="project-icon">{project.icon}</span>
+                                                            <h5 className="project-title">{project.title}</h5>
+                                                            <p className="project-desc">{project.description}</p>
+                                                            <div className="project-footer">
+                                                                <span className="project-tag">{project.tag}</span>
+                                                                <span className="preview-label">Explore →</span>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+
+                                            <div className="carousel-dots project-dots">
+                                                {fullStackContent.projects3D.map((_, index) => (
+                                                    <button
+                                                        key={index}
+                                                        className={`project-dot ${index === activeFullStack3DProjectIndex ? 'active' : ''}`}
+                                                        onClick={() => setActiveFullStack3DProjectIndex(index)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Games Section */}
+                                    <div className="fullstack-section games-section">
+                                        <h4 className="section-title">🎮 Play Zone</h4>
+                                        <div className="games-grid-mern">
+                                            {fullStackContent.games.map((game, index) => (
                                                 <div
                                                     key={index}
-                                                    className={`carousel-card ${positionClass}`}
-                                                    onClick={() => setActiveCardIndex(index)}
+                                                    className="game-card-mern"
+                                                    onClick={() => navigate(game.route)}
                                                 >
-                                                    <span className="border-line border-line-top"></span>
-                                                    <span className="border-line border-line-right"></span>
-                                                    <span className="border-line border-line-bottom"></span>
-                                                    <span className="border-line border-line-left"></span>
-
-                                                    {card.icon.startsWith('/') ? (
-                                                        <img src={card.icon} alt={card.title} className="card-icon-img" />
-                                                    ) : (
-                                                        <span className="card-icon">{card.icon}</span>
-                                                    )}
-                                                    <h4 className="card-title">{card.title}</h4>
-                                                    <p className="card-description">{card.description}</p>
+                                                    <span className="game-icon">{game.icon}</span>
+                                                    <h5 className="game-title">{game.title}</h5>
+                                                    <p className="game-desc">{game.description}</p>
+                                                    <span className="play-label">PLAY NOW</span>
                                                 </div>
-                                            );
-                                        })}
-                                    </div>
-
-                                    <div className="carousel-dots">
-                                        {currentContent.cards.map((_, index) => (
-                                            <button
-                                                key={index}
-                                                className={`carousel-dot ${index === activeCardIndex ? 'active' : ''}`}
-                                                onClick={() => setActiveCardIndex(index)}
-                                                aria-label={`Go to card ${index + 1}`}
-                                            />
-                                        ))}
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )}
+                            ) : (
+                                /* Stacked Carousel for Football/Enfield */
+                                <div className="carousel-reveal">
+                                    <div className="carousel-container">
+                                        <div className="carousel-stack">
+                                            {currentContent.cards.map((card, index) => {
+                                                const position = index - activeCardIndex;
+                                                let positionClass = '';
+
+                                                if (position === 0) positionClass = 'active';
+                                                else if (position === -1 || (activeCardIndex === 0 && index === currentContent.cards.length - 1)) positionClass = 'prev';
+                                                else if (position === 1 || (activeCardIndex === currentContent.cards.length - 1 && index === 0)) positionClass = 'next';
+                                                else if (position < -1) positionClass = 'prev-hidden';
+                                                else positionClass = 'next-hidden';
+
+                                                return (
+                                                    <div
+                                                        key={index}
+                                                        className={`carousel-card ${positionClass}`}
+                                                        onClick={() => setActiveCardIndex(index)}
+                                                    >
+                                                        <span className="border-line border-line-top"></span>
+                                                        <span className="border-line border-line-right"></span>
+                                                        <span className="border-line border-line-bottom"></span>
+                                                        <span className="border-line border-line-left"></span>
+
+                                                        {card.icon.startsWith('/') ? (
+                                                            <img src={card.icon} alt={card.title} className="card-icon-img" />
+                                                        ) : (
+                                                            <span className="card-icon">{card.icon}</span>
+                                                        )}
+                                                        <h4 className="card-title">{card.title}</h4>
+                                                        <p className="card-description">{card.description}</p>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+
+                                        <div className="carousel-dots">
+                                            {currentContent.cards.map((_, index) => (
+                                                <button
+                                                    key={index}
+                                                    className={`carousel-dot ${index === activeCardIndex ? 'active' : ''}`}
+                                                    onClick={() => setActiveCardIndex(index)}
+                                                    aria-label={`Go to card ${index + 1}`}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
+
+            {/* Contact FAB - Portaled to body for guaranteed z-index/visibility */}
+            {createPortal(
+                <div className={`contact-fab-container ${isContactOpen ? 'open' : ''}`}>
+                    <div className="contact-options">
+                        <a href="mailto:mohammed.hafiz.4755@gmail.com" className="contact-option email" title="Mail Me">
+                            <img src="/assets/icons/email.svg" alt="Email" />
+                            <span className="tooltip">mohammed.hafiz.4755@gmail.com</span>
+                        </a>
+                        <a href="https://www.linkedin.com/in/hafiz-webdeveloper/" target="_blank" rel="noopener noreferrer" className="contact-option linkedin" title="LinkedIn">
+                            <img src="/assets/icons/linkedin.svg" alt="LinkedIn" />
+                            <span className="tooltip">LinkedIn Profile</span>
+                        </a>
+                        <a href="https://github.com/hafiz475" target="_blank" rel="noopener noreferrer" className="contact-option github" title="GitHub">
+                            <img src="/assets/icons/github.svg" alt="GitHub" />
+                            <span className="tooltip">GitHub Profile</span>
+                        </a>
+                        <a href="tel:+918754274815" className="contact-option phone" title="Call Me">
+                            <img src="/assets/icons/whatsapp.svg" alt="Phone" />
+                            <span className="tooltip">+91 8754274815</span>
+                        </a>
+                    </div>
+                    <button
+                        className="contact-trigger"
+                        onClick={() => setIsContactOpen(!isContactOpen)}
+                        title="Contact Me"
+                    >
+                        <div className="trigger-icon">
+                            {isContactOpen ? '×' : '👋'}
+                        </div>
+                    </button>
+                </div>,
+                document.body
+            )}
 
             {/* Image Modal */}
             {selectedImage && createPortal(
