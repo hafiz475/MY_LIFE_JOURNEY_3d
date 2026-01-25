@@ -206,7 +206,7 @@ const fullStackContent = {
     subtitle: "MERN Stack & Cloud Architecture",
     headerIcon: "/assets/lotties/space boy developer (1).json",
     storyPoints: [
-        "Specialized in MERN stack development with 2+ years of experience",
+        "Specialized in MERN stack development with 4+ years of experience",
         "Cloud orchestration using AWS, DigitalOcean & Cloudflare",
         "Security expert: Firebase 2FA, OTP verification & Secure Auth",
         "Building scalable microservices with Node.js & Express"
@@ -502,57 +502,41 @@ export default function RoomScene({ onBack }) {
                 <div className={`room-content ${isContentVisible ? 'visible' : ''}`}>
                     {/* T-Shirts Display */}
                     <div className="tshirts-wall">
-                        <div
-                            className={`tshirt-item ${selectedShirt === 'football' ? 'active' : ''}`}
-                            onClick={() => setSelectedShirt('football')}
-                        >
-                            <div className="hanger"></div>
-                            <img
-                                src="/assets/2dModels/football_tshirt.png"
-                                alt="Football Jersey"
-                                className="tshirt-image"
-                            />
-                            <span className="tshirt-label">Football</span>
-                        </div>
+                        {[
+                            { id: 'football', label: 'Football', img: '/assets/2dModels/football_tshirt.png', alt: 'Football Jersey' },
+                            { id: 'enfield', label: 'Mechanical Engineer', img: '/assets/2dModels/RE_tshirt.png', alt: 'Royal Enfield' },
+                            { id: 'blender', label: 'Creative Artist', img: '/assets/2dModels/blender_tshirt.png', alt: 'Blender 3D' },
+                            { id: 'fullstack', label: 'Computer Science Engineer', img: '/assets/2dModels/software_tshirt.png', alt: 'Full Stack Developer' }
+                        ].map((shirt, index) => {
+                            const shirtIds = ['football', 'enfield', 'blender', 'fullstack'];
+                            const activeIndex = shirtIds.indexOf(selectedShirt);
+                            const position = index - activeIndex;
+                            let positionClass = '';
 
-                        <div
-                            className={`tshirt-item ${selectedShirt === 'enfield' ? 'active' : ''}`}
-                            onClick={() => setSelectedShirt('enfield')}
-                        >
-                            <div className="hanger"></div>
-                            <img
-                                src="/assets/2dModels/RE_tshirt.png"
-                                alt="Royal Enfield"
-                                className="tshirt-image"
-                            />
-                            <span className="tshirt-label">Royal Enfield</span>
-                        </div>
+                            if (position === 0) positionClass = 'active';
+                            else if (position === -1) positionClass = 'prev';
+                            else if (position === 1) positionClass = 'next';
+                            else if (position < -1) positionClass = 'prev-hidden';
+                            else positionClass = 'next-hidden';
 
-                        <div
-                            className={`tshirt-item ${selectedShirt === 'blender' ? 'active' : ''}`}
-                            onClick={() => setSelectedShirt('blender')}
-                        >
-                            <div className="hanger"></div>
-                            <img
-                                src="/assets/2dModels/blender_tshirt.png"
-                                alt="Blender 3D"
-                                className="tshirt-image"
-                            />
-                            <span className="tshirt-label">Blender</span>
-                        </div>
-
-                        <div
-                            className={`tshirt-item ${selectedShirt === 'fullstack' ? 'active' : ''}`}
-                            onClick={() => setSelectedShirt('fullstack')}
-                        >
-                            <div className="hanger"></div>
-                            <img
-                                src="/assets/2dModels/software_tshirt.png"
-                                alt="Full Stack Developer"
-                                className="tshirt-image"
-                            />
-                            <span className="tshirt-label">Full Stack</span>
-                        </div>
+                            return (
+                                <div
+                                    key={shirt.id}
+                                    className={`tshirt-item ${positionClass}`}
+                                    onClick={() => setSelectedShirt(shirt.id)}
+                                >
+                                    <div className="hanger"></div>
+                                    <div className="tshirt-image-wrapper">
+                                        <img
+                                            src={shirt.img}
+                                            alt={shirt.alt}
+                                            className="tshirt-image"
+                                        />
+                                    </div>
+                                    <span className="tshirt-label">{shirt.label}</span>
+                                </div>
+                            );
+                        })}
                     </div>
 
                     {/* Content Display */}

@@ -232,9 +232,19 @@
             }
         }
 
+        .tshirt-image-wrapper {
+            width: 112px;
+            height: 150px; // Maintain same height as others for grid uniformity
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .tshirt-image {
-            width: 112px; // Reduced another 10% from 125px for perfect match
+            width: auto;
+            max-width: 100%;
             height: auto;
+            max-height: 100%;
             margin-top: 5px;
         }
     }
@@ -272,12 +282,23 @@
         }
     }
 
-    .tshirt-image {
+    .tshirt-image-wrapper {
         width: 150px;
+        height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    .tshirt-image {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
         height: auto;
         object-fit: contain;
         filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
-        transition: transform 0.3s ease;
     }
 
     .tshirt-label {
@@ -1666,19 +1687,95 @@
     }
 
     .tshirts-wall {
-        gap: 1rem;
-        padding: 1rem 0;
+        display: flex;
+        flex-wrap: nowrap;
         justify-content: center;
-        flex-wrap: wrap;
+        align-items: center;
+        height: 250px;
+        perspective: 1200px;
+        transform-style: preserve-3d;
+        padding: 2rem 0;
+        margin: 1rem auto;
+        position: relative;
+        overflow: visible;
+        overflow-x: hidden;
+
+        &::before,
+        &::after {
+            display: none !important;
+        }
     }
 
     .tshirt-item {
+        position: absolute;
+        width: 160px;
+        height: 200px;
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-style: preserve-3d;
+        cursor: pointer;
+        opacity: 0.3;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+        // Position Logic - Cover Flow Effect
+        &.active {
+            transform: translateX(0) scale(1.2) translateZ(100px) rotateY(0deg);
+            opacity: 1;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--loader-color);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 20px color-mix(in srgb, var(--loader-color) 30%, transparent);
+        }
+
+        &.prev {
+            transform: translateX(-110px) scale(0.85) translateZ(-50px) rotateY(45deg);
+            opacity: 0.6;
+            z-index: 5;
+        }
+
+        &.next {
+            transform: translateX(110px) scale(0.85) translateZ(-50px) rotateY(-45deg);
+            opacity: 0.6;
+            z-index: 5;
+        }
+
+        &.prev-hidden {
+            transform: translateX(-180px) scale(0.6) translateZ(-150px) rotateY(60deg);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        &.next-hidden {
+            transform: translateX(180px) scale(0.6) translateZ(-150px) rotateY(-60deg);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .tshirt-image-wrapper {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .tshirt-image {
-            width: 80px;
+            width: auto;
+            max-width: 100%;
+            height: auto;
+            max-height: 100%;
         }
 
         .tshirt-label {
             font-size: 0.85rem;
+            margin-top: 0.5rem;
         }
 
         &.active {
