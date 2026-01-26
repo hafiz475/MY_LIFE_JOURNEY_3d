@@ -61,8 +61,36 @@ function MainExperience() {
       setTimeout(() => (locked = false), 1200);
     };
 
+    let touchStartY = 0;
+    const onTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const onTouchEnd = (e) => {
+      if (!canScroll) return;
+      if (locked) return;
+
+      const touchEndY = e.changedTouches[0].clientY;
+      const deltaY = touchStartY - touchEndY;
+
+      // Swipe up (deltaY > 0) to continue
+      if (deltaY > 50) {
+        setSection(1);
+        setCanScroll(false);
+        locked = true;
+        setTimeout(() => (locked = false), 1200);
+      }
+    };
+
     window.addEventListener('wheel', onWheel, { passive: true });
-    return () => window.removeEventListener('wheel', onWheel);
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchend', onTouchEnd);
+    };
   }, [hasStarted, canScroll, section]);
 
   // Handle scroll back from section 1 to section 0
@@ -84,8 +112,35 @@ function MainExperience() {
       setTimeout(() => (locked = false), 1200);
     };
 
+    let touchStartY = 0;
+    const onTouchStart = (e) => {
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const onTouchEnd = (e) => {
+      if (locked) return;
+
+      const touchEndY = e.changedTouches[0].clientY;
+      const deltaY = touchStartY - touchEndY;
+
+      // Swipe down (deltaY < 0) to go back
+      if (deltaY < -50) {
+        setSection(0);
+        setCanScroll(true);
+        locked = true;
+        setTimeout(() => (locked = false), 1200);
+      }
+    };
+
     window.addEventListener('wheel', onWheel, { passive: true });
-    return () => window.removeEventListener('wheel', onWheel);
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchend', onTouchEnd);
+    };
   }, [hasStarted, section]);
 
   // Story timing for section 1
