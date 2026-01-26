@@ -102,7 +102,7 @@ function MainExperience() {
       setIsDark(true);
 
       setTimeout(() => {
-        navigate('/windmill');
+        navigate('/starFishIsland');
       }, 2000);
     }, 3000);
   };
@@ -159,7 +159,7 @@ function RoomSceneWrapper() {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate('/roomBike');
+    navigate('/myHouse');
   };
 
   return <RoomScene onBack={handleBack} />;
@@ -251,8 +251,8 @@ function App() {
       <Route path="/landing" element={<LandingSceneWrapper />} />
       <Route path="/island" element={<IslandSceneWrapper />} />
       <Route path="/polyTheme" element={<PolyThemeSceneWrapper />} />
-      <Route path="/windmill" element={<WindmillSceneWrapper />} />
-      <Route path="/roomBike" element={<RoomBikeSceneWrapper />} />
+      <Route path="/starFishIsland" element={<WindmillSceneWrapper />} />
+      <Route path="/myHouse" element={<RoomBikeSceneWrapper />} />
     </Routes>
   );
 }
