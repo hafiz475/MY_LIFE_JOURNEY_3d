@@ -20,11 +20,11 @@ export default function StoryPoint({ item, active = false, onSelect = () => { } 
                 <meshStandardMaterial color={accent} transparent opacity={0.9} />
             </mesh>
 
-            <Text position={[-0.62, 0.10, 0.05]} font="/fonts/Inter-Bold.woff" fontSize={0.075} maxWidth={1.05} anchorX="left" anchorY="top" color="#0f172a">
+            <Text position={[-0.62, 0.10, 0.05]} font={`${import.meta.env.BASE_URL}assets/fonts/Inter-Bold.woff`} fontSize={0.075} maxWidth={1.05} anchorX="left" anchorY="top" color="#0f172a">
                 {item.title}
             </Text>
 
-            <Text position={[-0.62, -0.02, 0.05]} font="/fonts/Inter-Regular.woff" fontSize={0.045} maxWidth={1.05} anchorX="left" anchorY="top" color={"rgba(15,23,42,0.7)"}>
+            <Text position={[-0.62, -0.02, 0.05]} font={`${import.meta.env.BASE_URL}assets/fonts/Inter-Regular.woff`} fontSize={0.045} maxWidth={1.05} anchorX="left" anchorY="top" color={"rgba(15,23,42,0.7)"}>
                 {item.subtitle}
             </Text>
 

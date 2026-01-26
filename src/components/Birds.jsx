@@ -50,7 +50,7 @@ function Bird({ position, speed, factor, phase, scale, scene, animations }) {
 
 export default function Birds() {
     const birdsCount = 10;
-    const { scene, animations } = useGLTF('/assets/models/low_poly_bird_animated.glb');
+    const { scene, animations } = useGLTF(`${import.meta.env.BASE_URL}assets/models/low_poly_bird_animated.glb`);
 
     const birds = useMemo(() => {
         return new Array(birdsCount).fill().map((_, i) => ({
@@ -75,4 +75,4 @@ export default function Birds() {
     );
 }
 
-useGLTF.preload('/assets/models/low_poly_bird_animated.glb');
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/low_poly_bird_animated.glb`);

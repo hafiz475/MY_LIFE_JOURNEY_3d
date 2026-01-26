@@ -15,7 +15,7 @@ import './PolyThemeScene.scss';
 // The 3D Model inside the sphere
 function WorkingModel() {
     const groupRef = useRef();
-    const { scene } = useGLTF('/assets/models/landingscene/working.glb');
+    const { scene } = useGLTF(`${import.meta.env.BASE_URL}assets/models/landingscene/working.glb`);
 
     // Gentle rotation animation
     useFrame((state) => {
@@ -257,4 +257,4 @@ export default function PolyThemeScene() {
 }
 
 // Preload the model
-useGLTF.preload('/assets/models/landingscene/working.glb');
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/landingscene/working.glb`);

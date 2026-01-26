@@ -23,7 +23,7 @@ export default function HeroHub({ name = "J Md Hafizur Rahman", position = [0, 1
                 <meshStandardMaterial emissive={"#61dafb"} emissiveIntensity={0.9} color={"#ffffff"} />
             </mesh>
 
-            <Text position={[0, 0.95, 0]} font="/fonts/Inter-Bold.woff" fontSize={0.12} maxWidth={2.2} textAlign="center" anchorX="center" anchorY="middle" color="#0f172a">
+            <Text position={[0, 0.95, 0]} font={`${import.meta.env.BASE_URL}assets/fonts/Inter-Bold.woff`} fontSize={0.12} maxWidth={2.2} textAlign="center" anchorX="center" anchorY="middle" color="#0f172a">
                 {name}
             </Text>
 

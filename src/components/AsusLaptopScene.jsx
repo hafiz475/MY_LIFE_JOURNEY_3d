@@ -18,7 +18,7 @@ import './AsusLaptopScene.scss';
 // ASUS ROG Laptop Model with Open/Close Animation
 function AsusLaptop({ isOpen, onAnimationComplete }) {
     const groupRef = useRef();
-    const { scene, animations } = useGLTF('/assets/models/asus_rog_laptop.glb');
+    const { scene, animations } = useGLTF(`${import.meta.env.BASE_URL}assets/models/asus_rog_laptop.glb`);
     const { actions, mixer } = useAnimations(animations, scene);
     const animationRef = useRef(null);
     const prevIsOpen = useRef(isOpen);
@@ -306,4 +306,4 @@ export default function AsusLaptopScene() {
 }
 
 // Preload the model
-useGLTF.preload('/assets/models/asus_rog_laptop.glb');
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/asus_rog_laptop.glb`);

@@ -16,7 +16,7 @@ import './LandingScene.scss'; // Reuse the same styles
 function RoomBikeModel({ isNightMode, onToggleNight }) {
     const navigate = useNavigate();
     const groupRef = useRef();
-    const { scene, animations } = useGLTF('/assets/models/landingscene/room_and_bike.glb');
+    const { scene, animations } = useGLTF(`${import.meta.env.BASE_URL}assets/models/landingscene/room_and_bike.glb`);
     const { actions, names } = useAnimations(animations, scene);
     const [hovered, setHovered] = useState(false);
 
@@ -375,4 +375,4 @@ export default function RoomBikeScene() {
 }
 
 // Preload model
-useGLTF.preload('/assets/models/landingscene/room_and_bike.glb');
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/landingscene/room_and_bike.glb`);

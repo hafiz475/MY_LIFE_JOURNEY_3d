@@ -18,7 +18,7 @@ import { useMemo } from 'react';
 function WindmillModel({ onClick, isLanded }) {
     const groupRef = useRef();
     const starLightRef = useRef();
-    const { scene, animations } = useGLTF('/assets/models/landingscene/working2.glb');
+    const { scene, animations } = useGLTF(`${import.meta.env.BASE_URL}assets/models/landingscene/working2.glb`);
     const { actions } = useAnimations(animations, scene);
     const [hovered, setHovered] = useState(false);
 
@@ -132,8 +132,8 @@ function SteppingStonePath() {
 
 // Parked Boats - stationary boats near the shore
 function ParkedBoats() {
-    const lancha1 = useGLTF('/assets/models/landingscene/lancha_low_poly.glb');
-    const lancha2 = useGLTF('/assets/models/landingscene/lancha_2_low_poly.glb');
+    const lancha1 = useGLTF(`${import.meta.env.BASE_URL}assets/models/landingscene/lancha_low_poly.glb`);
+    const lancha2 = useGLTF(`${import.meta.env.BASE_URL}assets/models/landingscene/lancha_2_low_poly.glb`);
 
     // Setup shadows
     useEffect(() => {
@@ -171,7 +171,7 @@ function ParkedBoats() {
 function SailingBoats() {
     const boat1Ref = useRef();
     const boat2Ref = useRef();
-    const { scene: boatScene } = useGLTF('/assets/models/landingscene/boat_from_poly_by_google.glb');
+    const { scene: boatScene } = useGLTF(`${import.meta.env.BASE_URL}assets/models/landingscene/boat_from_poly_by_google.glb`);
 
     // Setup shadows
     useEffect(() => {
@@ -236,7 +236,7 @@ function SailingBoats() {
 function CruiseShips() {
     const cruise1Ref = useRef();
     const cruise2Ref = useRef();
-    const { scene: cruiseScene } = useGLTF('/assets/models/landingscene/cruise_ship_-_toofan.glb');
+    const { scene: cruiseScene } = useGLTF(`${import.meta.env.BASE_URL}assets/models/landingscene/cruise_ship_-_toofan.glb`);
 
     // Setup shadows
     useEffect(() => {
@@ -300,7 +300,7 @@ function CruiseShips() {
 // Shark Fin - animated shark swimming in the sea (visible in front of island)
 function SharkFin() {
     const sharkRef = useRef();
-    const { scene } = useGLTF('/assets/models/landingscene/shark_fin_from_poly_by_google.glb');
+    const { scene } = useGLTF(`${import.meta.env.BASE_URL}assets/models/landingscene/shark_fin_from_poly_by_google.glb`);
 
     useEffect(() => {
         scene.traverse((child) => {
@@ -343,7 +343,7 @@ function SharkFin() {
 // Eagle - flies forever with spiral descent and takeoff pattern
 function Eagle() {
     const eagleRef = useRef();
-    const { scene, animations } = useGLTF('/assets/models/low_poly_eagle.glb');
+    const { scene, animations } = useGLTF(`${import.meta.env.BASE_URL}assets/models/low_poly_eagle.glb`);
     const { actions } = useAnimations(animations, scene);
 
     // Play flying animation
@@ -427,7 +427,7 @@ function Eagle() {
 // Flying Birds - animated flock of 5 birds flying across the scene
 function FlyingBirds() {
     const groupRef = useRef();
-    const { scene, animations } = useGLTF('/assets/models/birds.glb');
+    const { scene, animations } = useGLTF(`${import.meta.env.BASE_URL}assets/models/birds.glb`);
     const { actions } = useAnimations(animations, scene);
 
     // Play bird flying animations
@@ -592,7 +592,7 @@ function ShorelineFoam() {
 
 // Animated Clouds - More clouds for a fuller sky
 function AnimatedClouds() {
-    const { scene } = useGLTF('/assets/models/cloud.glb');
+    const { scene } = useGLTF(`${import.meta.env.BASE_URL}assets/models/cloud.glb`);
     const groupRef = useRef();
     const cloudsRef = useRef([]);
 
@@ -665,7 +665,7 @@ function AnimatedClouds() {
 
 // Cute Toon Trees - 3 trees positioned around the windmill
 function ToonTrees() {
-    const { scene } = useGLTF('/assets/models/landingscene/cute_toon_tree.glb');
+    const { scene } = useGLTF(`${import.meta.env.BASE_URL}assets/models/landingscene/cute_toon_tree.glb`);
     const groupRef = useRef();
 
     // Tree positions around the windmill
@@ -708,7 +708,7 @@ function ToonTrees() {
 function SeaplaneLanding({ onTakeoffComplete, onLanded }) {
     const groupRef = useRef();
     const starLightRef = useRef();
-    const { scene, animations } = useGLTF('/assets/models/gottfried_freiherr_von_banfields_seaplane.glb');
+    const { scene, animations } = useGLTF(`${import.meta.env.BASE_URL}assets/models/gottfried_freiherr_von_banfields_seaplane.glb`);
     const { actions } = useAnimations(animations, scene);
     const startTimeRef = useRef(null);
     const hasLandedRef = useRef(false);
@@ -913,7 +913,7 @@ function SeaplaneLanding({ onTakeoffComplete, onLanded }) {
 
 // Welcome Sign - wooden sign board with text
 function WelcomeSign() {
-    const { scene } = useGLTF('/assets/models/landingscene/low_poly_sign_board__stylized_wooden_sign.glb');
+    const { scene } = useGLTF(`${import.meta.env.BASE_URL}assets/models/landingscene/low_poly_sign_board__stylized_wooden_sign.glb`);
 
     useEffect(() => {
         scene.traverse((child) => {
@@ -966,7 +966,7 @@ function WelcomeSign() {
 
 // Snow Mountain in the background
 function SnowMountain() {
-    const { scene } = useGLTF('/assets/models/landingscene/snow_mountain.glb');
+    const { scene } = useGLTF(`${import.meta.env.BASE_URL}assets/models/landingscene/snow_mountain.glb`);
 
     useEffect(() => {
         scene.traverse((child) => {
@@ -1184,16 +1184,16 @@ export default function WindmillScene() {
 }
 
 // Preload all models
-useGLTF.preload('/assets/models/landingscene/working2.glb');
-useGLTF.preload('/assets/models/cloud.glb');
-useGLTF.preload('/assets/models/landingscene/cute_toon_tree.glb');
-useGLTF.preload('/assets/models/gottfried_freiherr_von_banfields_seaplane.glb');
-useGLTF.preload('/assets/models/landingscene/snow_mountain.glb');
-useGLTF.preload('/assets/models/landingscene/low_poly_sign_board__stylized_wooden_sign.glb');
-useGLTF.preload('/assets/models/landingscene/lancha_low_poly.glb');
-useGLTF.preload('/assets/models/landingscene/lancha_2_low_poly.glb');
-useGLTF.preload('/assets/models/landingscene/boat_from_poly_by_google.glb');
-useGLTF.preload('/assets/models/landingscene/cruise_ship_-_toofan.glb');
-useGLTF.preload('/assets/models/landingscene/shark_fin_from_poly_by_google.glb');
-useGLTF.preload('/assets/models/low_poly_eagle.glb');
-useGLTF.preload('/assets/models/birds.glb');
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/landingscene/working2.glb`);
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/cloud.glb`);
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/landingscene/cute_toon_tree.glb`);
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/gottfried_freiherr_von_banfields_seaplane.glb`);
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/landingscene/snow_mountain.glb`);
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/landingscene/low_poly_sign_board__stylized_wooden_sign.glb`);
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/landingscene/lancha_low_poly.glb`);
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/landingscene/lancha_2_low_poly.glb`);
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/landingscene/boat_from_poly_by_google.glb`);
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/landingscene/cruise_ship_-_toofan.glb`);
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/landingscene/shark_fin_from_poly_by_google.glb`);
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/low_poly_eagle.glb`);
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/birds.glb`);

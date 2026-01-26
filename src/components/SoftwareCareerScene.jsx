@@ -15,7 +15,7 @@ import './SoftwareCareerScene.scss';
 // Animated Gaming Laptop - starts open, click to close
 function AnimatedLaptop({ isOpen, onLaptopClick }) {
     const groupRef = useRef();
-    const { scene } = useGLTF('/assets/models/gaming_laptop.glb');
+    const { scene } = useGLTF(`${import.meta.env.BASE_URL}assets/models/gaming_laptop.glb`);
     const [currentLidAngle, setCurrentLidAngle] = useState(0); // Start open (native state)
     const targetLidAngle = isOpen ? Math.PI * 0.5 : 0; // isOpen=true means CLOSED (0.5), isOpen=false means OPEN (0)
     const screenRef = useRef(null);
@@ -218,4 +218,4 @@ export default function SoftwareCareerScene() {
     );
 }
 
-useGLTF.preload('/assets/models/gaming_laptop.glb');
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/gaming_laptop.glb`);

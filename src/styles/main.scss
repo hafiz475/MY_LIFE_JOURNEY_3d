@@ -1,13 +1,13 @@
 @font-face {
     font-family: 'AppInterBold';
-    src: url('/assets/fonts/Inter-Bold.woff') format('woff');
+    src: url('https://hafiz475.github.io/MY_LIFE_JOURNEY_3d/assets/fonts/Inter-Bold.woff') format('woff');
     font-weight: 700;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Caveat';
-    src: url('/assets/fonts/Caveat-Regular.ttf') format('truetype');
+    src: url('https://hafiz475.github.io/MY_LIFE_JOURNEY_3d/assets/fonts/Caveat-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -1101,6 +1101,7 @@ canvas {
         0% {
             opacity: 0.3;
         }
+
         100% {
             opacity: 0.8;
         }
@@ -1120,12 +1121,10 @@ canvas {
         .core-glow {
             position: absolute;
             inset: -20px;
-            background: radial-gradient(
-                circle,
-                rgba(130, 180, 255, 0.4) 0%,
-                rgba(180, 130, 255, 0.2) 40%,
-                transparent 70%
-            );
+            background: radial-gradient(circle,
+                    rgba(130, 180, 255, 0.4) 0%,
+                    rgba(180, 130, 255, 0.2) 40%,
+                    transparent 70%);
             border-radius: 50%;
             animation: coreBreathing 4s ease-in-out infinite;
         }
@@ -1133,12 +1132,10 @@ canvas {
         .core-inner {
             position: absolute;
             inset: 0;
-            background: radial-gradient(
-                circle,
-                rgba(255, 255, 255, 0.1) 0%,
-                rgba(130, 180, 255, 0.2) 50%,
-                rgba(60, 80, 150, 0.3) 100%
-            );
+            background: radial-gradient(circle,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    rgba(130, 180, 255, 0.2) 50%,
+                    rgba(60, 80, 150, 0.3) 100%);
             border-radius: 50%;
             border: 1px solid rgba(130, 180, 255, 0.4);
             display: flex;
@@ -1159,10 +1156,13 @@ canvas {
     }
 
     @keyframes coreBreathing {
-        0%, 100% {
+
+        0%,
+        100% {
             transform: scale(1);
             opacity: 0.6;
         }
+
         50% {
             transform: scale(1.15);
             opacity: 1;
@@ -1192,10 +1192,9 @@ canvas {
             right: 0;
             height: 1px;
             background: linear-gradient(90deg,
-                transparent,
-                rgba(130, 180, 255, 0.5),
-                transparent
-            );
+                    transparent,
+                    rgba(130, 180, 255, 0.5),
+                    transparent);
             opacity: 0;
             transition: opacity 0.3s ease;
         }

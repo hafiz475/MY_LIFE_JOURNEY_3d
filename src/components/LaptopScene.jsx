@@ -14,12 +14,14 @@ import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 import PhoneModel from './PhoneModel';
+import woodenTexture from '../assets/wallpaper/laptop_wooden_texture.png';
+import pantherWallpaper from '../assets/wallpaper/black-panther-home wallpaper.jpg';
 import './LaptopScene.scss';
 
 // 3D Gaming Laptop Model Component with Screen Content
 function GamingLaptop() {
     const groupRef = useRef();
-    const { scene } = useGLTF('/assets/models/gaming_laptop.glb');
+    const { scene } = useGLTF(`${import.meta.env.BASE_URL}assets/models/gaming_laptop.glb`);
 
     // Subtle floating animation
     useFrame((state) => {
@@ -90,7 +92,7 @@ function GamingLaptop() {
 
 // Reflective Floor/Desk surface component with wooden texture
 function ReflectiveFloor() {
-    const texture = useTexture('/src/assets/wallpaper/laptop_wooden_texture.png');
+    const texture = useTexture(woodenTexture);
 
     // Configure texture repeat for larger floor
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
@@ -558,7 +560,7 @@ function PhoneOverlay({ currentTime, onClose }) {
                 {/* Phone Screen with Black Panther Wallpaper */}
                 <div
                     className="phone-screen-content"
-                    style={{ backgroundImage: `url('/src/assets/wallpaper/black-panther-home wallpaper.jpg')` }}
+                    style={{ backgroundImage: `url(${pantherWallpaper})` }}
                 >
                     {/* Time Display */}
                     <div className="phone-time-section">
@@ -765,4 +767,4 @@ export default function LaptopScene() {
 }
 
 // Preload the model
-useGLTF.preload('/assets/models/gaming_laptop.glb');
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/gaming_laptop.glb`);

@@ -33,7 +33,7 @@ export default function SpaceCube() {
 
     // Load the Lottie animation from public folder
     useEffect(() => {
-        fetch('/assets/lotties/space boy developer (1).json')
+        fetch(`${import.meta.env.BASE_URL}assets/lotties/space boy developer (1).json`)
             .then(res => res.json())
             .then(data => setSpaceBoyLottie(data))
             .catch(err => console.error('Failed to load Lottie:', err));

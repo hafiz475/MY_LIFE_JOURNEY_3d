@@ -17,22 +17,22 @@ const footballContent = {
     ],
     cards: [
         {
-            icon: "/assets/2dModels/football_img.png",
+            icon: `${import.meta.env.BASE_URL}assets/2dModels/football_img.png`,
             title: "Weekend Warrior",
             description: "Every weekend, the local pitch becomes my battlefield. Rain or shine, the game must go on."
         },
         {
-            icon: "/assets/2dModels/chess_img.png",
+            icon: `${import.meta.env.BASE_URL}assets/2dModels/chess_img.png`,
             title: "Tactical Mind",
             description: "Reading the game, anticipating moves, and finding that perfect through ball. Football is chess at 100 km/h."
         },
         {
-            icon: "/assets/2dModels/heart_img.png",
+            icon: `${import.meta.env.BASE_URL}assets/2dModels/heart_img.png`,
             title: "Pure Passion",
             description: "From watching legends on TV to playing under streetlights. This love never fades."
         },
         {
-            icon: "/assets/2dModels/trophy_img.png",
+            icon: `${import.meta.env.BASE_URL}assets/2dModels/trophy_img.png`,
             title: "Team Leader",
             description: "Captain spirit runs deep. Leading by example, lifting the team when spirits are low."
         }
@@ -57,12 +57,12 @@ const royalEnfieldContent = {
             description: "Supervising 2,000 motorcycles daily. Every bolt tightened, every engine tested — zero compromises."
         },
         {
-            icon: "/assets/2dModels/kaizen_master.png",
+            icon: `${import.meta.env.BASE_URL}assets/2dModels/kaizen_master.png`,
             title: "Kaizen Master",
             description: "Continuous improvement wasn't just a buzzword. It was hunting inefficiencies and making processes bulletproof."
         },
         {
-            icon: "/assets/2dModels/mechanical_engineer.png",
+            icon: `${import.meta.env.BASE_URL}assets/2dModels/mechanical_engineer.png`,
             title: "500+ Engineers",
             description: "Coordinating with a massive team across shifts. Communication, leadership, and keeping the line moving."
         },
@@ -124,8 +124,8 @@ const blenderContent = {
             name: "HD Chess Kit",
             description: "High-detail chess pieces and board",
             files: [
-                "/assets/blender/Chess/HD chess/Chess board.blend",
-                "/assets/blender/Chess/HD chess/Chess base piece.blend"
+                `${import.meta.env.BASE_URL}assets/blender/Chess/HD chess/Chess board.blend`,
+                `${import.meta.env.BASE_URL}assets/blender/Chess/HD chess/Chess base piece.blend`
             ],
             icon: "♔"
         },
@@ -133,14 +133,14 @@ const blenderContent = {
             name: "Low Poly Chess",
             description: "Full set of low-poly optimized chess pieces",
             files: [
-                "/assets/blender/Chess/Low poly chess/Chess board full set 2( color )- Copy.blend",
-                "/assets/blender/Chess/Low poly chess/Chess board full set 2- Copy.blend",
-                "/assets/blender/Chess/Low poly chess/LP King.blend",
-                "/assets/blender/Chess/Low poly chess/LP Queen.blend",
-                "/assets/blender/Chess/Low poly chess/LP Knight.blend",
-                "/assets/blender/Chess/Low poly chess/Chess Bishop.blend",
-                "/assets/blender/Chess/Low poly chess/LP rook.blend",
-                "/assets/blender/Chess/Low poly chess/Chess Pawn.blend"
+                `${import.meta.env.BASE_URL}assets/blender/Chess/Low poly chess/Chess board full set 2( color )- Copy.blend`,
+                `${import.meta.env.BASE_URL}assets/blender/Chess/Low poly chess/Chess board full set 2- Copy.blend`,
+                `${import.meta.env.BASE_URL}assets/blender/Chess/Low poly chess/LP King.blend`,
+                `${import.meta.env.BASE_URL}assets/blender/Chess/Low poly chess/LP Queen.blend`,
+                `${import.meta.env.BASE_URL}assets/blender/Chess/Low poly chess/LP Knight.blend`,
+                `${import.meta.env.BASE_URL}assets/blender/Chess/Low poly chess/Chess Bishop.blend`,
+                `${import.meta.env.BASE_URL}assets/blender/Chess/Low poly chess/LP rook.blend`,
+                `${import.meta.env.BASE_URL}assets/blender/Chess/Low poly chess/Chess Pawn.blend`
             ],
             icon: "♙"
         },
@@ -148,34 +148,34 @@ const blenderContent = {
             name: "Donut Tutorial",
             description: "Classic Blender donut - 3 variations",
             files: [
-                "/assets/blender/Donut/donut.blend",
-                "/assets/blender/Donut/donut 1.blend",
-                "/assets/blender/Donut/Donut 2.blend"
+                `${import.meta.env.BASE_URL}assets/blender/Donut/donut.blend`,
+                `${import.meta.env.BASE_URL}assets/blender/Donut/donut 1.blend`,
+                `${import.meta.env.BASE_URL}assets/blender/Donut/Donut 2.blend`
             ],
             icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="3" /></svg>
         },
         {
             name: "Fluffy Bunny",
             description: "Sculpted character with fur shader",
-            files: ["/assets/blender/Fluffy bunny/untitled.blend"],
+            files: [`${import.meta.env.BASE_URL}assets/blender/Fluffy bunny/untitled.blend`],
             icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 5L8 2M14 5L16 2M12 21C16.4183 21 20 17.4183 20 13C20 8.58172 16.4183 5 12 5C7.58172 5 4 8.58172 4 13C4 17.4183 7.58172 21 12 21Z" /><path d="M9 12H9.01M15 12H15.01" /><path d="M10 16C10.5 17 13.5 17 14 16" /></svg>
         },
         {
             name: "Lamp Animation",
             description: "Rigged lamp with animation",
-            files: ["/assets/blender/Lamp/Lamp.blend1"],
+            files: [`${import.meta.env.BASE_URL}assets/blender/Lamp/Lamp.blend1`],
             icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5V2M12 22V19M5 12H2M22 12H19M7.05 7.05L4.93 4.93M19.07 19.07L16.95 16.83M19.07 4.93L16.95 7.05M7.05 19.07L4.93 16.95M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z" /></svg>
         }
     ],
     // Showcase gallery - now will be displayed as carousel
     gallery: [
-        { src: "/assets/blender/Chess cycle 2.png", title: "Chess Set - Cycles Render" },
-        { src: "/assets/blender/Chess Eevee 1.png", title: "Chess Set - Eevee Render" },
-        { src: "/assets/blender/Chess/Low poly chess/Full chess 1.png", title: "Low Poly Chess Set" },
-        { src: "/assets/blender/finished well part 1.png", title: "Stone Well - Part 1" },
-        { src: "/assets/blender/finished well part 2(cycle rendered).png", title: "Stone Well - Cycles" },
-        { src: "/assets/blender/oil barell render.png", title: "Oil Barrel" },
-        { src: "/assets/blender/rocket cycle render.png", title: "Rocket - Cycles Render" }
+        { src: `${import.meta.env.BASE_URL}assets/blender/Chess cycle 2.png`, title: "Chess Set - Cycles Render" },
+        { src: `${import.meta.env.BASE_URL}assets/blender/Chess Eevee 1.png`, title: "Chess Set - Eevee Render" },
+        { src: `${import.meta.env.BASE_URL}assets/blender/Chess/Low poly chess/Full chess 1.png`, title: "Low Poly Chess Set" },
+        { src: `${import.meta.env.BASE_URL}assets/blender/finished well part 1.png`, title: "Stone Well - Part 1" },
+        { src: `${import.meta.env.BASE_URL}assets/blender/finished well part 2(cycle rendered).png`, title: "Stone Well - Cycles" },
+        { src: `${import.meta.env.BASE_URL}assets/blender/oil barell render.png`, title: "Oil Barrel" },
+        { src: `${import.meta.env.BASE_URL}assets/blender/rocket cycle render.png`, title: "Rocket - Cycles Render" }
     ]
 };
 
@@ -204,7 +204,7 @@ const softwareContent = {
 const fullStackContent = {
     title: "Full Stack Developer",
     subtitle: "MERN Stack & Cloud Architecture",
-    headerIcon: "/assets/lotties/space boy developer (1).json",
+    headerIcon: `${import.meta.env.BASE_URL}assets/lotties/space boy developer (1).json`,
     storyPoints: [
         "Specialized in MERN stack development with 4+ years of experience",
         "Cloud orchestration using AWS, DigitalOcean & Cloudflare",
@@ -212,17 +212,17 @@ const fullStackContent = {
         "Building scalable microservices with Node.js & Express"
     ],
     skills: [
-        { name: "React", logo: "/assets/logos/react.svg", color: "#61DAFB" },
-        { name: "Node.js", logo: "/assets/logos/node.svg", color: "#339933" },
-        { name: "MongoDB", logo: "/assets/logos/mongo.svg", color: "#47A248" },
-        { name: "Express", logo: "/assets/logos/express.svg", color: "#ffffff" },
-        { name: "TypeScript", logo: "/assets/logos/typescript.svg", color: "#3178C6" },
-        { name: "JavaScript", logo: "/assets/logos/javascript.svg", color: "#F7DF1E" },
-        { name: "Next.js", logo: "/assets/logos/nextjs.svg", color: "#ffffff" },
-        { name: "AWS", logo: "/assets/logos/aws.svg", color: "#FF9900" },
-        { name: "DigitalOcean", logo: "/assets/logos/digitalocean.svg", color: "#0080FF", isRaw: true },
-        { name: "Cloudflare", logo: "/assets/logos/cloudflare.svg", color: "#F38020", isRaw: true },
-        { name: "Firebase", logo: "/assets/logos/firebase.svg", color: "#FFCA28" }
+        { name: "React", logo: `${import.meta.env.BASE_URL}assets/logos/react.svg`, color: "#61DAFB" },
+        { name: "Node.js", logo: `${import.meta.env.BASE_URL}assets/logos/node.svg`, color: "#339933" },
+        { name: "MongoDB", logo: `${import.meta.env.BASE_URL}assets/logos/mongo.svg`, color: "#47A248" },
+        { name: "Express", logo: `${import.meta.env.BASE_URL}assets/logos/express.svg`, color: "#ffffff" },
+        { name: "TypeScript", logo: `${import.meta.env.BASE_URL}assets/logos/typescript.svg`, color: "#3178C6" },
+        { name: "JavaScript", logo: `${import.meta.env.BASE_URL}assets/logos/javascript.svg`, color: "#F7DF1E" },
+        { name: "Next.js", logo: `${import.meta.env.BASE_URL}assets/logos/nextjs.svg`, color: "#ffffff" },
+        { name: "AWS", logo: `${import.meta.env.BASE_URL}assets/logos/aws.svg`, color: "#FF9900" },
+        { name: "DigitalOcean", logo: `${import.meta.env.BASE_URL}assets/logos/digitalocean.svg`, color: "#0080FF", isRaw: true },
+        { name: "Cloudflare", logo: `${import.meta.env.BASE_URL}assets/logos/cloudflare.svg`, color: "#F38020", isRaw: true },
+        { name: "Firebase", logo: `${import.meta.env.BASE_URL}assets/logos/firebase.svg`, color: "#FFCA28" }
     ],
     projects: [
         {
@@ -521,10 +521,10 @@ export default function RoomScene({ onBack }) {
                         {/* T-Shirts Display */}
                         <div className="tshirts-wall">
                             {[
-                                { id: 'football', label: 'Football', img: '/assets/2dModels/football_tshirt.png', alt: 'Football Jersey' },
-                                { id: 'enfield', label: 'Mechanical Engineer', img: '/assets/2dModels/RE_tshirt.png', alt: 'Royal Enfield' },
-                                { id: 'blender', label: 'Creative Artist', img: '/assets/2dModels/blender_tshirt.png', alt: 'Blender 3D' },
-                                { id: 'fullstack', label: 'Computer Science Engineer', img: '/assets/2dModels/software_tshirt.png', alt: 'Full Stack Developer' }
+                                { id: 'football', label: 'Football', img: `${import.meta.env.BASE_URL}assets/2dModels/football_tshirt.png`, alt: 'Football Jersey' },
+                                { id: 'enfield', label: 'Mechanical Engineer', img: `${import.meta.env.BASE_URL}assets/2dModels/RE_tshirt.png`, alt: 'Royal Enfield' },
+                                { id: 'blender', label: 'Creative Artist', img: `${import.meta.env.BASE_URL}assets/2dModels/blender_tshirt.png`, alt: 'Blender 3D' },
+                                { id: 'fullstack', label: 'Computer Science Engineer', img: `${import.meta.env.BASE_URL}assets/2dModels/software_tshirt.png`, alt: 'Full Stack Developer' }
                             ].map((shirt, index) => {
                                 const shirtIds = ['football', 'enfield', 'blender', 'fullstack'];
                                 const activeIndex = shirtIds.indexOf(selectedShirt);
@@ -928,19 +928,19 @@ export default function RoomScene({ onBack }) {
                 <div className={`contact-fab-container ${selectedShirt} ${isContactOpen ? 'open' : ''}`}>
                     <div className="contact-options">
                         <a href="mailto:mohammed.hafiz.4755@gmail.com?subject=Inquiry%20from%20Portfolio&body=Hi%20Hafiz,%0D%0A%0D%0AI%20saw%20your%20portfolio%20and%20wanted%20to%20get%20in%20touch." className="contact-option email" title="Mail Me">
-                            <img src="/assets/icons/email.svg" alt="Email" />
+                            <img src={`${import.meta.env.BASE_URL}assets/icons/email.svg`} alt="Email" />
                             <span className="tooltip">mohammed.hafiz.4755@gmail.com</span>
                         </a>
                         <a href="https://www.linkedin.com/in/hafiz-webdeveloper/" target="_blank" rel="noopener noreferrer" className="contact-option linkedin" title="LinkedIn">
-                            <img src="/assets/icons/linkedin.svg" alt="LinkedIn" />
+                            <img src={`${import.meta.env.BASE_URL}assets/icons/linkedin.svg`} alt="LinkedIn" />
                             <span className="tooltip">LinkedIn Profile</span>
                         </a>
                         <a href="https://github.com/hafiz475" target="_blank" rel="noopener noreferrer" className="contact-option github" title="GitHub">
-                            <img src="/assets/icons/github.svg" alt="GitHub" />
+                            <img src={`${import.meta.env.BASE_URL}assets/icons/github.svg`} alt="GitHub" />
                             <span className="tooltip">GitHub Profile</span>
                         </a>
                         <a href="https://wa.me/918754274815?text=Hi%20Hafiz!%20I%20saw%20your%20portfolio%20and%20wanted%20to%20connect." target="_blank" rel="noopener noreferrer" className="contact-option phone" title="WhatsApp Me">
-                            <img src="/assets/icons/whatsapp.svg" alt="WhatsApp" />
+                            <img src={`${import.meta.env.BASE_URL}assets/icons/whatsapp.svg`} alt="WhatsApp" />
                             <span className="tooltip">Chat on WhatsApp</span>
                         </a>
                     </div>

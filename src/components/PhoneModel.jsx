@@ -5,7 +5,7 @@ import { useFrame } from '@react-three/fiber';
 export default function PhoneModel({ onClick }) {
     const groupRef = useRef();
     const dotRef = useRef();
-    const { scene } = useGLTF('/assets/models/phone_free.glb');
+    const { scene } = useGLTF(`${import.meta.env.BASE_URL}assets/models/phone_free.glb`);
 
     useFrame((state) => {
         if (groupRef.current) {
@@ -51,4 +51,4 @@ export default function PhoneModel({ onClick }) {
 }
 
 // Preload the model
-useGLTF.preload('/assets/models/phone_free.glb');
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/phone_free.glb`);

@@ -4,7 +4,7 @@ import { Text } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Same font as HudText name display
-const CAVEAT_URL = "/assets/fonts/Caveat-Regular.ttf";
+const CAVEAT_URL = `${import.meta.env.BASE_URL}assets/fonts/Caveat-Regular.ttf`;
 
 export default function StoryText3D({ isStoryDone }) {
     const { camera, size } = useThree();

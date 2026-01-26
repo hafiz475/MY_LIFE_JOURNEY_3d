@@ -106,7 +106,7 @@ function ClickablePlane({ onClick }) {
 // Island with Boat Model
 function IslandModel({ onHouseClick, onPlaneClick }) {
     const groupRef = useRef();
-    const { scene, animations } = useGLTF('/assets/models/landingscene/island_boat.glb');
+    const { scene, animations } = useGLTF(`${import.meta.env.BASE_URL}assets/models/landingscene/island_boat.glb`);
     const { actions, names } = useAnimations(animations, scene);
 
     useEffect(() => {
@@ -145,7 +145,7 @@ function IslandModel({ onHouseClick, onPlaneClick }) {
 
 // Static Clouds (no animation for performance)
 function StaticClouds() {
-    const { scene } = useGLTF('/assets/models/cloud.glb');
+    const { scene } = useGLTF(`${import.meta.env.BASE_URL}assets/models/cloud.glb`);
     const groupRef = useRef();
     const cloudsInitialized = useRef(false);
 
@@ -373,5 +373,5 @@ export default function IslandScene() {
 }
 
 // Preload models
-useGLTF.preload('/assets/models/landingscene/island_boat.glb');
-useGLTF.preload('/assets/models/cloud.glb');
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/landingscene/island_boat.glb`);
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/cloud.glb`);

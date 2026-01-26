@@ -11,7 +11,7 @@ export const projects = [
     {
         id: "carzmoto",
         title: "CarzMoto Billing & Service Platform",
-        logo: "/assets/logos/carz moto.png", // prefer rename to carzmoto.png (no spaces)
+        logo: `${import.meta.env.BASE_URL}assets/logos/carz moto.png`, // prefer rename to carzmoto.png (no spaces)
         lotties: [firebaseLottie, nodeLottie, expressLottie, mongoLottie, awsLottie, whatsappLottie],
         summary: `A full billing + product management + WhatsApp PDF delivery system for an auto accessories garage in Chennai.`,
         position: [3.5, 1.2, -2.0],
@@ -20,7 +20,7 @@ export const projects = [
     {
         id: "bizmagnets",
         title: "Bizmagnets WhatsApp CRM",
-        logo: "/assets/logos/bizmagnets.png",
+        logo: `${import.meta.env.BASE_URL}assets/logos/bizmagnets.png`,
         lotties: [whatsappLottie, nodeLottie, mongoLottie],
         summary: `WhatsApp Business CRM: chatbots, automation, ticketing.`,
         position: [-3.2, 1.7, 1.5],
@@ -29,7 +29,7 @@ export const projects = [
     {
         id: "nippon",
         title: "Nippon Paint Digital Billing",
-        logo: "/assets/logos/nippon.png",
+        logo: `${import.meta.env.BASE_URL}assets/logos/nippon.png`,
         lotties: [reactLottie, nodeLottie],
         summary: `Tablet-based billing workflow migration for Nippon Paint.`,
         position: [1.0, 2.0, 3.3],

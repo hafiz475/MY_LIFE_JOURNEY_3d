@@ -9,7 +9,7 @@ import gsap from 'gsap';
 export default function Plane() {
   const group = useRef();
   const idleRef = useRef();
-  const { scene, animations } = useGLTF('/assets/models/gottfried_freiherr_von_banfields_seaplane.glb');
+  const { scene, animations } = useGLTF(`${import.meta.env.BASE_URL}assets/models/gottfried_freiherr_von_banfields_seaplane.glb`);
   const { actions, names } = useAnimations(animations, group);
 
   // Track animation state to prevent spamming

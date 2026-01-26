@@ -15,7 +15,7 @@ import './LandingScene.scss';
 // Bedroom Model with Animations
 function BedroomModel() {
     const groupRef = useRef();
-    const { scene, animations } = useGLTF('/assets/models/low_poly_bedroom.glb');
+    const { scene, animations } = useGLTF(`${import.meta.env.BASE_URL}assets/models/low_poly_bedroom.glb`);
     const { actions, names } = useAnimations(animations, scene);
 
     useEffect(() => {
@@ -242,4 +242,4 @@ export default function LandingScene() {
 }
 
 // Preload model
-useGLTF.preload('/assets/models/low_poly_bedroom.glb');
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/low_poly_bedroom.glb`);

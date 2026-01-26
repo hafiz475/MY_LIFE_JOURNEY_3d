@@ -11,10 +11,10 @@ const SoundManager = forwardRef(({ isRaining, showBirds, section }, ref) => {
 
     // Initialize Audio Objects Logic
     useEffect(() => {
-        engineAudio.current = new Audio('/assets/sounds/plane_engine.mp3');
-        rainAudio.current = new Audio('/assets/sounds/rain.mp3');
-        thunderAudio.current = new Audio('/assets/sounds/thunder.mp3');
-        birdsAudio.current = new Audio('/assets/sounds/birds.mp3');
+        engineAudio.current = new Audio(`${import.meta.env.BASE_URL}assets/sounds/plane_engine.mp3`);
+        rainAudio.current = new Audio(`${import.meta.env.BASE_URL}assets/sounds/rain.mp3`);
+        thunderAudio.current = new Audio(`${import.meta.env.BASE_URL}assets/sounds/thunder.mp3`);
+        birdsAudio.current = new Audio(`${import.meta.env.BASE_URL}assets/sounds/birds.mp3`);
 
         // --- Setup Properties ---
 

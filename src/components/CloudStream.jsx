@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import * as THREE from 'three';
 
 export default function CloudStream({ maxClouds = 20, onCloudClick, section = 0, active = true }) {
-  const { scene } = useGLTF('/assets/models/cloud.glb');
+  const { scene } = useGLTF(`${import.meta.env.BASE_URL}assets/models/cloud.glb`);
   const group = useRef();
   const clouds = useRef([]);
 
@@ -107,4 +107,4 @@ export default function CloudStream({ maxClouds = 20, onCloudClick, section = 0,
   );
 }
 
-useGLTF.preload('/assets/models/cloud.glb');
+useGLTF.preload(`${import.meta.env.BASE_URL}assets/models/cloud.glb`);
