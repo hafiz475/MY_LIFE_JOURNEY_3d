@@ -14,6 +14,7 @@ import './LandingScene.scss'; // Reuse the same styles
 
 // Room and Bike Model with Animations and Blinking Notification Lights
 function RoomBikeModel({ isNightMode, onToggleNight }) {
+    const navigate = useNavigate();
     const groupRef = useRef();
     const { scene, animations } = useGLTF('/assets/models/landingscene/room_and_bike.glb');
     const { actions, names } = useAnimations(animations, scene);
@@ -25,14 +26,14 @@ function RoomBikeModel({ isNightMode, onToggleNight }) {
     // Object positions for blinking lights - silver color, smaller size
     // Removed PhotoFrame3 as requested
     const blinkingObjects = useMemo(() => [
-        { name: 'Bike', position: [-0.22, 0.7, 2.3], offset: 0, isSwitch: false },
-        { name: 'Football', position: [-0.22, 0.5, -0.3], offset: 0.5, isSwitch: false },
-        { name: 'Laptop', position: [0.64, 0.42, -1.4], offset: 1.0, isSwitch: false },
-        { name: 'Trophy', position: [-1.18, 0.8, -2.2], offset: 1.5, isSwitch: false },
-        { name: 'Blender_Icon', position: [0.15, 0.9, -2.7], offset: 2.0, isSwitch: false },
-        // Photo frames on wall (removed PhotoFrame3)
-        { name: 'PhotoFrame1', position: [-0.9, 1.2, -2.7], offset: 2.5, isSwitch: false },
-        { name: 'PhotoFrame2', position: [0.1, 1.5, -2.7], offset: 3.0, isSwitch: false },
+        { name: 'Bike', position: [-0.22, 0.7, 2.3], offset: 0, isSwitch: false, targetShirt: 'enfield' },
+        { name: 'Football', position: [-0.22, 0.5, -0.3], offset: 0.5, isSwitch: false, targetShirt: 'football' },
+        { name: 'Laptop', position: [0.64, 0.42, -1.4], offset: 1.0, isSwitch: false, targetShirt: 'fullstack' },
+        { name: 'Trophy', position: [-1.18, 0.8, -2.2], offset: 1.5, isSwitch: false, targetShirt: 'football' },
+        { name: 'Blender_Icon', position: [0.15, 0.9, -2.7], offset: 2.0, isSwitch: false, targetShirt: 'blender' },
+        // Photo frames on wall
+        { name: 'PhotoFrame1', position: [-0.9, 1.2, -2.7], offset: 2.5, isSwitch: false, targetShirt: 'fullstack' },
+        { name: 'PhotoFrame2', position: [0.1, 1.5, -2.7], offset: 3.0, isSwitch: false, targetShirt: 'fullstack' },
         // Switches - clickable to toggle day/night
         { name: 'Room_Switch', position: [-1.95, 1.48, 0.96], offset: 4.0, isSwitch: true },
         { name: 'Lamp_Switch', position: [1.77, 0.9, -2.7], offset: 4.5, isSwitch: true },
@@ -97,7 +98,7 @@ function RoomBikeModel({ isNightMode, onToggleNight }) {
         });
     }, [scene, actions, names]);
 
-    // Change cursor on hover over switches
+    // Change cursor on hover over all interactive pips
     useEffect(() => {
         document.body.style.cursor = hovered ? 'pointer' : 'auto';
         return () => { document.body.style.cursor = 'auto'; };
@@ -117,9 +118,11 @@ function RoomBikeModel({ isNightMode, onToggleNight }) {
         });
     });
 
-    const handleSwitchClick = () => {
-        if (onToggleNight) {
-            onToggleNight();
+    const handlePipClick = (obj) => {
+        if (obj.isSwitch) {
+            if (onToggleNight) onToggleNight();
+        } else if (obj.targetShirt) {
+            navigate('/room', { state: { shirt: obj.targetShirt } });
         }
     };
 
@@ -133,9 +136,9 @@ function RoomBikeModel({ isNightMode, onToggleNight }) {
                     key={obj.name}
                     ref={(el) => (blinkingLightsRef.current[index] = el)}
                     position={obj.position}
-                    onClick={obj.isSwitch ? handleSwitchClick : undefined}
-                    onPointerOver={obj.isSwitch ? () => setHovered(true) : undefined}
-                    onPointerOut={obj.isSwitch ? () => setHovered(false) : undefined}
+                    onClick={() => handlePipClick(obj)}
+                    onPointerOver={() => setHovered(true)}
+                    onPointerOut={() => setHovered(false)}
                 >
                     <sphereGeometry args={[0.035, 16, 16]} />
                     <meshStandardMaterial
@@ -207,13 +210,9 @@ function GradientBackground() {
 function Loader() {
     return (
         <Html center>
-            <div style={{
-                color: '#8b5a7a',
-                fontSize: '1.2rem',
-                fontFamily: 'Inter, sans-serif',
-                textShadow: '0 2px 10px rgba(0,0,0,0.3)'
-            }}>
-                Loading Scene...
+            <div className="scene-loader-container">
+                <div className="spinner"></div>
+                <div className="loader-text">Loading Scene</div>
             </div>
         </Html>
     );

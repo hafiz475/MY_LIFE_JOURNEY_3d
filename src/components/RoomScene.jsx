@@ -398,7 +398,7 @@ const FullStackHeaderIcon = React.memo(({ src, onLoaded }) => {
 export default function RoomScene({ onBack }) {
     const navigate = useNavigate();
     const location = useLocation();
-    const [selectedShirt, setSelectedShirt] = useState('football');
+    const [selectedShirt, setSelectedShirt] = useState(location.state?.shirt || 'football');
     const [isContentVisible, setIsContentVisible] = useState(false);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [activeCardIndex, setActiveCardIndex] = useState(0);
