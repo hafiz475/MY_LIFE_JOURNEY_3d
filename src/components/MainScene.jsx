@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Suspense, useEffect, useRef, useState } from 'react';
-import { Sky } from '@react-three/drei';
+import { Sky, OrbitControls } from '@react-three/drei';
 import gsap from 'gsap';
 
 import Plane from './Plane';
@@ -383,6 +383,14 @@ function SceneContent({ section, onRainStart, isLanding, isStoryDone, hasStarted
 export default function MainScene({ section, onRainStart, isLanding, isStoryDone, hasStarted }) {
   return (
     <Canvas camera={{ position: [0, 1.5, 6], fov: 45 }}>
+      <OrbitControls
+        enabled={section === 0}
+        enablePan={false}
+        enableZoom={false}
+        enableDamping={true}
+        dampingFactor={0.05}
+        rotateSpeed={0.5}
+      />
       <SceneContent section={section} onRainStart={onRainStart} isLanding={isLanding} isStoryDone={isStoryDone} hasStarted={hasStarted} />
     </Canvas>
   );

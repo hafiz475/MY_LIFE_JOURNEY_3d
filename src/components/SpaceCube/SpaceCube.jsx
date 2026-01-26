@@ -54,6 +54,8 @@ export default function SpaceCube() {
     // Scroll handler
     useEffect(() => {
         let scrollLocked = false;
+        let touchStartY = 0;
+        let touchStartX = 0;
 
         const handleWheel = (e) => {
             if (scrollLocked || isAnimating) return;
@@ -81,14 +83,50 @@ export default function SpaceCube() {
             setTimeout(() => scrollLocked = false, 1000);
         };
 
+        const handleTouchStart = (e) => {
+            touchStartY = e.touches[0].clientY;
+            touchStartX = e.touches[0].clientX;
+        };
+
+        const handleTouchEnd = (e) => {
+            if (scrollLocked || isAnimating) return;
+
+            const touchEndY = e.changedTouches[0].clientY;
+            const touchEndX = e.changedTouches[0].clientX;
+            const deltaY = touchStartY - touchEndY;
+            const deltaX = touchStartX - touchEndX;
+
+            if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                // Vertical swipe
+                if (Math.abs(deltaY) > 50) {
+                    scrollLocked = true;
+                    if (deltaY > 0) navigateTo('down');
+                    else navigateTo('up');
+                    setTimeout(() => scrollLocked = false, 1000);
+                }
+            } else {
+                // Horizontal swipe
+                if (Math.abs(deltaX) > 50) {
+                    scrollLocked = true;
+                    if (deltaX > 0) navigateTo('right');
+                    else navigateTo('left');
+                    setTimeout(() => scrollLocked = false, 1000);
+                }
+            }
+        };
+
         const container = document.querySelector('.star-journey-wrapper');
         if (container) {
             container.addEventListener('wheel', handleWheel, { passive: false });
+            container.addEventListener('touchstart', handleTouchStart, { passive: true });
+            container.addEventListener('touchend', handleTouchEnd, { passive: true });
         }
 
         return () => {
             if (container) {
                 container.removeEventListener('wheel', handleWheel);
+                container.removeEventListener('touchstart', handleTouchStart);
+                container.removeEventListener('touchend', handleTouchEnd);
             }
         };
     }, [navigateTo, isAnimating]);
