@@ -412,6 +412,58 @@ const FullStackHeaderIcon = React.memo(({ src, onLoaded }) => {
     );
 });
 
+// Reusable hook for carousel drag/swipe navigation
+const useCarouselDrag = (onNext, onPrev, elementRef) => {
+    useEffect(() => {
+        const el = elementRef.current;
+        if (!el) return;
+
+        let startX = 0;
+        let isDragging = false;
+        const threshold = 50;
+
+        const handleStart = (x) => {
+            startX = x;
+            isDragging = true;
+        };
+
+        const handleMove = (x) => {
+            if (!isDragging) return;
+        };
+
+        const handleEnd = (x) => {
+            if (!isDragging) return;
+            const diffX = startX - x;
+
+            if (Math.abs(diffX) > threshold) {
+                if (diffX > 0) onNext();
+                else onPrev();
+            }
+            isDragging = false;
+        };
+
+        const onMouseDown = (e) => handleStart(e.clientX);
+        const onMouseMove = (e) => handleMove(e.clientX);
+        const onMouseUp = (e) => handleEnd(e.clientX);
+        const onTouchStart = (e) => handleStart(e.touches[0].clientX);
+        const onTouchEnd = (e) => handleEnd(e.changedTouches[0].clientX);
+
+        el.addEventListener('mousedown', onMouseDown);
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+        el.addEventListener('touchstart', onTouchStart, { passive: true });
+        el.addEventListener('touchend', onTouchEnd, { passive: true });
+
+        return () => {
+            el.removeEventListener('mousedown', onMouseDown);
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+            el.removeEventListener('touchstart', onTouchStart);
+            el.removeEventListener('touchend', onTouchEnd);
+        };
+    }, [onNext, onPrev, elementRef]);
+};
+
 export default function RoomScene({ onBack }) {
     const navigate = useNavigate();
     const location = useLocation();
@@ -427,6 +479,14 @@ export default function RoomScene({ onBack }) {
     const [fullStackLoadedCount, setFullStackLoadedCount] = useState(0);
     const [isSectionReady, setIsSectionReady] = useState(false);
     const [isContactOpen, setIsContactOpen] = useState(false);
+
+    // Refs for drag support
+    const shirtWallRef = React.useRef(null);
+    const blenderProjectRef = React.useRef(null);
+    const galleryRef = React.useRef(null);
+    const fullStackProjectRef = React.useRef(null);
+    const fullStack3DProjectRef = React.useRef(null);
+    const standardCarouselRef = React.useRef(null);
 
     // Check if we're on the /software route
     const showSoftware = location.pathname === '/software';
@@ -504,6 +564,41 @@ export default function RoomScene({ onBack }) {
                 ? blenderContent
                 : fullStackContent;
 
+    // Navigation helpers
+    const nextShirt = () => {
+        const shirtIds = ['football', 'enfield', 'blender', 'fullstack'];
+        const currentIndex = shirtIds.indexOf(selectedShirt);
+        if (currentIndex < shirtIds.length - 1) setSelectedShirt(shirtIds[currentIndex + 1]);
+    };
+    const prevShirt = () => {
+        const shirtIds = ['football', 'enfield', 'blender', 'fullstack'];
+        const currentIndex = shirtIds.indexOf(selectedShirt);
+        if (currentIndex > 0) setSelectedShirt(shirtIds[currentIndex - 1]);
+    };
+
+    const nextCard = () => setActiveCardIndex(prev => (prev + 1) % currentContent.cards.length);
+    const prevCard = () => setActiveCardIndex(prev => (prev - 1 + currentContent.cards.length) % currentContent.cards.length);
+
+    const nextBlenderProject = () => setActiveBlenderProjectIndex(prev => (prev + 1) % blenderContent.projects.length);
+    const prevBlenderProject = () => setActiveBlenderProjectIndex(prev => (prev - 1 + blenderContent.projects.length) % blenderContent.projects.length);
+
+    const nextGallery = () => setActiveGalleryIndex(prev => (prev + 1) % blenderContent.gallery.length);
+    const prevGallery = () => setActiveGalleryIndex(prev => (prev - 1 + blenderContent.gallery.length) % blenderContent.gallery.length);
+
+    const nextFSProject = () => setActiveFullStackProjectIndex(prev => (prev + 1) % fullStackContent.projects.length);
+    const prevFSProject = () => setActiveFullStackProjectIndex(prev => (prev - 1 + fullStackContent.projects.length) % fullStackContent.projects.length);
+
+    const nextFS3DProject = () => setActiveFullStack3DProjectIndex(prev => (prev + 1) % fullStackContent.projects3D.length);
+    const prevFS3DProject = () => setActiveFullStack3DProjectIndex(prev => (prev - 1 + fullStackContent.projects3D.length) % fullStackContent.projects3D.length);
+
+    // Apply drag hook to carousels
+    useCarouselDrag(nextShirt, prevShirt, shirtWallRef);
+    useCarouselDrag(nextBlenderProject, prevBlenderProject, blenderProjectRef);
+    useCarouselDrag(nextGallery, prevGallery, galleryRef);
+    useCarouselDrag(nextFSProject, prevFSProject, fullStackProjectRef);
+    useCarouselDrag(nextFS3DProject, prevFS3DProject, fullStack3DProjectRef);
+    useCarouselDrag(nextCard, prevCard, standardCarouselRef);
+
     // Show software scene if on /software route
     return (
         <>
@@ -519,7 +614,7 @@ export default function RoomScene({ onBack }) {
                     {/* Main Content Area */}
                     <div className={`room-content ${isContentVisible ? 'visible' : ''}`}>
                         {/* T-Shirts Display */}
-                        <div className="tshirts-wall">
+                        <div className="tshirts-wall" ref={shirtWallRef}>
                             {[
                                 { id: 'football', label: 'Football', img: `${import.meta.env.BASE_URL}assets/2dModels/football_tshirt.png`, alt: 'Football Jersey' },
                                 { id: 'enfield', label: 'Mechanical Engineer', img: `${import.meta.env.BASE_URL}assets/2dModels/RE_tshirt.png`, alt: 'Royal Enfield' },
@@ -596,7 +691,7 @@ export default function RoomScene({ onBack }) {
                                     <div className="blender-section projects-section">
                                         <h4 className="section-title">🎬 3D Projects</h4>
                                         <p className="section-desc">Interactive scenes built with Blender & Three.js</p>
-                                        <div className="carousel-container project-carousel">
+                                        <div className="carousel-container project-carousel" ref={blenderProjectRef}>
                                             <div className="carousel-stack">
                                                 {blenderContent.projects.map((project, index) => {
                                                     const position = index - activeBlenderProjectIndex;
@@ -683,7 +778,7 @@ export default function RoomScene({ onBack }) {
                                         <h4 className="section-title">🖼️ Blender Workspace</h4>
                                         <p className="section-desc">Renders and artwork from my 3D journey</p>
 
-                                        <div className="carousel-container gallery-carousel">
+                                        <div className="carousel-container gallery-carousel" ref={galleryRef}>
                                             <div className="carousel-stack">
                                                 {blenderContent.gallery.map((item, index) => {
                                                     const position = index - activeGalleryIndex;
@@ -745,7 +840,7 @@ export default function RoomScene({ onBack }) {
                                     {/* Projects Section */}
                                     <div className="fullstack-section projects-section">
                                         <h4 className="section-title">📂 Featured Projects</h4>
-                                        <div className="carousel-container project-carousel">
+                                        <div className="carousel-container project-carousel" ref={fullStackProjectRef}>
                                             <div className="carousel-stack">
                                                 {fullStackContent.projects.map((project, index) => {
                                                     const position = index - activeFullStackProjectIndex;
@@ -798,7 +893,7 @@ export default function RoomScene({ onBack }) {
                                     {/* 3D Projects Section */}
                                     <div className="fullstack-section projects-section">
                                         <h4 className="section-title">🎬 3D Craft</h4>
-                                        <div className="carousel-container project-carousel">
+                                        <div className="carousel-container project-carousel" ref={fullStack3DProjectRef}>
                                             <div className="carousel-stack">
                                                 {fullStackContent.projects3D.map((project, index) => {
                                                     const position = index - activeFullStack3DProjectIndex;
@@ -870,7 +965,7 @@ export default function RoomScene({ onBack }) {
                             ) : (
                                 /* Stacked Carousel for Football/Enfield */
                                 <div className="carousel-reveal">
-                                    <div className="carousel-container">
+                                    <div className="carousel-container" ref={standardCarouselRef}>
                                         <div className="carousel-stack">
                                             {currentContent.cards.map((card, index) => {
                                                 const position = index - activeCardIndex;

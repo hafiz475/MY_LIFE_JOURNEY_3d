@@ -179,7 +179,7 @@ canvas {
 // Scroll Prompt - appears after rain ends
 .scroll-prompt {
     position: absolute;
-    bottom: 8%;
+    bottom: 12%;
     left: 0;
     width: 100%;
     z-index: 100;
@@ -636,7 +636,7 @@ canvas {
 
 @media (max-width: 768px) {
     .land-button {
-        bottom: 5%;
+        bottom: calc(5% + 30px);
         right: 5%;
         padding: 0.6rem 1rem;
         font-size: 0.9rem;
