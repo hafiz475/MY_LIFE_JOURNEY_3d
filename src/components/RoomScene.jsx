@@ -212,17 +212,17 @@ const fullStackContent = {
         "Building scalable microservices with Node.js & Express"
     ],
     skills: [
-        { name: "React", lottie: "/assets/lotties/react.json", color: "#61DAFB" },
-        { name: "Node.js", lottie: "/assets/lotties/node.json", color: "#339933" },
-        { name: "MongoDB", lottie: "/assets/lotties/mongodb.json", color: "#47A248" },
-        { name: "Express", lottie: "/assets/lotties/express.json", color: "#000000" },
-        { name: "TypeScript", lottie: "/assets/lotties/typescript.json", color: "#3178C6" },
-        { name: "JavaScript", lottie: "/assets/lotties/javascript.json", color: "#F7DF1E" },
-        { name: "Next.js", lottie: "/assets/lotties/nextjs.json", color: "#ffffff" },
-        { name: "AWS", lottie: "/assets/lotties/aws.json", color: "#FF9900" },
-        { name: "DigitalOcean", lottie: "/assets/lotties/digitalocean.json", color: "#0080FF" },
-        { name: "Cloudflare", lottie: "/assets/lotties/cloudflare.json", color: "#F38020" },
-        { name: "Firebase", lottie: "/assets/lotties/firebase.json", color: "#FFCA28" }
+        { name: "React", logo: "/assets/logos/react.svg", color: "#61DAFB" },
+        { name: "Node.js", logo: "/assets/logos/node.svg", color: "#339933" },
+        { name: "MongoDB", logo: "/assets/logos/mongo.svg", color: "#47A248" },
+        { name: "Express", logo: "/assets/logos/express.svg", color: "#ffffff" },
+        { name: "TypeScript", logo: "/assets/logos/typescript.svg", color: "#3178C6" },
+        { name: "JavaScript", logo: "/assets/logos/javascript.svg", color: "#F7DF1E" },
+        { name: "Next.js", logo: "/assets/logos/nextjs.svg", color: "#ffffff" },
+        { name: "AWS", logo: "/assets/logos/aws.svg", color: "#FF9900" },
+        { name: "DigitalOcean", logo: "/assets/logos/digitalocean.svg", color: "#0080FF", isRaw: true },
+        { name: "Cloudflare", logo: "/assets/logos/cloudflare.svg", color: "#F38020", isRaw: true },
+        { name: "Firebase", logo: "/assets/logos/firebase.svg", color: "#FFCA28" }
     ],
     projects: [
         {
@@ -326,7 +326,11 @@ const SkillCard = React.memo(({ skill, onLoaded }) => {
     const [animationData, setAnimationData] = useState(null);
 
     useEffect(() => {
-        if (!skill.lottie) return;
+        if (!skill.lottie) {
+            // If it's a logo, it's considered loaded immediately
+            if (skill.logo && onLoaded) onLoaded();
+            return;
+        }
         let isMounted = true;
         fetch(skill.lottie)
             .then(res => res.json())
@@ -341,19 +345,32 @@ const SkillCard = React.memo(({ skill, onLoaded }) => {
                 if (onLoaded) onLoaded();
             });
         return () => { isMounted = false; };
-    }, [skill.lottie]);
+    }, [skill.lottie, skill.logo, onLoaded]);
 
     return (
-        <div className="skill-card-mern" style={{ '--accent-color': skill.color }}>
+        <div className="skill-card-mern" style={{ '--accent-color': skill.color, '--logo-url': `url(${skill.logo})` }}>
             <div className="lottie-container">
-                {animationData && (
+                {skill.lottie && animationData ? (
                     <Lottie
                         animationData={animationData}
                         loop={true}
                         renderer="canvas"
                         style={{ width: '100%', height: '100%' }}
                     />
-                )}
+                ) : skill.logo ? (
+                    skill.isRaw ? (
+                        <img
+                            src={skill.logo}
+                            alt={skill.name}
+                            className="skill-logo-img is-raw"
+                        />
+                    ) : (
+                        <div
+                            className="skill-logo-img"
+                            aria-label={skill.name}
+                        />
+                    )
+                ) : null}
             </div>
             <span className="skill-name">{skill.name}</span>
         </div>
@@ -434,7 +451,9 @@ export default function RoomScene({ onBack }) {
     // Handle Full Stack loading progress
     useEffect(() => {
         if (selectedShirt === 'fullstack') {
-            const totalToLoad = fullStackContent.skills.length + 1; // skills + header icon
+            const lottieSkillsCount = fullStackContent.skills.filter(s => s.lottie).length;
+            const logoSkillsCount = fullStackContent.skills.filter(s => s.logo).length;
+            const totalToLoad = lottieSkillsCount + logoSkillsCount + 1; // skills + header icon
             if (fullStackLoadedCount >= totalToLoad) {
                 setTimeout(() => setIsSectionReady(true), 500);
             }

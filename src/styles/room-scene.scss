@@ -2110,6 +2110,51 @@
         height: 80px;
         z-index: 1;
         filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .skill-logo-img {
+            width: 70%;
+            height: 70%;
+            object-fit: contain;
+
+            // Colorize the SVG to its brand color (accent color)
+            background-color: var(--accent-color);
+            mask-image: var(--logo-url);
+            mask-size: contain;
+            mask-repeat: no-repeat;
+            mask-position: center;
+            -webkit-mask-image: var(--logo-url);
+            -webkit-mask-size: contain;
+            -webkit-mask-repeat: no-repeat;
+            -webkit-mask-position: center;
+
+            // Raw icons (like DigitalOcean/Cloudflare) use their own file colors
+            &.is-raw {
+                background-color: transparent !important;
+                mask-image: none !important;
+                -webkit-mask-image: none !important;
+            }
+
+            // Add a glow in the brand color
+            filter: drop-shadow(0 0 10px var(--accent-color));
+            transition: all 0.3s ease;
+            opacity: 0.85;
+
+            // Hide the actual <img> content and only show the masked background
+            visibility: visible;
+        }
+    }
+
+    &:hover .skill-logo-img {
+        opacity: 1;
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 15px var(--accent-color));
+
+        &:not(.is-raw) {
+            background-color: color-mix(in srgb, var(--accent-color) 80%, white);
+        }
     }
 
     .skill-name {
