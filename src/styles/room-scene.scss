@@ -2299,18 +2299,52 @@
         }
 
         .contact-trigger {
-            background: #ff3300;
             transform: rotate(0deg) scale(0.9);
-            box-shadow: 0 0 30px rgba(255, 51, 0, 0.4);
+            box-shadow: 0 0 30px var(--theme-color-glow);
+            background: var(--theme-color-bg-active) !important;
+            border-color: var(--theme-color-border) !important;
         }
+    }
+
+    // Theme Variables Mapping
+    &.football {
+        --theme-color-main: #00f2ff;
+        --theme-color-border: rgba(0, 242, 255, 0.6);
+        --theme-color-bg: rgba(0, 242, 255, 0.1);
+        --theme-color-bg-active: rgba(0, 242, 255, 0.2);
+        --theme-color-glow: rgba(0, 242, 255, 0.3);
+    }
+
+    &.enfield {
+        --theme-color-main: #ff5533;
+        --theme-color-border: rgba(255, 85, 51, 0.6);
+        --theme-color-bg: rgba(255, 85, 51, 0.1);
+        --theme-color-bg-active: rgba(255, 85, 51, 0.2);
+        --theme-color-glow: rgba(255, 85, 51, 0.3);
+    }
+
+    &.blender {
+        --theme-color-main: #ff6600;
+        --theme-color-border: rgba(255, 102, 0, 0.6);
+        --theme-color-bg: rgba(255, 102, 0, 0.1);
+        --theme-color-bg-active: rgba(255, 102, 0, 0.2);
+        --theme-color-glow: rgba(255, 102, 0, 0.3);
+    }
+
+    &.fullstack {
+        --theme-color-main: #ffcc00;
+        --theme-color-border: rgba(255, 204, 0, 0.6);
+        --theme-color-bg: rgba(255, 204, 0, 0.1);
+        --theme-color-bg-active: rgba(255, 204, 0, 0.2);
+        --theme-color-glow: rgba(255, 204, 0, 0.3);
     }
 }
 
 .contact-option {
     width: 45px;
     height: 45px;
-    background: rgba(30, 30, 30, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--theme-color-bg);
+    border: 1px solid var(--theme-color-border);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -2339,13 +2373,18 @@
 
         .tooltip {
             opacity: 1;
-            transform: translateX(-110%) translateY(-50%);
+            transform: translateX(-8px) translateY(-50%);
         }
     }
 
     &.email:hover {
         border-color: #EA4335;
         box-shadow: 0 0 15px rgba(234, 67, 53, 0.3);
+    }
+
+    &.email img,
+    &.github img {
+        filter: brightness(0) invert(1);
     }
 
     &.linkedin:hover {
@@ -2367,7 +2406,7 @@
         position: absolute;
         right: 100%;
         top: 50%;
-        transform: translateX(-100%) translateY(-50%);
+        transform: translateY(-50%);
         background: rgba(10, 10, 10, 0.9);
         color: #fff;
         padding: 0.5rem 1rem;
@@ -2377,9 +2416,9 @@
         white-space: nowrap;
         pointer-events: none;
         opacity: 0;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        margin-right: 15px;
+        margin-right: 12px;
 
         &::after {
             content: '';
@@ -2397,17 +2436,18 @@
 .contact-trigger {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, #ff6600, #ff3300);
-    border: none;
+    background: var(--theme-color-bg);
+    border: 2px solid var(--theme-color-border);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 10px 25px rgba(255, 102, 0, 0.4);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(10px);
 
     &::after {
         content: '';
@@ -2416,14 +2456,15 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.1);
         opacity: 0;
         transition: opacity 0.3s ease;
     }
 
     &:hover {
         transform: scale(1.1) rotate(5deg);
-        box-shadow: 0 15px 35px rgba(255, 102, 0, 0.6);
+        box-shadow: 0 15px 35px var(--theme-color-glow);
+        background: var(--theme-color-bg-active);
 
         &::after {
             opacity: 1;
@@ -2438,6 +2479,7 @@
         font-size: 24px;
         color: #fff;
         transition: transform 0.4s ease;
+        text-shadow: 0 0 10px var(--theme-color-glow);
     }
 }
 

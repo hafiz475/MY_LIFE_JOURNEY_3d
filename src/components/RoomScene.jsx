@@ -907,9 +907,9 @@ export default function RoomScene({ onBack }) {
 
             {/* Contact FAB - Portaled to body for guaranteed z-index/visibility */}
             {createPortal(
-                <div className={`contact-fab-container ${isContactOpen ? 'open' : ''}`}>
+                <div className={`contact-fab-container ${selectedShirt} ${isContactOpen ? 'open' : ''}`}>
                     <div className="contact-options">
-                        <a href="mailto:mohammed.hafiz.4755@gmail.com" className="contact-option email" title="Mail Me">
+                        <a href="mailto:mohammed.hafiz.4755@gmail.com?subject=Inquiry%20from%20Portfolio&body=Hi%20Hafiz,%0D%0A%0D%0AI%20saw%20your%20portfolio%20and%20wanted%20to%20get%20in%20touch." className="contact-option email" title="Mail Me">
                             <img src="/assets/icons/email.svg" alt="Email" />
                             <span className="tooltip">mohammed.hafiz.4755@gmail.com</span>
                         </a>
@@ -921,9 +921,9 @@ export default function RoomScene({ onBack }) {
                             <img src="/assets/icons/github.svg" alt="GitHub" />
                             <span className="tooltip">GitHub Profile</span>
                         </a>
-                        <a href="tel:+918754274815" className="contact-option phone" title="Call Me">
-                            <img src="/assets/icons/whatsapp.svg" alt="Phone" />
-                            <span className="tooltip">+91 8754274815</span>
+                        <a href="https://wa.me/918754274815?text=Hi%20Hafiz!%20I%20saw%20your%20portfolio%20and%20wanted%20to%20connect." target="_blank" rel="noopener noreferrer" className="contact-option phone" title="WhatsApp Me">
+                            <img src="/assets/icons/whatsapp.svg" alt="WhatsApp" />
+                            <span className="tooltip">Chat on WhatsApp</span>
                         </a>
                     </div>
                     <button
