@@ -103,15 +103,16 @@ function RoomBikeModel({ isNightMode, onToggleNight }) {
         return () => { document.body.style.cursor = 'auto'; };
     }, [hovered]);
 
-    // Blinking animation for all notification lights - subtle silver pulse
+    // Blinking animation for all notification lights - vibrant silver glow
     useFrame((state) => {
         blinkingLightsRef.current.forEach((lightMesh, index) => {
-            if (lightMesh) {
+            if (lightMesh && lightMesh.material) {
                 const offset = blinkingObjects[index]?.offset || 0;
-                // Subtle opacity pulsing only
-                if (lightMesh.material) {
-                    lightMesh.material.opacity = 0.4 + Math.sin(state.clock.elapsedTime * 2.5 + offset) * 0.3;
-                }
+                const pulse = Math.sin(state.clock.elapsedTime * 3.5 + offset);
+
+                // Pulsate both opacity and emissive intensity for maximum visibility
+                lightMesh.material.opacity = 0.6 + pulse * 0.4;
+                lightMesh.material.emissiveIntensity = 2.0 + pulse * 1.5;
             }
         });
     });
@@ -136,11 +137,15 @@ function RoomBikeModel({ isNightMode, onToggleNight }) {
                     onPointerOver={obj.isSwitch ? () => setHovered(true) : undefined}
                     onPointerOut={obj.isSwitch ? () => setHovered(false) : undefined}
                 >
-                    <sphereGeometry args={[0.06, 12, 12]} />
-                    <meshBasicMaterial
-                        color="#C0C0C0"
+                    <sphereGeometry args={[0.035, 16, 16]} />
+                    <meshStandardMaterial
+                        color="#ffffff"
+                        emissive="#00f2ff"
+                        emissiveIntensity={2}
                         transparent
-                        opacity={0.7}
+                        opacity={0.8}
+                        metalness={1}
+                        roughness={0}
                     />
                 </mesh>
             ))}
@@ -226,7 +231,7 @@ export default function RoomBikeScene() {
     return (
         <div className="landing-scene-container">
             <Canvas
-                camera={{ position: [10, 8, 10], fov: 45 }}
+                camera={{ position: [7, 5, 7], fov: 45 }}
                 shadows
                 gl={{ antialias: true, alpha: true }}
                 dpr={[1, 2]}
@@ -247,7 +252,7 @@ export default function RoomBikeScene() {
 
                 {/* Ambient lighting - dimmer at night */}
                 <ambientLight
-                    intensity={isNightMode ? 0.15 : 0.6}
+                    intensity={isNightMode ? 0.15 : 0.4}
                     color={isNightMode ? '#404060' : '#fff5f8'}
                 />
 
@@ -255,7 +260,7 @@ export default function RoomBikeScene() {
                 {!isNightMode && (
                     <directionalLight
                         position={[8, 15, 5]}
-                        intensity={2}
+                        intensity={1.2}
                         castShadow
                         shadow-mapSize={[2048, 2048]}
                         shadow-camera-left={-15}
@@ -281,7 +286,7 @@ export default function RoomBikeScene() {
                 {/* Secondary fill light - dimmer at night */}
                 <directionalLight
                     position={[-5, 8, -5]}
-                    intensity={isNightMode ? 0.1 : 0.5}
+                    intensity={isNightMode ? 0.1 : 0.3}
                     color={isNightMode ? '#303050' : '#ffeef5'}
                 />
 
@@ -290,7 +295,7 @@ export default function RoomBikeScene() {
                     args={[
                         isNightMode ? '#303050' : '#ffd0e0',
                         isNightMode ? '#101020' : '#8b6070',
-                        isNightMode ? 0.15 : 0.4
+                        isNightMode ? 0.15 : 0.2
                     ]}
                 />
 
@@ -317,7 +322,7 @@ export default function RoomBikeScene() {
                 {/* Desk/Trophy spotlight - dimmer at night */}
                 <pointLight
                     position={[2, 4, 1]}
-                    intensity={isNightMode ? 3 : 15}
+                    intensity={isNightMode ? 3 : 7}
                     distance={8}
                     color={isNightMode ? '#404060' : '#fff8e0'}
                     castShadow
@@ -343,8 +348,8 @@ export default function RoomBikeScene() {
                 {/* Post-processing */}
                 <EffectComposer>
                     <Bloom
-                        intensity={isNightMode ? 0.4 : 0.15}
-                        luminanceThreshold={isNightMode ? 0.5 : 0.8}
+                        intensity={isNightMode ? 1.5 : 0.4}
+                        luminanceThreshold={isNightMode ? 0.2 : 0.6}
                         luminanceSmoothing={0.9}
                     />
                     <Vignette eskil={false} offset={0.1} darkness={isNightMode ? 0.6 : 0.3} />
