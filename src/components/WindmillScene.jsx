@@ -1117,7 +1117,7 @@ export default function WindmillScene() {
 
                 {/* The 3D Model - Click to go to /landing */}
                 <Suspense fallback={<Loader />}>
-                    <WindmillModel onClick={() => navigate('/landing')} isLanded={isSeaplaneLanded} />
+                    <WindmillModel onClick={() => navigate('/roomBike')} isLanded={isSeaplaneLanded} />
                 </Suspense>
 
                 {/* Green Grass Floor */}

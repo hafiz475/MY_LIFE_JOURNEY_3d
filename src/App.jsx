@@ -174,7 +174,7 @@ function PinballGameWrapper() {
     return <GameLoader gameType="pinball" onComplete={() => setLoading(false)} />;
   }
 
-  return <PinballGame onClose={() => navigate('/software')} />;
+  return <PinballGame onClose={() => navigate(-1)} />;
 }
 
 // Flappy Bird Game Wrapper
@@ -186,7 +186,7 @@ function FlappyBirdGameWrapper() {
     return <GameLoader gameType="flappy" onComplete={() => setLoading(false)} />;
   }
 
-  return <FlappyBirdGame onClose={() => navigate('/software')} />;
+  return <FlappyBirdGame onClose={() => navigate(-1)} />;
 }
 
 // Rubik's Cube Game Wrapper
@@ -198,7 +198,7 @@ function RubiksCubeGameWrapper() {
     return <GameLoader gameType="rubiks" onComplete={() => setLoading(false)} />;
   }
 
-  return <RubiksCubeGame onClose={() => navigate('/software')} />;
+  return <RubiksCubeGame onClose={() => navigate(-1)} />;
 }
 
 // Software Career Scene Wrapper
