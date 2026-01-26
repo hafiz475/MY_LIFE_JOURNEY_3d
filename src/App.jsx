@@ -159,7 +159,7 @@ function RoomSceneWrapper() {
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate('/');
+    navigate('/roomBike');
   };
 
   return <RoomScene onBack={handleBack} />;

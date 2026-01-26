@@ -494,8 +494,7 @@ export default function RoomScene({ onBack }) {
                 <div className={`room-scene-wrapper ${selectedShirt} ${isTransitioning ? 'fade-out' : ''} ${selectedImage ? 'modal-open' : ''}`}>
                     {/* Back Button */}
                     <button className="back-button" onClick={onBack}>
-                        <span className="back-icon">🚀</span>
-                        <span>Back to Sky</span>
+                        <span className="back-icon">←</span>
                     </button>
 
                     {/* Main Content Area */}
