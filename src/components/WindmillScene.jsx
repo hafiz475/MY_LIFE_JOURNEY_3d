@@ -69,17 +69,19 @@ function WindmillModel({ onClick, isLanded }) {
             position={[2, 0, 0]}
             scale={0.5}
         >
-            <primitive object={scene} />
+            <primitive
+                object={scene}
+                onClick={isLanded ? onClick : undefined}
+                onPointerOver={() => isLanded && setHovered(true)}
+                onPointerOut={() => isLanded && setHovered(false)}
+            />
             {/* Pulsing notification light at windmill entrance - only shows after plane lands */}
             {isLanded && (
                 <mesh
                     ref={starLightRef}
                     position={[-2.7, -6.7, -1.5]}
-                    onClick={onClick}
-                    onPointerOver={() => setHovered(true)}
-                    onPointerOut={() => setHovered(false)}
                 >
-                    <sphereGeometry args={[0.4, 16, 16]} />
+                    <sphereGeometry args={[0.6, 16, 16]} />
                     <meshBasicMaterial color="#00ffff" transparent opacity={0.9} />
                 </mesh>
             )}
@@ -885,26 +887,28 @@ function SeaplaneLanding({ onTakeoffComplete, onLanded }) {
             position={[START_POS.x, START_POS.y, START_POS.z]}
             scale={0.78}
         >
-            <primitive object={scene} />
+            <primitive
+                object={scene}
+                onClick={isLanded && !isTakingOff ? handleClick : undefined}
+                onPointerOver={() => isLanded && !isTakingOff && setHovered(true)}
+                onPointerOut={() => isLanded && !isTakingOff && setHovered(false)}
+            />
             {/* Pulsing cyan notification light when landed - only sphere is clickable */}
             {isLanded && !isTakingOff && (
                 <>
                     <mesh
                         ref={starLightRef}
-                        position={[0, 0.7, 0]}
-                        onClick={handleClick}
-                        onPointerOver={() => setHovered(true)}
-                        onPointerOut={() => setHovered(false)}
+                        position={[0, 1.2, 0]}
                     >
-                        <sphereGeometry args={[2, 2, 2]} />
+                        <sphereGeometry args={[0.3, 16, 16]} />
                         <meshBasicMaterial color="#00ffff" transparent opacity={0.9} />
                     </mesh>
-                    {/* Glow ring */}
-                    <mesh position={[0, 1.5, 0]} rotation={[Math.PI / 2, 0, 0]}>
-                        <ringGeometry args={[0.18, 0.32, 32]} />
+                    {/* Glow ring - increased size and position for visibility */}
+                    <mesh position={[0, 1.2, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                        <ringGeometry args={[0.4, 0.7, 32]} />
                         <meshBasicMaterial color="#00ffff" transparent opacity={0.5} />
                     </mesh>
-                    <pointLight position={[0, 1.5, 0]} color="#00ffff" intensity={3} distance={4} />
+                    <pointLight position={[0, 1.2, 0]} color="#00ffff" intensity={5} distance={6} />
                 </>
             )}
         </group>
