@@ -4,6 +4,7 @@ import './styles/main.scss';
 import MainScene from './components/MainScene';
 import Overlay from './components/Overlay';
 import ExperienceStart from './components/ExperienceStart';
+import InteractionHints from './components/InteractionHints';
 import RoomScene from './components/RoomScene';
 import PinballGame from './components/PinballGame';
 import FlappyBirdGame from './components/FlappyBirdGame';
@@ -184,6 +185,8 @@ function MainExperience() {
           hasStarted={hasStarted}
         />
       </Suspense>
+
+      <InteractionHints visible={hasStarted && !showIntro && section === 0} />
 
       {/* Intro overlay on top of 3D scene during transition */}
       {showIntro && (

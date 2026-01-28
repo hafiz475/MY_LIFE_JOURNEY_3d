@@ -8,8 +8,8 @@ export default function ExperienceStart({ onStart, onExitComplete }) {
     const containerRef = useRef();
 
     // Generate grid for particles
-    const rows = 6;
-    const cols = 10;
+    const rows = 4;
+    const cols = 6;
     const totalParticles = rows * cols;
     const particles = Array.from({ length: totalParticles });
 

@@ -1,0 +1,185 @@
+@font-face {
+    font-family: 'Caveat';
+    src: url('/assets/fonts/Caveat-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.interaction-hints-wrapper {
+    position: absolute;
+    inset: 0;
+    z-index: 1000;
+    pointer-events: none;
+    font-family: 'Caveat', cursive;
+
+    // Cloud hint at the top
+    .hint-cloud {
+        position: absolute;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        animation: fadeInHandwritten 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    }
+
+    // Plane hint near the middle/bottom
+    .hint-plane {
+        position: absolute;
+        bottom: 30%;
+        left: 50%;
+        transform: translateX(-50%); // Perfectly centered horizontally
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0px;
+        opacity: 0;
+        animation: fadeInPlaneHand 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.4s forwards;
+
+        .hint-arrow {
+            color: #9ea7b0; // Matched to HI soft grey
+            font-size: 3rem;
+            font-weight: normal;
+            transform: rotate(0deg); // Pointing down
+            margin-bottom: -15px;
+            animation: bounceSmall 2s infinite;
+        }
+    }
+
+    &.exit {
+
+        .hint-cloud,
+        .hint-plane {
+            animation: fadeOutHandwritten 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+    }
+
+    .hint-item {
+        background: transparent; // Removed card/box
+        backdrop-filter: none;
+        border: none;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: none;
+
+        .hint-icon {
+            font-size: 2.2rem; // Larger icons
+            filter: brightness(0.8);
+            opacity: 0.7;
+        }
+
+        .hint-text {
+            color: #9ea7b0; // Matched to visual grey of HI in fog
+            font-size: 2.2rem; // Large handwritten text
+            font-weight: normal;
+            letter-spacing: 0px;
+            text-transform: none; // Handwritten looks better in normal case
+            text-shadow: none; // Removed shadow for that "soft" look
+            font-family: 'Caveat', cursive;
+        }
+    }
+}
+
+@keyframes bounceSmall {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-10px);
+    }
+
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes fadeInHandwritten {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 30px) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1.1); // Slightly larger when visible
+    }
+}
+
+// Special override for plane hint due to absolute positioning differences
+.hint-plane {
+    @keyframes fadeInPlaneHand {
+        from {
+            opacity: 0;
+            transform: translate(-50%, 30px) scale(0.9);
+        }
+
+        to {
+            opacity: 1;
+            transform: translate(-50%, 0) scale(1.1);
+        }
+    }
+
+    animation: fadeInPlaneHand 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.4s forwards;
+}
+
+@keyframes fadeOutHandwritten {
+    from {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1.1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translate(-50%, -20px) scale(0.8);
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+    .interaction-hints-wrapper {
+        .hint-cloud {
+            top: 25px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .hint-plane {
+            bottom: 25%; // Position it lower to be clearly below the plane
+            left: 50%;
+            transform: translateX(-50%);
+            gap: 2px;
+            width: 100%;
+
+            .hint-arrow {
+                font-size: 1.5rem; // Much smaller arrow
+                margin-bottom: -5px;
+            }
+        }
+
+        .hint-item {
+            gap: 8px;
+            justify-content: center;
+
+            .hint-icon {
+                svg {
+                    width: 24px !important; // Even smaller icons
+                    height: 24px !important;
+                }
+            }
+
+            .hint-text {
+                font-size: 1.2rem; // Even smaller font
+                max-width: 160px;
+                line-height: 1.1;
+                text-align: center;
+            }
+        }
+    }
+}
