@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist -r https://github.com/hafiz475/meta_resume.git"
   },
   "dependencies": {
     "@react-spring/three": "^10.0.3",
