@@ -378,16 +378,26 @@
     animation: fadeSlideIn 0.6s ease-out;
 
     &.loading {
-        &>*:not(.section-loader) {
+        &>*:not(.universal-loader-container) {
             opacity: 0;
             pointer-events: none;
         }
     }
 
     &.ready {
-        &>*:not(.section-loader) {
+        &>*:not(.universal-loader-container) {
             opacity: 1;
             transition: opacity 0.8s ease-out;
+        }
+
+        .universal-loader-container {
+            position: absolute;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease-out;
         }
     }
 
@@ -1998,59 +2008,6 @@
 
     &:hover {
         transform: scale(1.05);
-    }
-}
-
-.section-loader {
-    position: absolute;
-    top: 40px; // Aligned precisely with header icon / t-shirt area
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.2rem;
-    z-index: 100;
-
-    .loader-orbit {
-        width: 80px;
-        height: 80px;
-        border: 2px dashed rgba(255, 204, 0, 0.15);
-        border-color: color-mix(in srgb, var(--loader-color) 30%, transparent);
-        border-radius: 50%;
-        position: relative;
-        animation: rotateLoader 4s linear infinite;
-
-        .loader-planet {
-            width: 12px;
-            height: 12px;
-            background: var(--loader-color);
-            border-radius: 50%;
-            position: absolute;
-            top: -6px;
-            left: 50%;
-            transform: translateX(-50%);
-            box-shadow: 0 0 15px var(--loader-color);
-        }
-    }
-
-    .loader-text {
-        font-family: 'Caveat', cursive;
-        font-size: 1.3rem;
-        color: var(--loader-color);
-        text-shadow: 0 0 10px color-mix(in srgb, var(--loader-color) 50%, transparent);
-        letter-spacing: 1px;
-        white-space: nowrap;
-    }
-}
-
-@keyframes rotateLoader {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
     }
 }
 

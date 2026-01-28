@@ -11,6 +11,7 @@ import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 import './SoftwareCareerScene.scss';
+import UniversalLoader from './UniversalLoader';
 
 // Animated Gaming Laptop - starts open, click to close
 function AnimatedLaptop({ isOpen, onLaptopClick }) {
@@ -119,19 +120,7 @@ function AnimatedLaptop({ isOpen, onLaptopClick }) {
 }
 
 // Simple loading fallback
-function Loader() {
-    return (
-        <Html center>
-            <div style={{
-                color: '#ff6b6b',
-                fontSize: '1.2rem',
-                fontFamily: 'Inter, sans-serif'
-            }}>
-                Loading...
-            </div>
-        </Html>
-    );
-}
+// Universal Loader
 
 // Main Scene Component - Laptop with bright red wall
 export default function SoftwareCareerScene() {
@@ -185,7 +174,7 @@ export default function SoftwareCareerScene() {
                 </mesh>
 
                 {/* The Laptop - click to close */}
-                <Suspense fallback={<Loader />}>
+                <Suspense fallback={<UniversalLoader isCanvas text="Launching Console..." />}>
                     <AnimatedLaptop
                         isOpen={isLaptopOpen}
                         onLaptopClick={() => setIsLaptopOpen(true)}

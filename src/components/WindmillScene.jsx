@@ -12,6 +12,7 @@ import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 import './WindmillScene.scss';
+import UniversalLoader from './UniversalLoader';
 import { useMemo } from 'react';
 
 // The Windmill 3D Model with Animation - Clickable to go to /landing
@@ -1050,20 +1051,7 @@ function BrightSun() {
 }
 
 // Loading Fallback
-function Loader() {
-    return (
-        <Html center>
-            <div style={{
-                color: '#00f9ff',
-                fontSize: '1.2rem',
-                fontFamily: 'Inter, sans-serif',
-                textShadow: '0 0 20px #00f9ff'
-            }}>
-                Loading Windmill...
-            </div>
-        </Html>
-    );
-}
+// Universal loader for 3D content
 
 // Main Scene Component
 export default function WindmillScene() {
@@ -1120,7 +1108,7 @@ export default function WindmillScene() {
                 <BrightSun />
 
                 {/* The 3D Model - Click to go to /landing */}
-                <Suspense fallback={<Loader />}>
+                <Suspense fallback={<UniversalLoader isCanvas text="Building Island..." />}>
                     <WindmillModel onClick={() => navigate('/myHouse')} isLanded={isSeaplaneLanded} />
                 </Suspense>
 

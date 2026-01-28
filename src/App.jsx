@@ -17,6 +17,7 @@ import IslandScene from './components/IslandScene';
 import PolyThemeScene from './components/PolyThemeScene';
 import WindmillScene from './components/WindmillScene';
 import RoomBikeScene from './components/RoomBikeScene';
+import UniversalLoader from './components/UniversalLoader';
 
 // Main Experience Component - combines intro, flight, and sunset on single page
 function MainExperience() {
@@ -297,21 +298,31 @@ function RoomBikeSceneWrapper() {
 // Main App with Routes
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<MainExperience />} />
-      <Route path="/room" element={<RoomSceneWrapper />} />
-      <Route path="/software" element={<RoomSceneWrapper />} />
-      <Route path="/softwareCareer" element={<SoftwareCareerWrapper />} />
-      <Route path="/pinball" element={<PinballGameWrapper />} />
-      <Route path="/flappy-bird" element={<FlappyBirdGameWrapper />} />
-      <Route path="/rubiks-cube" element={<RubiksCubeGameWrapper />} />
-      <Route path="/asus" element={<AsusSceneWrapper />} />
-      <Route path="/landing" element={<LandingSceneWrapper />} />
-      <Route path="/island" element={<IslandSceneWrapper />} />
-      <Route path="/polyTheme" element={<PolyThemeSceneWrapper />} />
-      <Route path="/starFishIsland" element={<WindmillSceneWrapper />} />
-      <Route path="/myHouse" element={<RoomBikeSceneWrapper />} />
-    </Routes>
+    <Suspense fallback={<UniversalLoader text="Preparing Scene..." />}>
+      <Routes>
+        <Route path="/" element={<MainExperience />} />
+        <Route path="/room" element={<RoomSceneWrapper />} />
+        <Route path="/software" element={<RoomSceneWrapper />} />
+        <Route path="/softwareCareer" element={<SoftwareCareerWrapper />} />
+        <Route path="/pinball" element={<PinballGameWrapper />} />
+        <Route path="/flappy-bird" element={<FlappyBirdGameWrapper />} />
+        <Route path="/rubiks-cube" element={<RubiksCubeGameWrapper />} />
+        <Route path="/asus" element={<AsusSceneWrapper />} />
+        <Route path="/landing" element={<LandingSceneWrapper />} />
+        <Route path="/island" element={<IslandSceneWrapper />} />
+        <Route path="/polyTheme" element={<PolyThemeSceneWrapper />} />
+        <Route path="/starFishIsland" element={
+          <Suspense fallback={<UniversalLoader color="#00f2ff" text="Arriving at Starfish Island..." />}>
+            <WindmillSceneWrapper />
+          </Suspense>
+        } />
+        <Route path="/myHouse" element={
+          <Suspense fallback={<UniversalLoader color="#c9a0af" text="Entering Habitat..." />}>
+            <RoomBikeSceneWrapper />
+          </Suspense>
+        } />
+      </Routes>
+    </Suspense>
   );
 }
 

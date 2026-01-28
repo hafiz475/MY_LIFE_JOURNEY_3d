@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Lottie from 'lottie-react';
 import ParticleEffect from './ParticleEffect';
 import LaptopScene from './LaptopScene';
+import UniversalLoader from './UniversalLoader';
 import '../styles/room-scene.scss';
 
 // Football t-shirt content
@@ -654,19 +655,21 @@ export default function RoomScene({ onBack }) {
 
                         {/* Content Display */}
                         <div className={`passion-display ${selectedShirt} ${isSectionReady ? 'ready' : 'loading'}`}>
-                            {!isSectionReady && (
-                                <div className="section-loader">
-                                    <div className="loader-orbit">
-                                        <div className="loader-planet"></div>
-                                    </div>
-                                    <p className="loader-text">
-                                        {selectedShirt === 'fullstack' ? 'Initializing Full Stack Environment...' :
-                                            selectedShirt === 'blender' ? 'Launching Blender Workspace...' :
-                                                selectedShirt === 'enfield' ? 'Starting Engines...' :
-                                                    'Preparing Pitch...'}
-                                    </p>
-                                </div>
-                            )}
+                            <UniversalLoader
+                                mode="section"
+                                color={
+                                    selectedShirt === 'fullstack' ? '#ffcc00' :
+                                        selectedShirt === 'blender' ? '#ff6600' :
+                                            selectedShirt === 'enfield' ? '#ff5533' :
+                                                '#00f2ff'
+                                }
+                                text={
+                                    selectedShirt === 'fullstack' ? 'Initializing Full Stack Environment...' :
+                                        selectedShirt === 'blender' ? 'Launching Blender Workspace...' :
+                                            selectedShirt === 'enfield' ? 'Starting Engines...' :
+                                                'Preparing Pitch...'
+                                }
+                            />
 
                             <h2 className="passion-title">{currentContent.title}</h2>
                             <h3 className="passion-subtitle">{currentContent.subtitle}</h3>

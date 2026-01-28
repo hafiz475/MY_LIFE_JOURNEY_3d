@@ -11,6 +11,7 @@ import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { useNavigate } from 'react-router-dom';
 import * as THREE from 'three';
 import './LandingScene.scss'; // Reuse the same styles
+import UniversalLoader from './UniversalLoader';
 
 // Room and Bike Model with Animations and Blinking Notification Lights
 function RoomBikeModel({ isNightMode, onToggleNight }) {
@@ -249,16 +250,7 @@ function GradientBackground() {
 }
 
 // Loading Fallback
-function Loader() {
-    return (
-        <Html center>
-            <div className="scene-loader-container">
-                <div className="spinner"></div>
-                <div className="loader-text">Loading Scene</div>
-            </div>
-        </Html>
-    );
-}
+// Universal Loader
 
 // Main Scene Component
 export default function RoomBikeScene() {
@@ -373,7 +365,7 @@ export default function RoomBikeScene() {
                 {!isNightMode && <GradientBackground />}
 
                 {/* Models */}
-                <Suspense fallback={<Loader />}>
+                <Suspense fallback={<UniversalLoader isCanvas text="Entering Habitat..." />}>
                     <RoomBikeModel
                         isNightMode={isNightMode}
                         onToggleNight={toggleNightMode}
