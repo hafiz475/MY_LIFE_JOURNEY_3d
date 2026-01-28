@@ -26,17 +26,17 @@ function RoomBikeModel({ isNightMode, onToggleNight }) {
     // Object positions for blinking lights - silver color, smaller size
     // Removed PhotoFrame3 as requested
     const blinkingObjects = useMemo(() => [
-        { name: 'Bike', position: [-0.22, 0.7, 2.3], offset: 0, isSwitch: false, targetShirt: 'enfield' },
-        { name: 'Football', position: [-0.22, 0.5, -0.3], offset: 0.5, isSwitch: false, targetShirt: 'football' },
-        { name: 'Laptop', position: [0.64, 0.42, -1.4], offset: 1.0, isSwitch: false, targetShirt: 'fullstack' },
-        { name: 'Trophy', position: [-1.18, 0.8, -2.2], offset: 1.5, isSwitch: false, targetShirt: 'football' },
-        { name: 'Blender_Icon', position: [0.15, 0.9, -2.7], offset: 2.0, isSwitch: false, targetShirt: 'blender' },
+        { name: 'Bike', keywords: ['bike', 'motorcycle', 'moto', 'vespa', 'cycle', 'scooter'], position: [-0.22, 0.7, 2.3], offset: 0, isSwitch: false, targetShirt: 'enfield' },
+        { name: 'Football', keywords: ['football', 'ball', 'soccer'], position: [-0.22, 0.5, -0.3], offset: 0.5, isSwitch: false, targetShirt: 'football' },
+        { name: 'Laptop', keywords: ['laptop', 'macbook', 'computer', 'screen'], position: [0.64, 0.42, -1.4], offset: 1.0, isSwitch: false, targetShirt: 'fullstack' },
+        { name: 'Trophy', keywords: ['trophy', 'award', 'cup', 'medal', 'prize'], position: [-1.18, 0.8, -2.2], offset: 1.5, isSwitch: false, targetShirt: 'football' },
+        { name: 'Blender_Icon', keywords: ['blender', 'logo', 'icon'], position: [0.15, 0.9, -2.7], offset: 2.0, isSwitch: false, targetShirt: 'blender' },
         // Photo frames on wall
-        { name: 'PhotoFrame1', position: [-0.9, 1.2, -2.7], offset: 2.5, isSwitch: false, targetShirt: 'fullstack' },
-        { name: 'PhotoFrame2', position: [0.1, 1.5, -2.7], offset: 3.0, isSwitch: false, targetShirt: 'fullstack' },
+        { name: 'PhotoFrame1', keywords: ['photo', 'frame', 'picture1'], position: [-0.9, 1.2, -2.7], offset: 2.5, isSwitch: false, targetShirt: 'fullstack' },
+        { name: 'PhotoFrame2', keywords: ['photo', 'frame', 'picture2'], position: [0.1, 1.5, -2.7], offset: 3.0, isSwitch: false, targetShirt: 'fullstack' },
         // Switches - clickable to toggle day/night
-        { name: 'Room_Switch', position: [-1.95, 1.48, 0.96], offset: 4.0, isSwitch: true },
-        { name: 'Lamp_Switch', position: [1.77, 0.9, -2.7], offset: 4.5, isSwitch: true },
+        { name: 'Room_Switch', keywords: ['switch', 'toggle', 'button'], position: [-1.95, 1.48, 0.96], offset: 4.0, isSwitch: true },
+        { name: 'Lamp_Switch', keywords: ['switch', 'lamp', 'toggle'], position: [1.77, 0.9, -2.7], offset: 4.5, isSwitch: true },
     ], []);
 
     useEffect(() => {
@@ -118,6 +118,43 @@ function RoomBikeModel({ isNightMode, onToggleNight }) {
         });
     });
 
+    const handleObjectClick = (e) => {
+        e.stopPropagation();
+        let current = e.object;
+        let foundObj = null;
+
+        // Traverse up the parent tree to find a matching object
+        while (current && current !== scene) {
+            const currentName = current.name.toLowerCase();
+            foundObj = blinkingObjects.find(obj =>
+                obj.keywords.some(keyword => currentName.includes(keyword))
+            );
+            if (foundObj) break;
+            current = current.parent;
+        }
+
+        if (foundObj) {
+            handlePipClick(foundObj);
+        }
+    };
+
+    const handlePointerOver = (e) => {
+        e.stopPropagation();
+        let current = e.object;
+        let isInteractive = false;
+
+        while (current && current !== scene) {
+            const currentName = current.name.toLowerCase();
+            isInteractive = blinkingObjects.some(obj =>
+                obj.keywords.some(keyword => currentName.includes(keyword))
+            );
+            if (isInteractive) break;
+            current = current.parent;
+        }
+
+        if (isInteractive) setHovered(true);
+    };
+
     const handlePipClick = (obj) => {
         if (obj.isSwitch) {
             if (onToggleNight) onToggleNight();
@@ -128,9 +165,14 @@ function RoomBikeModel({ isNightMode, onToggleNight }) {
 
     return (
         <group ref={groupRef} position={[0, 0, 0]} scale={1}>
-            <primitive object={scene} />
+            <primitive
+                object={scene}
+                onClick={handleObjectClick}
+                onPointerOver={handlePointerOver}
+                onPointerOut={() => setHovered(false)}
+            />
 
-            {/* Silver Blinking Notification Lights - smaller size, no emissive */}
+            {/* Silver Blinking Notification Lights - increased size, softer pulsing */}
             {blinkingObjects.map((obj, index) => (
                 <mesh
                     key={obj.name}
@@ -140,15 +182,15 @@ function RoomBikeModel({ isNightMode, onToggleNight }) {
                     onPointerOver={() => setHovered(true)}
                     onPointerOut={() => setHovered(false)}
                 >
-                    <sphereGeometry args={[0.035, 16, 16]} />
+                    <sphereGeometry args={[0.045, 16, 16]} />
                     <meshStandardMaterial
                         color="#ffffff"
                         emissive="#00f2ff"
                         emissiveIntensity={2}
                         transparent
                         opacity={0.8}
-                        metalness={1}
-                        roughness={0}
+                        metalness={0.5}
+                        roughness={0.2}
                     />
                 </mesh>
             ))}
